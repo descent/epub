@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="bfc95bb7-1e1e-46c8-a9df-7fb154b077f6" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.0)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>Linux library loader stirs Borland complaint</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="title" id="navPoint-titlepage" playOrder="1">
+      <navLabel>
+        <text>Title</text>
+      </navLabel>
+      <content src="OEBPS/text/title.xhtml"/>
+    </navPoint>
+    <navPoint class="section" id="navPoint-1" playOrder="2">
+      <navLabel>
+        <text>Content</text>
+      </navLabel>
+      <content src="OEBPS/text/content.xhtml"/>
+    </navPoint>
+    <navPoint class="section" id="navPoint-2" playOrder="3">
+      <navLabel>
+        <text>Disclaimer</text>
+      </navLabel>
+      <content src="OEBPS/text/copy.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>
