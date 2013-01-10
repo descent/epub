@@ -14,7 +14,7 @@
     }
 .articledate {
     color: gray;
-    font-family: monospace
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     }
 .articledescription {
     display: block;
@@ -23,6 +23,7 @@
     }
 .calibre {
     display: block;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     font-size: 1em;
     margin-bottom: 0;
     margin-left: 5pt;
@@ -40,7 +41,7 @@
     text-align: center
     }
 .calibre10 {
-    font-family: 標楷體
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     }
 .calibre11 {
     display: block;
@@ -56,7 +57,7 @@
     font-weight: bold
     }
 .calibre13 {
-    font-family: 細明體;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     font-size: 1em
     }
 .calibre14 {
@@ -79,6 +80,7 @@
     display: list-item
     }
 .calibre5 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     display: block
     }
 .calibre6 {
@@ -92,6 +94,7 @@
     margin-top: 0.5em
     }
 .calibre7 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     display: block;
     margin-bottom: 1em;
     margin-left: 0;
@@ -102,7 +105,7 @@
     font-size: 1em
     }
 .calibre9 {
-    font-family: 細明體
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     }
 .calibrefeeddescription {
     display: block;
@@ -127,7 +130,7 @@
     }
 .calibrenavbar {
     display: block;
-    font-family: monospace;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
     font-size: 0.75em;
     text-align: center
     }
