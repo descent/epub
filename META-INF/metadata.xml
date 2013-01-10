@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		 xmlns:dcterms="http://purl.org/dc/terms/"
+		 xmlns:dc="http://purl.org/dc/elements/1.1/"
+		 xmlns:prs="http://xmlns.sony.net/e-book/prs/">
+	<rdf:Description rdf:about="">
+		<dc:title>你不知道的台灣 [星期三, 09 一月 2013]</dc:title>
+		<dc:publisher>calibre 0.9.10</dc:publisher>
+		<dcterms:alternative>你不知道的台灣</dcterms:alternative>
+		<dcterms:issued>2013-01-09</dcterms:issued>
+		<dc:language>zho</dc:language>
+		<dcterms:conformsTo rdf:resource="http://xmlns.sony.net/e-book/prs/periodicals/1.0/newspaper/1.0"/>
+		<dcterms:type rdf:resource="http://xmlns.sony.net/e-book/prs/datatype/newspaper"/>
+		<dcterms:type rdf:resource="http://xmlns.sony.net/e-book/prs/datatype/periodical"/>
+	</rdf:Description>
+</rdf:RDF>
