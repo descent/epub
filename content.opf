@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>calibre</dc:publisher>
+    <meta name="calibre:title_sort" content="你不知道的台灣 [星期三, 09 一月 2013]"/>
+    <dc:description>&lt;div&gt;&lt;p class="description"&gt;這次發行期刊中的文章： &lt;br&gt;神所賜給我「化裝的祝福」（管仁健／著）&lt;/p&gt;
+&lt;p class="description"&gt;當《龍的傳人》被新聞局長「自強」了之後（管仁健／著）&lt;/p&gt;
+&lt;p class="description"&gt;作者大於書名的《大江大海大爛書》（管仁健／著）&lt;/p&gt;
+&lt;p class="description"&gt;搖落深知中年悲的《校園奇案》案外案&lt;/p&gt;
+&lt;p class="description"&gt;我的字典裡沒有人生，只有女生（管仁健／著）&lt;/p&gt;
+&lt;p class="description"&gt;管仁健新書《校園奇案》出版了！&lt;/p&gt;
+&lt;p class="description"&gt;台灣最恐怖的校園連環喋血案（管仁健／著）&lt;/p&gt;&lt;/div&gt;</dc:description>
+    <dc:language>zh</dc:language>
+    <dc:creator opf:file-as="calibre" opf:role="aut">calibre</dc:creator>
+    <meta name="calibre:timestamp" content="2013-01-09T14:20:24+00:00"/>
+    <dc:title>你不知道的台灣 [星期三, 09 一月 2013]</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>2013-01-09T14:20:14+00:00</dc:date>
+    <dc:contributor opf:role="bkp">calibre (0.9.10) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe</dc:identifier>
+    <meta name="calibre:publication_type" content="periodical:unknown:你不知道的台灣"/>
+    <dc:subject>新聞</dc:subject>
+    <dc:subject>你不知道的台灣</dc:subject>
+  </metadata>
+  <manifest>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="feed_0/article_0/images/img1_u6.jpg" id="id3" media-type="image/jpeg"/>
+    <item href="feed_0/article_0/images/img2_u2.jpg" id="id4" media-type="image/jpeg"/>
+    <item href="feed_0/article_0/images/img3_u1.jpg" id="id5" media-type="image/jpeg"/>
+    <item href="feed_0/article_0/images/img4.jpg" id="id6" media-type="image/jpeg"/>
+    <item href="feed_0/article_0/index.html" id="id2" media-type="application/xhtml+xml"/>
+    <item href="feed_0/article_1/images/img1_u5.jpg" id="id8" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/images/img2_u3.jpg" id="id9" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/images/img3_u3.jpg" id="id10" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/images/img4_u3.jpg" id="id11" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/images/img5_u1.jpg" id="id12" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/images/img6.jpg" id="id13" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/images/img7_u1.jpg" id="id14" media-type="image/jpeg"/>
+    <item href="feed_0/article_1/index_u4.html" id="id7" media-type="application/xhtml+xml"/>
+    <item href="feed_0/article_2/images/img1_u4.jpg" id="id16" media-type="image/jpeg"/>
+    <item href="feed_0/article_2/index_u2.html" id="id15" media-type="application/xhtml+xml"/>
+    <item href="feed_0/article_3/images/img1_u2.jpg" id="id18" media-type="image/jpeg"/>
+    <item href="feed_0/article_3/index_u5.html" id="id17" media-type="application/xhtml+xml"/>
+    <item href="feed_0/article_4/images/img1.jpg" id="id20" media-type="image/jpeg"/>
+    <item href="feed_0/article_4/index_u8.html" id="id19" media-type="application/xhtml+xml"/>
+    <item href="feed_0/article_5/images/img1_u1.jpg" id="id22" media-type="image/jpeg"/>
+    <item href="feed_0/article_5/images/img2_u1.jpg" id="id23" media-type="image/jpeg"/>
+    <item href="feed_0/article_5/images/img3.jpg" id="id24" media-type="image/jpeg"/>
+    <item href="feed_0/article_5/images/img4_u1.jpg" id="id25" media-type="image/jpeg"/>
+    <item href="feed_0/article_5/index_u1.html" id="id21" media-type="application/xhtml+xml"/>
+    <item href="feed_0/article_6/images/img1_u3.jpg" id="id27" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img2.jpg" id="id28" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img3_u2.jpg" id="id29" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img4_u2.jpg" id="id30" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img5.jpg" id="id31" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img6_u1.jpg" id="id32" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img7.jpg" id="id33" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/images/img8.jpg" id="id34" media-type="image/jpeg"/>
+    <item href="feed_0/article_6/index_u3.html" id="id26" media-type="application/xhtml+xml"/>
+    <item href="feed_0/index_u6.html" id="id1" media-type="application/xhtml+xml"/>
+    <item href="index_u7.html" id="id35" media-type="application/xhtml+xml"/>
+    <item href="mastheadImage.jpg" id="masthead-image" media-type="image/jpeg"/>
+    <item href="page_styles.css" id="page_css" media-type="text/css"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="id35"/>
+    <itemref idref="id1"/>
+    <itemref idref="id2"/>
+    <itemref idref="id7"/>
+    <itemref idref="id15"/>
+    <itemref idref="id17"/>
+    <itemref idref="id19"/>
+    <itemref idref="id21"/>
+    <itemref idref="id26"/>
+  </spine>
+  <guide>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+  </guide>
+</package>

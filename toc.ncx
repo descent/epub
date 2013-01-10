@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="zho">
+  <head>
+    <meta content="4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.10)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>你不知道的台灣 [星期三, 09 一月 2013]</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="9a75fc4e-6f9e-4494-b0c3-b2f88c98febd" playOrder="1">
+      <navLabel>
+        <text>神所賜給我「化裝的祝福」（管仁健／著）</text>
+      </navLabel>
+      <content src="feed_0/article_0/index.html"/>
+    </navPoint>
+    <navPoint class="chapter" id="dafbd554-ca7d-4137-9a83-c660312cb50f" playOrder="2">
+      <navLabel>
+        <text>當《龍的傳人》被新聞局長「自強」了之後（管仁健／著）</text>
+      </navLabel>
+      <content src="feed_0/article_1/index_u4.html"/>
+    </navPoint>
+    <navPoint class="chapter" id="db2a8a6b-742e-496f-acb4-33d53ef7231d" playOrder="3">
+      <navLabel>
+        <text>作者大於書名的《大江大海大爛書》（管仁健／著）</text>
+      </navLabel>
+      <content src="feed_0/article_2/index_u2.html"/>
+    </navPoint>
+    <navPoint class="chapter" id="58755fe7-946a-40d1-9e9d-e38be247438c" playOrder="4">
+      <navLabel>
+        <text>搖落深知中年悲的《校園奇案》案外案</text>
+      </navLabel>
+      <content src="feed_0/article_3/index_u5.html"/>
+    </navPoint>
+    <navPoint class="chapter" id="55c0761f-c446-4866-8950-77c4725ab392" playOrder="5">
+      <navLabel>
+        <text>我的字典裡沒有人生，只有女生（管仁健／著）</text>
+      </navLabel>
+      <content src="feed_0/article_4/index_u8.html"/>
+    </navPoint>
+    <navPoint class="chapter" id="f760e63c-999c-4b5e-b743-5acfae6356dd" playOrder="6">
+      <navLabel>
+        <text>管仁健新書《校園奇案》出版了！</text>
+      </navLabel>
+      <content src="feed_0/article_5/index_u1.html"/>
+    </navPoint>
+    <navPoint class="chapter" id="2e46f470-3835-4d51-bae9-3fea75e72a71" playOrder="7">
+      <navLabel>
+        <text>台灣最恐怖的校園連環喋血案（管仁健／著）</text>
+      </navLabel>
+      <content src="feed_0/article_6/index_u3.html"/>
+    </navPoint>
+  </navMap>
+</ncx>

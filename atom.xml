@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:prs="http://xmlns.sony.net/e-book/prs/"
+    xmlns:media="http://video.search.yahoo.com/mrss"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<title>你不知道的台灣</title>
+<updated>2013-01-09T14:32:14Z</updated>
+<id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe</id>
+<entry rdf:ID="神所賜給我「化裝的祝福」（管仁健／著）">
+  <title>神所賜給我「化裝的祝福」（管仁健／著）</title>
+  <link href="feed_0/article_0/index.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section0</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/神所賜給我「化裝的祝福」（管仁健／著）"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="神所賜給我「化裝的祝福」（管仁健／著）"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+
+<entry rdf:ID="當《龍的傳人》被新聞局長「自強」了之後（管仁健／著）">
+  <title>當《龍的傳人》被新聞局長「自強」了之後（管仁健／著）</title>
+  <link href="feed_0/article_1/index_u4.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section1</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/當《龍的傳人》被新聞局長「自強」了之後（管仁健／著）"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="當《龍的傳人》被新聞局長「自強」了之後（管仁健／著）"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+
+<entry rdf:ID="作者大於書名的《大江大海大爛書》（管仁健／著）">
+  <title>作者大於書名的《大江大海大爛書》（管仁健／著）</title>
+  <link href="feed_0/article_2/index_u2.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section2</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/作者大於書名的《大江大海大爛書》（管仁健／著）"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="作者大於書名的《大江大海大爛書》（管仁健／著）"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+
+<entry rdf:ID="搖落深知中年悲的《校園奇案》案外案">
+  <title>搖落深知中年悲的《校園奇案》案外案</title>
+  <link href="feed_0/article_3/index_u5.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section3</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/搖落深知中年悲的《校園奇案》案外案"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="搖落深知中年悲的《校園奇案》案外案"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+
+<entry rdf:ID="我的字典裡沒有人生，只有女生（管仁健／著）">
+  <title>我的字典裡沒有人生，只有女生（管仁健／著）</title>
+  <link href="feed_0/article_4/index_u8.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section4</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/我的字典裡沒有人生，只有女生（管仁健／著）"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="我的字典裡沒有人生，只有女生（管仁健／著）"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+
+<entry rdf:ID="管仁健新書《校園奇案》出版了！">
+  <title>管仁健新書《校園奇案》出版了！</title>
+  <link href="feed_0/article_5/index_u1.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section5</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/管仁健新書《校園奇案》出版了！"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="管仁健新書《校園奇案》出版了！"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+
+<entry rdf:ID="台灣最恐怖的校園連環喋血案（管仁健／著）">
+  <title>台灣最恐怖的校園連環喋血案（管仁健／著）</title>
+  <link href="feed_0/article_6/index_u3.html"/>
+  <id>4cf86b8b-b98d-4b5c-bb9f-675c1f5f83fe/section6</id>
+  <updated>2013-01-09T14:32:14Z</updated>
+  <summary></summary>
+  <category term="你不知道的台灣/台灣最恐怖的校園連環喋血案（管仁健／著）"
+      scheme="http://xmlns.sony.net/e-book/terms/" label="台灣最恐怖的校園連環喋血案（管仁健／著）"/>
+  <dc:type xsi:type="prs:datatype">newspaper/section</dc:type>
+  <dcterms:isReferencedBy rdf:resource=""/>
+</entry>
+
+</feed>
