@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+}
+
 #logo {
 	display: inline;
 	border: 0;
@@ -7,10 +12,11 @@
 	padding: 0;
 }
 
+
 body {
-	padding: 0;
-	margin: 1em;
-	font-family: georgia, times new roman, times roman, times, roman, serif;
+    padding: 0;
+    margin: 1em;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
 }
 
 #epub-title {
@@ -30,10 +36,11 @@ body {
 }
 
 h2, h3, h4, h5, h6 {
-	margin: 1.5em 0 1em 0;
-	padding: 0;
-	font-weight: bold;
-	font-size: 1em;
+  font-family: georgia, times new roman, times roman, times, roman;
+  margin: 1.5em 0 1em 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: 1em;
 }
 
 div, p.img {
