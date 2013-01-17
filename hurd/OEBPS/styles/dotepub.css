@@ -35,12 +35,19 @@ body {
 	width: 160px;
 }
 
-h2, h3, h4, h5, h6 {
-  font-family: georgia, times new roman, times roman, times, roman;
+h2, h4, h5, h6 {
   margin: 1.5em 0 1em 0;
   padding: 0;
   font-weight: bold;
   font-size: 1em;
+}
+
+h3{
+  color:#FF0000;
+  margin: 1.5em 0 1em 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: 1.7em;
 }
 
 div, p.img {
