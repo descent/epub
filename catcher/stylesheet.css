@@ -1,0 +1,169 @@
+@namespace h "http://www.w3.org/1999/xhtml";
+.calibre {
+    display: block;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    font-size: 1.29167em;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 50px;
+    page-break-before: always
+    }
+.calibre1 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    border-bottom: 2px solid #d5eeab;
+    display: block;
+    margin-bottom: 50px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    padding-bottom: 0;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0;
+    text-align: center;
+    text-indent: 0
+    }
+.calibre10 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    display: block
+    }
+.calibre11 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    display: block;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1.5em;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    text-align: center
+    }
+.calibre12 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    display: block;
+    margin-bottom: 0.5em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0.5em;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    text-align: justify;
+    text-indent: 0
+    }
+.calibre13 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline
+    }
+.calibre2 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    border: 0;
+    display: inline;
+    height: 32px;
+    margin-bottom: 2em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    width: 160px
+    }
+.calibre3 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    display: block;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0;
+    text-align: center
+    }
+.calibre4 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    display: block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0;
+    text-align: center
+    }
+.calibre5 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    color: blue;
+    cursor: pointer;
+    line-height: 1.2;
+    text-decoration: underline
+    }
+.calibre6 {
+    display: block;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    font-size: 1.29167em;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    page-break-before: always
+    }
+.calibre7 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    text-align: justify;
+    text-indent: 0
+    }
+.calibre8 {
+    display: block;
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    font-size: 0.77419em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em;
+    text-align: left;
+    white-space: pre-wrap
+    }
+.calibre9 {
+    font-family: georgia, times new roman, times roman, times, roman, serif;
+    height: auto;
+    width: 500px
+    }
+.filler {
+    padding-right: 2em
+    }

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>dotepub.com (http://dotepub.com)</dc:publisher>
+    <dc:rights>(c) disp.cc</dc:rights>
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="ayabrea74012" opf:role="aut">ayabrea74012 (黃金勇者)</dc:creator>
+    <meta name="calibre:timestamp" content="2013-01-12T14:38:36.586207+00:00"/>
+    <dc:title opf:file-as="Re: [新聞] 4萬招嘸人？ 可成底薪不到2萬 - FW板">Re: [新聞] 4萬招嘸人？ 可成底薪不到2萬 - FW板</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>2013-01-11T16:00:00+00:00</dc:date>
+    <dc:contributor opf:role="bkp">calibre (0.7.44) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">c48b4cc8-9b4b-448f-935c-16cbdafa05e7</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="OEBPS/img/49N.jpg" id="added1" media-type="image/jpeg"/>
+    <item href="OEBPS/img/J4Zq.jpg" id="added" media-type="image/jpeg"/>
+    <item href="OEBPS/img/dotepub.png" id="logo" media-type="image/png"/>
+    <item href="OEBPS/text/content.xhtml" id="content" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/text/copy.xhtml" id="copy" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/text/title.xhtml" id="title" media-type="application/xhtml+xml"/>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="title"/>
+    <itemref idref="content"/>
+    <itemref idref="copy"/>
+  </spine>
+  <guide>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+    <reference href="OEBPS/text/title.xhtml" type="title-page" title="Title Page"/>
+    <reference href="OEBPS/text/copy.xhtml" type="copyright-page" title="Copyright"/>
+  </guide>
+</package>
