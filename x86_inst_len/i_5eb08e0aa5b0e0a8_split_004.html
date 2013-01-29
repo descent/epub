@@ -1,0 +1,212 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 x86/x64 指令长度的迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre17" id="calibre_pb_4">1.4 真实的指令边界</h2>
+    <p class="calibre4">尽管上面的 disassembly 给我们带来了更多的迷惑，但是要清楚认识到：那些并不是真实机器的指令边界。那只是 disassembler 的 disassembly 的指令边界。</p>
+    <h3 class="calibre6">1.4.1 在 bochs 上看真实的指令边界</h3>
+    <p class="calibre4">我在 bochs 对比两条同样的指令，第 1 条是 <span class="STYLE2">15 bytes</span>，第 2 条是 <span class="STYLE"><strong class="calibre5">16 bytes</strong></span>，如下： </p>
+<pre>
+<a name="line1" href="#line1">1</a> &lt;bochs:3&gt; u /4
+<a name="line2" href="#line2">2</a> 00007c00: (                    ): lock add dword ptr es:[eax+ecx*8], 0x00000000 ; 266667f08184c80000000000000000
+<a name="line3" href="#line3">3</a> 00007c0f: (                    ): nop                       ; 90
+<a name="line4" href="#line4">4</a> 00007c10: (                    ): lock add dword ptr ds:[eax+ecx*8], 0x00000000 ; 263e6667f08184c80000000000000000
+<a name="line5" href="#line5">5</a> 00007c20: (                    ): nop                       ; 90
+</pre>
+
+<p class="calibre4">
+为了观察行为，我将必要的调试选项打开，如下：
+</p>
+
+<pre>
+<a name="line1" href="#line1">1</a> &lt;bochs:4&gt; trace-reg on
+<a name="line2" href="#line2">2</a> Register-Tracing enabled for CPU0
+<a name="line3" href="#line3">3</a> &lt;bochs:5&gt; trace-mem on
+<a name="line4" href="#line4">4</a> Memory-Tracing enabled for CPU0
+<a name="line5" href="#line5">5</a> &lt;bochs:6&gt; show int
+<a name="line6" href="#line6">6</a> show interrupts tracing (extint/softint/iret): ON
+<a name="line7" href="#line7">7</a> show mask is: softint extint iret
+</pre>
+
+    <p class="calibre4">最主要是 mem 观察和 interupt 观察打开。 </p>
+    <p class="calibre4">下面来看一看，指令的执行情况</p>
+    <p class="calibre4">执行第 1 条指令： </p>
+
+
+<pre>
+<a name="line1" href="#line1"> 1</a> &lt;bochs:6&gt; u
+<a name="line2" href="#line2"> 2</a> 00007c00: (                    ): lock add dword ptr es:[eax+ecx*8], 0x00000000 ; 266667f08184c80000000000000000
+<a name="line3" href="#line3"> 3</a> &lt;bochs:7&gt; s
+<a name="line4" href="#line4"> 4</a> [CPU0 RD]: LIN 0x000000000000aa55 PHY 0x0000aa55 (len=4, pl=0): 0x00000000
+<a name="line5" href="#line5"> 5</a> [CPU0 WR]: PHY 0x0000aa55 (len=4): 0x00000000
+<a name="line6" href="#line6"> 6</a> 00153228546: softint 0000:7c0f (0x00007c0f)
+<a name="line7" href="#line7"> 7</a> 00153228546: iret 0000:7c0f (0x00007c0f)
+<a name="line8" href="#line8"> 8</a> Next at t=153228546
+<a name="line9" href="#line9"> 9</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line10" href="#line10">10</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line11" href="#line11">11</a> rsp: 0x00000000:0000ffd6 rbp: 0x00000000:00000000
+<a name="line12" href="#line12">12</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line13" href="#line13">13</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line14" href="#line14">14</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line15" href="#line15">15</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line16" href="#line16">16</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line17" href="#line17">17</a> rip: 0x00000000:00007c0f
+<a name="line18" href="#line18">18</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line19" href="#line19">19</a> (0) [0x00007c0f] 0000:7c0f (unk. ctxt): nop                       ; 90
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+	  <p class="calibre4">bochs 正确执行第 1 条指令<span class="STYLE"><strong class="calibre5">没有产生异常</strong></span>， 下一条指令边界在 <strong class="calibre5">0x7c0f</strong> 上，这条指令是 <strong class="calibre5">15 bytes</strong> 的。 这是机器所能接受的最长指令。</p>
+    <p class="calibre4">下面看一看执行 16 bytes 指令的情况如何：</p>
+
+
+<pre>
+<a name="line1" href="#line1"> 1</a> &lt;bochs:8&gt;
+<a name="line2" href="#line2"> 2</a> Next at t=153228547
+<a name="line3" href="#line3"> 3</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line4" href="#line4"> 4</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line5" href="#line5"> 5</a> rsp: 0x00000000:0000ffd6 rbp: 0x00000000:00000000
+<a name="line6" href="#line6"> 6</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line7" href="#line7"> 7</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line8" href="#line8"> 8</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line9" href="#line9"> 9</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line10" href="#line10">10</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line11" href="#line11">11</a> rip: 0x00000000:00007c10
+<a name="line12" href="#line12">12</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line13" href="#line13">13</a> (0) [0x00007c10] 0000:7c10 (unk. ctxt): lock add dword ptr ds:[eax+ecx*8], 0x00000000 ; 263e6667f08184c80000000000000000　&lt;- 16 bytes 指令
+<a name="line14" href="#line14">14</a> &lt;bochs:9&gt;
+<a name="line15" href="#line15">15</a> [CPU0 WR]: LIN 0x000000000000ffd4 PHY 0x0000ffd4 (len=2, pl=0): 0x0046
+<a name="line16" href="#line16">16</a> [CPU0 WR]: LIN 0x000000000000ffd2 PHY 0x0000ffd2 (len=2, pl=0): 0x0000
+<a name="line17" href="#line17">17</a> [CPU0 WR]: LIN 0x000000000000ffd0 PHY 0x0000ffd0 (len=2, pl=0): 0x7C10
+<a name="line18" href="#line18">18</a> [CPU0 RD]: LIN 0x0000000000000034 PHY 0x00000034 (len=2, pl=0): 0xFF53 &lt;- 异常处理程序
+<a name="line19" href="#line19">19</a> [CPU0 RD]: LIN 0x0000000000000036 PHY 0x00000036 (len=2, pl=0): 0xF000
+<a name="line20" href="#line20">20</a> 00153228548: exception (not softint) f000:ff53 (0x000fff53)　&lt;- 异常产生
+<a name="line21" href="#line21">21</a> Next at t=153228548
+<a name="line22" href="#line22">22</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line23" href="#line23">23</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line24" href="#line24">24</a> rsp: 0x00000000:0000ffd0 rbp: 0x00000000:00000000
+<a name="line25" href="#line25">25</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line26" href="#line26">26</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line27" href="#line27">27</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line28" href="#line28">28</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line29" href="#line29">29</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line30" href="#line30">30</a> rip: 0x00000000:0000ff53
+<a name="line31" href="#line31">31</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line32" href="#line32">32</a> (0) [0x000fff53] f000:ff53 (unk. ctxt): iret                      ; cf　&lt;- 跳转到 exception 处理程序 
+</pre>
+
+
+
+
+
+
+
+
+
+
+
+
+    <p class="calibre4">如上图所示，执行 0x7c10 处的 16 bytes 的指令时，产生了异常。 </p>
+    <p class="calibre4">processor 先写入 eip 值和 eflags 值，然后读入<strong class="calibre5">异常处理程序</strong>。最后跳转到 <strong class="calibre5">f000:ff53</strong> 处的异常处理程序， 这个异常处理程序只有一条 <strong class="calibre5">iret </strong>指令。 </p>
+<pre>
+<a name="line1" href="#line1"> 1</a> &lt;bochs:10&gt;
+<a name="line2" href="#line2"> 2</a> [CPU0 RD]: LIN 0x000000000000ffd0 PHY 0x0000ffd0 (len=2, pl=0): 0x7C10
+<a name="line3" href="#line3"> 3</a> [CPU0 RD]: LIN 0x000000000000ffd2 PHY 0x0000ffd2 (len=2, pl=0): 0x0000
+<a name="line4" href="#line4"> 4</a> [CPU0 RD]: LIN 0x000000000000ffd4 PHY 0x0000ffd4 (len=2, pl=0): 0x0046
+<a name="line5" href="#line5"> 5</a> 00153228549: iret 0000:7c10 (0x00007c10)
+<a name="line6" href="#line6"> 6</a> Next at t=153228549
+<a name="line7" href="#line7"> 7</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line8" href="#line8"> 8</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line9" href="#line9"> 9</a> rsp: 0x00000000:0000ffd6 rbp: 0x00000000:00000000
+<a name="line10" href="#line10">10</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line11" href="#line11">11</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line12" href="#line12">12</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line13" href="#line13">13</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line14" href="#line14">14</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line15" href="#line15">15</a> rip: 0x00000000:00007c10
+<a name="line16" href="#line16">16</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line17" href="#line17">17</a> (0) [0x00007c10] 0000:7c10 (unk. ctxt): lock add dword ptr ds:[eax+ecx*8], 0x00000000 ; 263e6667f08184c80000000000000000
+<a name="line18" href="#line18">18</a> &lt;bochs:11&gt;
+<a name="line19" href="#line19">19</a> [CPU0 WR]: LIN 0x000000000000ffd4 PHY 0x0000ffd4 (len=2, pl=0): 0x0046
+<a name="line20" href="#line20">20</a> [CPU0 WR]: LIN 0x000000000000ffd2 PHY 0x0000ffd2 (len=2, pl=0): 0x0000
+<a name="line21" href="#line21">21</a> [CPU0 WR]: LIN 0x000000000000ffd0 PHY 0x0000ffd0 (len=2, pl=0): 0x7C10
+<a name="line22" href="#line22">22</a> [CPU0 RD]: LIN 0x0000000000000034 PHY 0x00000034 (len=2, pl=0): 0xFF53
+<a name="line23" href="#line23">23</a> [CPU0 RD]: LIN 0x0000000000000036 PHY 0x00000036 (len=2, pl=0): 0xF000
+<a name="line24" href="#line24">24</a> 00153228550: exception (not softint) f000:ff53 (0x000fff53)
+<a name="line25" href="#line25">25</a> Next at t=153228550
+<a name="line26" href="#line26">26</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line27" href="#line27">27</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line28" href="#line28">28</a> rsp: 0x00000000:0000ffd0 rbp: 0x00000000:00000000
+<a name="line29" href="#line29">29</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line30" href="#line30">30</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line31" href="#line31">31</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line32" href="#line32">32</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line33" href="#line33">33</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line34" href="#line34">34</a> rip: 0x00000000:0000ff53
+<a name="line35" href="#line35">35</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line36" href="#line36">36</a> (0) [0x000fff53] f000:ff53 (unk. ctxt): iret                      ; cf
+</pre>
+    <p class="calibre4">当继续往下执行时，异常处理程序返回到<strong class="calibre5">异常发生点</strong>：<strong class="calibre5">0x7c10</strong>，接着执行又继续产生异常，又转入异常程序。</p>
+    <p class="calibre4"><strong class="calibre5">接下来，我测试一下 prefix override 的情形： </strong></p>
+
+<pre>
+<a name="line1" href="#line1"> 1</a> Next at t=153228547
+<a name="line2" href="#line2"> 2</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line3" href="#line3"> 3</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line4" href="#line4"> 4</a> rsp: 0x00000000:0000ffd6 rbp: 0x00000000:00000000
+<a name="line5" href="#line5"> 5</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line6" href="#line6"> 6</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line7" href="#line7"> 7</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line8" href="#line8"> 8</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line9" href="#line9"> 9</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line10" href="#line10">10</a> rip: 0x00000000:00007c10
+<a name="line11" href="#line11">11</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line12" href="#line12">12</a> (0) [0x00007c10] 0000:7c10 (unk. ctxt): lock add word ptr ds:[eax+ecx*8], 0x0000 ; 263e67f08184c8000000000000 &lt;- 修改后的指令
+<a name="line13" href="#line13">13</a> &lt;bochs:10&gt;
+<a name="line14" href="#line14">14</a> [CPU0 RD]: LIN 0x000000000000aa55 PHY 0x0000aa55 (len=2, pl=0): 0x0000
+<a name="line15" href="#line15">15</a> [CPU0 WR]: PHY 0x0000aa55 (len=2): 0x0000
+<a name="line16" href="#line16">16</a> Next at t=153228548
+<a name="line17" href="#line17">17</a> rax: 0x00000000:0000aa55 rcx: 0x00000000:00000000
+<a name="line18" href="#line18">18</a> rdx: 0x00000000:00000000 rbx: 0x00000000:00000000
+<a name="line19" href="#line19">19</a> rsp: 0x00000000:0000ffd6 rbp: 0x00000000:00000000
+<a name="line20" href="#line20">20</a> rsi: 0x00000000:000e32f8 rdi: 0x00000000:0000ffac
+<a name="line21" href="#line21">21</a> r8 : 0x00000000:00000000 r9 : 0x00000000:00000000
+<a name="line22" href="#line22">22</a> r10: 0x00000000:00000000 r11: 0x00000000:00000000
+<a name="line23" href="#line23">23</a> r12: 0x00000000:00000000 r13: 0x00000000:00000000
+<a name="line24" href="#line24">24</a> r14: 0x00000000:00000000 r15: 0x00000000:00000000
+<a name="line25" href="#line25">25</a> rip: 0x00000000:00007c1d
+<a name="line26" href="#line26">26</a> eflags 0x00000046: id vip vif ac vm rf nt IOPL=0 of df if tf sf ZF af PF cf
+<a name="line27" href="#line27">27</a> (0) [0x00007c1d] 0000:7c1d (unk. ctxt): add byte ptr ds:[bx+si], al ; 0000
+</pre>
+
+  
+    <p class="calibre4">注意上面修改后的指令，长度为 13 bytes，这里有一个 prefix override 情况：<strong class="calibre5">26 </strong>是 <span class="STYLE">ES segment</span> 而 <strong class="calibre5">3E</strong> 是 <span class="STYLE">DS segment </span></p>
+      <p class="calibre4">进行了双重 segment override 操作，但这并不妨碍指令的正确执行，最终是以 <strong class="calibre5">DS</strong>  为 segment 参考，这是 processor 能接受的。</p>
+      <p class="calibre4"> </p>
+      <p class="calibre4"><span class="STYLE7">结论</span>： <span class="STYLE8">bochs 的 diassembler 在反汇编上，可以接受大于 15 bytes 的指令边界。并不代表它能执行大于 15 bytes 的指令。事实上：<span class="STYLE9">bochs 不能执行大于 15 bytes 的指令。</span></span> </p>
+      <p class="calibre4"> </p>
+      <h3 class="calibre6">1.4.2 在 visual studio 上观察真实指令边界</h3>
+      <p class="calibre4">下面来看一看 visual studio 上的表现如何：</p>
+      <p class="calibre4">同样我在 visual studio 2010 的 debug 模式下观察同一条指令的 15 bytes 和 16 bytes 下的执行情况：</p>
+      <p class="calibre4"><img src="vs.png" class="calibre18"/></p>
+      <p class="calibre4">执行第 1 条指令：<span class="STYLE1">26 36 3e f0 81 84 cc 00 00 00 00 00 00 00 00 </span>（15 bytes）时，能正确执行。</p>
+      <p class="calibre4">当执行到另 1 条指令：<span class="STYLE2">26 36 2e 3e f0 81 84 cc 00 00 00 00 00 00 00 00 </span>（16 bytes）时，产生了异常，异常的发生点就是这一条指令上 <strong class="calibre5">0x00161019　</strong></p>
+      <p class="calibre4"><span class="STYLE8">注意</span>：<span class="STYLE8">虽然 visual studio 的 disassembler 在反汇编上不能接受 prefix override（即：多个同类型的 prefix），<span class="STYLE9">但是并不代表在真实执行指令上不接受 prefix override</span>，上图的第 1 指令能正确执行，就说明这一点</span></p>
+      <p class="calibre4"> </p>
+      <p class="STYLE10">结论：在 visual studio 里的例子说明：<span class="STYLE9">在真实机器上只能执行的最长指令边界为 15 bytes 上</span>。大于 15 bytes 指令将会产生异常，<span class="STYLE5">这结论与 bochs 上的结论是一致的</span>。 </p>
+      <p class="calibre4"> </p>
+      </body></html>

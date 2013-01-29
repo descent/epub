@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 x86/x64 指令长度的迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre17" id="calibre_pb_5">1.5 解开迷惑 </h2>
+      <p class="calibre4">到这里，我们能解开迷惑了吗？我认为：可以解开迷惑了。</p>
+      <p class="calibre4">disassembler 的<span class="STYLE"><strong class="calibre5">反汇编的指令边界</strong></span>与<span class="STYLE2">真实执行指令边界</span>可能会不一致。当然造成这种不一样的人为的，实际上这是对 disassembler 的一种考验。</p>
+      <p class="calibre4">不要期望编译器会产生大于 15 bytes 的指令编码！除非它有错。不要认为 disassmbler（反汇编器）的结果就是真实执行指令结果，有可能会不一致!</p>
+      <p class="calibre4">现在：我们可以回答前面提到的三个疑问：</p>
+      <ul class="calibre8">
+        <li class="calibre9">真实的指令长度确实为 15 bytes</li>
+        <li class="calibre9">processor 会给我们保证这一点</li>
+        <li class="calibre9">当加载超过 15 bytes 长度的指令时，processor 会给我们抛出异常，什么异常？在这里不重要，重要的是：它通过这种方式保证了 15 bytes 指令长度</li>
+      </ul>
+      <p class="calibre4"> </p>
+	  <hr class="calibre2"/>
+	  <div class="calibre19">所有权限 mik 所有，转载请注明出处
+	  </div>
+	  <p class="calibre4"> </p>
+
+
+</body></html>

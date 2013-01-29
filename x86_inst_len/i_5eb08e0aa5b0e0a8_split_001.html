@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 x86/x64 指令长度的迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h1 class="calibre3" id="calibre_pb_1">mik</h1>
+<p class="calibre4"> </p>
+<p class="calibre4">在 <strong class="calibre5">《x86/x64 指令编码内幕之指令格式》</strong> 一文，见 <a href="http://www.mouseos.com/x64/doc2.html" target="_blank">http://www.mouseos.com/x64/format.html</a> 中说过：指令长度为 <strong class="calibre5">15 bytes </strong></p>
+<p class="calibre4">那么事实上是这样吗？谁来保证指令的长度就是 15 bytes？ 怎样来保证？</p>
+<p class="calibre4">现在，我们来探索这个问题。</p>
+<p class="calibre4"> </p>
+<h3 class="calibre6">1.1 理论上确实有明文规定 </h3>
+<p class="calibre4">没错， <strong class="calibre5">AMD manual Vol3</strong> 第 <strong class="calibre5">1.1 Instruction Byte Brder</strong> 节中明确地说：<span class="STYLE">An instruction can be between one and 15 bytes in length.</span></p>
+<p class="calibre4">而 <strong class="calibre5">Intel manual</strong> 上没有明说指令长度是多少，而下图的描述有些让人迷惑： </p>
+<p class="calibre4"><img src="intel_instruction_format.png" class="calibre7"/></p>
+<ul class="calibre8">
+  <li class="calibre9">prefix 最多可以是 4 bytes</li>
+  <li class="calibre9">opcode 最多可以是 3 bytes</li>
+  <li class="calibre9">modrm 是 1 byte</li>
+  <li class="calibre9">sib 是 1 byte</li>
+  <li class="calibre9">displacement 是 4 bytes</li>
+  <li class="calibre9">immediate 是 4 bytes </li>
+</ul>
+<p class="calibre4">这样的描述，让人直觉认为 <span class="STYLE"><strong class="calibre5">在饱和状态下</strong></span> 最多可以是 <strong class="calibre5">17 bytes</strong>, 事实上有可能会达到这样的<strong class="calibre5">饱和状态</strong>吗？ 要达到这样的饱和状态，必须每个部分都要饱和</p>
+<p class="calibre4">事实上这是不可能<span class="STYLE"><strong class="calibre5"> 每个部分同时达到饱和状态</strong></span> 的。</p>
+<p class="calibre4">事实上最长的指令长度会出现在：<strong class="calibre5">prefix 达到饱和,</strong> <strong class="calibre5">ModRM/SIB 达到饱和</strong>,<strong class="calibre5"> displacement 达到饱和</strong>，<strong class="calibre5">immediate 达到饱和</strong>。而这些饱和不可能与 opcode 同时发生饱和。</p>
+<p class="calibre4">只有 <span class="STYLE1">指令 memory,immediate</span> 这种寻址模式下才有这些饱和状态出现，即：目标操作数是 memory，源操作数是 immediate</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre10">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre13">
+      <p class="calibre4">事实上：<br class="calibre14"/>    opcode 在 2 bytes 和 3 bytes 下，不可能有饱和的 immediate 出现。<br class="calibre14"/><br class="calibre14"/>也就是说: 没有 4 bytes 的 immediate 会出现在2 bytes 或 3 bytes 的 opcode。指令集设计时候要遵循这个原则</p></td>
+    </tr>
+</tbody></table>
+<p class="calibre4">即：<span class="STYLE">指令 memory, immediate 这种寻址模式不会出现在 2 bytes 或 3 bytes 的 opcode 指令中 </span></p>
+<p class="calibre4">  </p>
+<h3 class="calibre6">1.2　还是那个例子</h3>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre10">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre15">
+      <p class="calibre4">lock add dword ptr es:[eax+ecx*8+0x11223344], 0x12345678</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4"><span class="STYLE"><strong class="calibre5">仅仅在 16 位模式下</strong></span>，这条汇编语句的 encode 是 15 bytes </p>
+<p class="calibre4">因为：它在 16 位模式下，需要进行 <strong class="calibre5">operand size override </strong>和 <strong class="calibre5">address size override</strong>，因此能达到 <strong class="calibre5">prefix</strong> 的饱和 </p>
+<p class="calibre4">从而每个部分除了<strong class="calibre5"> opcode </strong>外，都达到了饱和状态。刚刚好是 15 bytes：<span class="STYLE2">26 66 67 F0 81 84 C8 44 33 22 11 78 56 34 12 </span></p>
+<p class="calibre4">4 group 的 prefix 都使用上了，ModRM 和 SIB 都需要，displacement 和 immediate 都是 4 bytes 的，只有 opocde 是 1 byte</p>
+<p class="calibre4">这条指令在 <strong class="calibre5">32</strong> 位是：<span class="STYLE2">26  F0 81 84 C8 44 33 22 11 78 56 34 12 </span>（13 bytes）</p>
+<p class="calibre4">在 <strong class="calibre5">64</strong> 位下：<span class="STYLE2">26  67 F0 81 84 C8 44 33 22 11 78 56 34 12 </span>（14 bytes） </p>
+<p class="calibre4">那是因为<strong class="calibre5"> 32 </strong>位下缺省的 operands size 和 address size 是 32 位，不需要作 <strong class="calibre5">operand size override </strong>和 <strong class="calibre5">address size override </strong></p>
+<p class="calibre4">在 <strong class="calibre5">64 </strong>位下缺省的 operands size 是 32 位，而 address size 是 64 位，因此不需要作<strong class="calibre5"> operand size override，</strong><span class="STYLE3">但是需要做</span> <strong class="calibre5">address size override</strong></p>
+<p class="calibre4"> </p>
+</body></html>
