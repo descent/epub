@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 Immediate 操作数的种种迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre6" id="calibre_pb_4">3. immediate 的符号扩展（sign-extended） </h2>
+  <p class="calibre4">让 immediate 操作数进行符号扩展的条件是：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+      <p class="calibre4">immediate 与<strong class="calibre5">指令的 operand size</strong> 不匹配的情况下，准确的说是：immediate 小于<strong class="calibre5">指令的 operand size</strong> 的情况下。</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">下面两种情况下，才有可能会发生 <strong class="calibre5">sign-extended</strong>：</p>
+    <ul class="calibre7">
+      <li class="calibre8"><strong class="calibre5">Ib</strong> 属性的 immediate 操作数</li>
+      <li class="calibre8"><strong class="calibre5">Iz </strong>属性的 immediate 操作数 </li>
+    </ul>
+	<p class="calibre4">而具有 <strong class="calibre5">Iv</strong> 属性的 immediate 是不会产生 sign-extended 的</p>
+    <p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+    <h3 class="calibre15">3.1 指令的 operand size </h3>
+    <p class="calibre4"><strong class="calibre5">指令的 operand size</strong> 是指令最终的 operand size，<strong class="calibre5">指令最终的 operand size</strong> 并不一定是 <strong class="calibre5">default operand size， <em class="calibre20">指令最终的 operand size </em></strong>是由 defalut operand size 和 operand size override 来决定。</p>
+  <p class="calibre4">关于 “<strong class="calibre5">指令的 operand size</strong>”详细的描述见于：<a href="http://www.mouseos.com/x64/operand_size.html" target="_blank">http://www.mouseos.com/x64/operand_size.html</a> 一文 </p>
+  <p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre15">3.2 Ib 属性的 immediate 操作数的符号扩展 </h3>
+  <p class="calibre4">如果<strong class="calibre5">指令的 operand size</strong> 是 byte 的话， 就不会存在符号扩展的现象，如这条指令：<span class="STYLE3"><strong class="calibre5">add al, 0xf0 </strong></span></p>
+  <p class="calibre4">除了上述这种情况外 <strong class="calibre5">Ib</strong> 属性的 immediate 操作数都会小于 <strong class="calibre5">指令的 operand size  </strong></p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">bits 32<br class="calibre9"/>    add eax, byte 0xf0</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">指令的目的操作数是 32 位，源操作数是 8 位，这条<strong class="calibre5">指令的 operand size </strong>是 32 位，immediate 操作数会符号扩展到 <strong class="calibre5">0xFFFFFFF0</strong> </p>
+  <p class="calibre4">对于这样的指令，所有的编译器都会编译为：<span class="STYLE2"><strong class="calibre5">83 C0 F0</strong></span> 它的 Opcode 码表示为：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+      <p class="calibre4">ADD Ev, <span class="STYLE2"><strong class="calibre5">Ib</strong></span></p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">指令的 operand size 依赖于 effective operand size，要么是 default operand size 要么是 override 后是 size</p>
+  <p class="calibre4">目标操作数可以是 <strong class="calibre5">16/32/64</strong> 位，那么 operand size 在 16/32/64 位的情况下，都会产生 immediate 符号扩展行为</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17"><p class="calibre4">bits 16 <br class="calibre9"/>
+            add ax, byte 0xf0</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">immediate 会扩展到 <strong class="calibre5">0xFFF0</strong> 再与<strong class="calibre5"> ax</strong> 寄存器相加</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17"><p class="calibre4">bits 64 <br class="calibre9"/>
+            add rax, byte 0xf0</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">immediate 会扩展到 <strong class="calibre5">0xFFFFFFFFFFFFFFF0</strong> 再与 <strong class="calibre5">rax</strong> 寄存器相加 </p>
+  <p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre15">3.2 Iz 属性的 immediate 操作数符号扩展</h3>
+  <ul class="calibre7">
+    <li class="calibre8">具有 <strong class="calibre5">Iz</strong> 属性的 immediate 操作数，只有指令 operand size 是 <strong class="calibre5">64 </strong>位的情况下，才可能发生 immediate 符号扩展。</li>
+  </ul>
+  <p class="calibre4">这是因为当 immediate 为 <strong class="calibre5">Iz</strong> 时，指令的 operand size 也为 <strong class="calibre5">z </strong>，也就是说：<strong class="calibre5">Iz</strong> 属性的 immediate 操作数为 16 位时，指令的 operand size 也为 16 位，immediate 操作数是 32 位时，指令的 operand size 也是 32 位，这样是不会存在 immediate 操作数与指令 operand size 不相符的情况。</p>
+  <p class="calibre4">只有当 immediate 为 32 位，而指令的 operand size 为 64 位是才会发生符号扩展，<strong class="calibre5">在 x64 指令体系里，绝大多数的 immediate 都是 Iz 属性的，只有少部分的 immediate 具有 Iv 属性。</strong></p>
+  <p class="calibre4">具有 <strong class="calibre5">Iv </strong>属性的 immediate 说明它可以为 <strong class="calibre5">64</strong> 位，也就是说：<strong class="calibre5">大部分的 immediate 操作数最大是 32 位，只有一部分 immediate 操作最大可以是 64 位</strong>。</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18"><p class="calibre4">ADD Ev, <span class="STYLE2"><strong class="calibre5">Iz</strong></span></p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">上面这个 Opcode 码是 <span class="STYLE2"><strong class="calibre5">81 </strong></span>它表明 immeidate 是 <strong class="calibre5">16/32</strong> 位，目标操作数是 <strong class="calibre5">16/32/64</strong></p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">bits 32<br class="calibre9"/>    add cx, 0xf000<br class="calibre9"/>    add ecx, 0xf0000000</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">上面的代码无必要也不可能发生符号扩展，immediate 与指令的 operand size 是相匹配的。</p>
+	  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">bits 64<br class="calibre9"/>    add rcx, 0xf0000000</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">而上面的代码中，immediate 是 32 位，指令的 operand size 是 64 位，这样会发生 immediate 符号扩展 </p>
+	<p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+    <h3 class="calibre15">3.3 不会发生 sign-extended 的原因 </h3>
+    <p class="calibre4">当<strong class="calibre5"> immediate 大小与指令的 operand size 是一样</strong>时，immediate 是不会发生 <strong class="calibre5">sign-extended</strong> 的，正如下面这条指令：</p>
+	  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">add eax, 0xf0000000</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">目标操作数和源操作数都是 32 位的，也就不可能会发生符号扩展。</p>
+    <h3 class="calibre15">3.3.1 为 immediate 提供明确的 size </h3>
+    <p class="calibre4">有时候并不是那么好判断 immediate 操作数的<strong class="calibre5"> size</strong>，除非你明确指定它的 <strong class="calibre5">size，</strong>正如下面条语句一样：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+      <tbody class="calibre11"><tr class="calibre12">
+        <td class="calibre17"><p class="calibre4">add eax, <span class="STYLE2"><strong class="calibre5">0xf0</strong></span></p></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4">对于这条指令中的 immediate 操作数 <strong class="calibre5">0xf0，</strong>你的直觉告诉你，这个 immediate 是 <strong class="calibre5">byte</strong>, 那么你会认为它生成的机器指令是：</p>
+	  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="STYLE4"><strong class="calibre5">83 c0 f0</strong></p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">它的 Opcode 码是<span class="STYLE2"><strong class="calibre5"> 83 </strong></span>它表达形式是：<span class="STYLE3"><strong class="calibre5">ADD Ev, Ib </strong></span></p>
+    <p class="calibre4">但是编译器可能不会这么认为，它可能会认为这个 immediate 是 <strong class="calibre5">dword， </strong>那么编译器很可能会生成这样的机器编码：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+      <tbody class="calibre11"><tr class="calibre12">
+        <td class="calibre17"><p class="STYLE4"><strong class="calibre5">81 c0 f0 00 00 00</strong></p></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4">它的 Opcode 码是 <span class="STYLE2"><strong class="calibre5">81 </strong></span>它的表达形式是：<span class="STYLE3"><strong class="calibre5">ADD Ev, Iz </strong></span></p>
+    <p class="calibre4">编译器会认为这个 immediate 应该是 <strong class="calibre5">0x000000f0</strong>（32 位的 immediaet 值），所产生的效果是不同的：使用 <span class="STYLE3"><strong class="calibre5">ADD Ev, Ib </strong></span>这个 Opcode 形式会产生 <strong class="calibre5">sign-extended，</strong>而使用 <span class="STYLE3"><strong class="calibre5">ADD Ev, Iz</strong></span> 是<strong class="calibre5">不会</strong>产生 sign-extended 的，这样会影响到最终的计算结果。</p>
+    <p class="calibre4">因此，在 <strong class="calibre5">nasm</strong> 中可以指定 immediate 的 size，如下所示：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+      <tbody class="calibre11"><tr class="calibre12">
+        <td class="calibre17"><p class="calibre4">add eax, <span class="STYLE2"><strong class="calibre5">byte <span class="STYLE5">0xf0</span></strong></span></p></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4">使用 <strong class="calibre5">byte</strong> 来指定 immediaet 大小是 byte，从而明确告诉编译器要使用 <span class="STYLE3"><strong class="calibre5">ADD Ev, Ib </strong></span>这种形式</p>
+	<p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+    <h3 class="calibre15">3.3.2 由于 operand size override 导致不会 sign-extended </h3>
+	  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">bits 64<br class="calibre9"/>    push 0xfffffff0</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">上面的指令<strong class="calibre5"> push</strong> 一个<strong class="calibre5"> 32</strong> 位的 immediate 入栈，这条指令的最终结果是将 0xfffffff0 符号扩展为 <strong class="calibre5">0xfffffffffffffff0 </strong>然后压入栈中。</p>
+    <p class="calibre4">这里就产生了 <strong class="calibre5">sign-extended </strong>行为，这是因为在 64 位下 push 指令的 default operand size 是 64 位的，在没有 <strong class="calibre5">override</strong> 的情况下，指令的 operand size 就是 64 位，因此：32 位的 immediate 会符号扩展到 64 位。 </p>
+    <p class="calibre4">但是，如果<strong class="calibre5">将 immediate 强行 override 到 16 位时</strong>，如下：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+      <tbody class="calibre11"><tr class="calibre12">
+        <td class="calibre17"><p class="calibre4">bits 64<br class="calibre9"/>
+              push <span class="STYLE2"><strong class="calibre5">word</strong></span> 0xfffffff0</p></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4">产生的机器编码是：<span class="STYLE2"><strong class="calibre5">66 68 f0 ff </strong></span></p>
+    <p class="calibre4">这里进行了 operand size override 操作，将 64 位的 operand size 改写为 16 位，指令的 operand size 最终变成了 16 位。那么这里<span class="STYLE3"><strong class="calibre5">不会</strong></span>产生 sign-extended 行为，因为 immediate 的大小与指令的大小是一致的，不存在不匹配的情形。也就不可能产生 sign-extended</p>
+	<p class="calibre4"> </p>
+    </body></html>
