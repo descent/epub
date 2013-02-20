@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en-US">
+  <head>
+    <meta content="7c42859f-d2c3-41aa-abd8-0e7d805bd97b" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.14)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>A zero pointer is not a null pointer</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="7fc766c4-5a40-4cdc-a3c1-0c680bec1466" playOrder="1">
+      <navLabel>
+        <text>Start</text>
+      </navLabel>
+      <content src="i_d97a892978fa1886_split_000.html"/>
+    </navPoint>
+  </navMap>
+</ncx>

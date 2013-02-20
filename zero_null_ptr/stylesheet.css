@@ -1,0 +1,294 @@
+.ArticleText {
+    border-color: #ddd;
+    border-style: none;
+    border-width: thin;
+    display: block;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 2px;
+    padding-top: 0
+    }
+.Comment {
+    background-color: inherit;
+    display: block;
+    margin-left: 1em
+    }
+.CommentBody {
+    background-color: inherit;
+    display: block;
+    padding-bottom: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 0
+    }
+.CommentBox {
+    background-color: inherit;
+    border-color: #fc9;
+    border-style: none none none solid;
+    border-width: thin;
+    display: block;
+    margin-top: 1em;
+    }
+.CommentPoster {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0
+    }
+.CommentReplyButton {
+    display: none;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    text-align: right
+    }
+.CommentTitle {
+    background-color: #fc9;
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 2px;
+    padding-top: 2px
+    }
+.Header {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 1px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    text-indent: 0
+    }
+.LeftColumn {
+    background-color: #fc9;
+    display: table-cell;
+    overflow: hidden;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    text-align: inherit;
+    vertical-align: top;
+    }
+.MCTopBanner {
+    background-color: #fff;
+    border-style: none;
+    display: table-cell;
+    padding-bottom: 0;
+    padding-left: 4px;
+    padding-right: 0;
+    padding-top: 0;
+    text-align: inherit;
+    vertical-align: inherit
+    }
+.MidColumn {
+    background-color: #fff;
+    border-style: none;
+    display: table-cell;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
+    text-align: inherit;
+    vertical-align: top
+    }
+.NavLink {
+    background-color: #eee;
+    display: table-cell;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    text-align: center;
+    vertical-align: inherit
+    }
+.Page {
+    border-collapse: separate;
+    border-spacing: 2px;
+    display: table;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-indent: 0;
+    width: 100%
+    }
+.PageHeadline {
+    display: block;
+    margin-bottom: 2em;
+    margin-top: 1em;
+    max-width: 75em;
+    text-align: center
+    }
+.QuotedText {
+    color: #909
+    }
+.RightColumn {
+    border-color: #eee;
+    border-style: none none none none;
+    border-width: thin;
+    display: table-cell;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 6em;
+    text-align: left;
+    vertical-align: top
+    }
+.SideBox {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 1px;
+    margin-right: 1px;
+    margin-top: 1em
+    }
+.TopNavigation {
+    border-collapse: separate;
+    border-spacing: 2px;
+    display: table;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 55em;
+    text-indent: 0;
+    width: 100%
+    }
+.calibre {
+    background-color: #fff;
+    color: black;
+    display: block;
+    font-size: 1em;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0
+    }
+.calibre1 {
+    display: table-row-group;
+    vertical-align: middle
+    }
+.calibre10 {
+    border-collapse: separate;
+    border-spacing: 2px;
+    display: table;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-indent: 0
+    }
+.calibre11 {
+    color: black;
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0.2em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0
+    }
+.calibre12 {
+    display: block;
+    font-size: 1.66667em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 5px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 20px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0
+    }
+.calibre13 {
+    font-weight: bold
+    }
+.calibre14 {
+    display: block
+    }
+.calibre15 {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-top: 1em
+    }
+.calibre16 {
+    border: 1px inset;
+    color: gray;
+    display: block;
+    height: 2px;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5em;
+    text-align: left
+    }
+.calibre17 {
+    font-size: 0.625em
+    }
+.calibre2 {
+    display: table-row;
+    vertical-align: top
+    }
+.calibre3 {
+    display: block;
+    text-align: center
+    }
+.calibre4 {
+    text-decoration: none
+    }
+.calibre5 {
+    }
+.calibre6 {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 1em
+    }
+.calibre7 {
+    display: none
+    }
+.calibre8 {
+    display: block;
+    margin-bottom: 1px;
+    margin-left: 1em;
+    margin-right: 0;
+    margin-top: 0;
+    text-indent: -1em
+    }
+.calibre9 {
+    display: table-cell;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    text-align: inherit;
+    vertical-align: inherit
+    }
+.pcalibre:visited {
+    color: DarkBlue
+    }
+.pcalibre2:link {
+    color: Blue
+    }
+.pcalibre1:hover {
+    color: Red
+    }
