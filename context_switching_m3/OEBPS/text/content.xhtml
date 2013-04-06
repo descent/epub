@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="../styles/dotepub.css" type="text/css" />
+  <title>Dotepub.com</title>
+</head>
+
+<body>
+The ARM Cortex-M3 architecture is designed with special features to make it easier to implement an embedded RTOS. A core feature of many operating systems is pre-emption which requires context switching. The ARM Cortex-M3 provides several interrupts and two stacks to facilitate context switching.
+
+<h1>
+ARM Cortex-M3 Context Switching Hardware
+</h1>
+<h2>
+Interrupts 
+</h2>
+<p>
+The SysTick and PendSV interrupts can both be used for context switching. The SysTick peripheral is a 24-bit timer that executes an interrupt each time it counts down to zero which lends itself to round-robin style context switching. The PendSV interrupt allows a task to cede control of the CPU when it is inactive (such as when sleeping or waiting for a hardware resource) which is helpful for FIFO style context switching. In addition to these interrupts, the ARM Cortex-M3 also includes two stack pointers.
+</p>
+<h2>
+Stacks
+</h2>
+
+<p>
+The stack pointers for the ARM Cortex-M3 include the main stack and the process stack pointers. The main stack pointer (MSP) is always used when handling interrupts and optionally used during regular program execution. The process stack pointer (PSP) is only used during regular program execution.  In an embedded RTOS, ARM recommends using the MSP for the kernel as well as interrupts and the PSP for executing other tasks.  While the architecture provides the interrupts and the stack pointers, the implementation must provide a task table and current task index.
+</p>
+<h1>
+Context Switching Software Implementation
+</h1>
+
+<p>
+The RTOS software manages the switching interrupts and stacks in order to achieve context switching.  When context switching between tasks, the RTOS needs a way to keep track of which tasks are doing what.  This is typically achieved using a task or scheduler table.  Three routines are then required for implementation which perform the context switch, initialize the system, and create new tasks.
+</p>
+
+<h2>Task Table</h2>
+
+<p>
+The task table must, at a minimum, save the task's stack pointer; it is also helpful to save other information, such as the task parent and status, to allow the context switcher to selectively execute tasks.  The following code shows an example of a structure that can be used for an entry in the task table:
+</p>
+
+<pre class="c">
+typedef struct {
+     void * sp; //The task's current stack pointer
+          int flags; //Status flags includes activity status, parent task, etc
+          } task_table_t;
+          int current_task;
+          task_table_t task_table[MAX_TASKS];
+</pre>
+
+	<p class=""> The stack value stores the value of the current stack pointer, while flags holds the task status. For simplicity, the task uses two of the flags bits: one to indicate that the table entry is in use and the other to specify whether or not to execute the task.</p><div class="" id=""> 
+
+<h2>
+Context Switching Routine
+</h2>
+
+<p>
+The context switcher needs to:
+</p>
+
+<ul> <li> save the state of the current task,</li> <li> update the current task index to the next task to be executed,</li> <li> set up the CPU to either use the MSP (if it's time to run the kernel) or the PSP,</li> <li> and finally load the previous state of the task which is about to execute. &nbsp;</li> </ul><p>The following code is an example of a context switcher preceded by some helper functions and the interrupt handlers.</p>
+
+<pre class="c">&nbsp;
+static uint32_t * stack; //This is stored on the heap rather than the stack
+&nbsp;
+#define MAIN_RETURN 0xFFFFFFF9  //Tells the handler to return using the MSP
+#define THREAD_RETURN 0xFFFFFFFD //Tells the handler to return using the PSP
+&nbsp;
+//Reads the main stack pointer
+static inline void * rd_stack_ptr(void){
+  void * result=NULL;
+  asm volatile ("MRS %0, msp\n\t"
+      //"MOV r0, %0 \n\t"
+      : "=r" (result) );
+  return result;
+}
+&nbsp;
+//This saves the context on the PSP, the Cortex-M3 pushes the other registers using hardware
+static inline void save_context(void){
+  uint32_t scratch;
+  asm volatile ("MRS %0, psp\n\t"
+      "STMDB %0!, {r4-r11}\n\t"
+      "MSR psp, %0\n\t"  : "=r" (scratch) );
+}
+&nbsp;
+//This loads the context from the PSP, the Cortex-M3 loads the other registers using hardware
+static inline void load_context(void){
+  uint32_t scratch;
+  asm volatile ("MRS %0, psp\n\t"
+      "LDMFD %0!, {r4-r11}\n\t"
+      "MSR psp, %0\n\t"  : "=r" (scratch) );
+}
+&nbsp;
+//The SysTick interrupt handler -- this grabs the main stack value then calls the context switcher
+void systick_handler(void){
+    save_context();  //The context is immediately saved
+    stack = (uint32_t *)rd_stack_ptr();
+    if ( SysTick-&gt;CTRL &amp; (1&lt;16) ){ //Indicates timer counted to zero
+        context_switcher();
+    }
+    load_context(); //Since the PSP has been updated, this loads the last state of the new task
+}
+&nbsp;
+//This does the same thing as the SysTick handler -- it is just triggered in a different way
+void pendsv_handler(void){
+    save_context();  //The context is immediately saved
+    stack = (uint32_t *)rd_stack_ptr();
+    core_proc_context_switcher();
+    load_context(); //Since the PSP has been updated, this loads the last state of the new task
+}
+&nbsp;
+//This reads the PSP so that it can be stored in the task table
+static inline void * rd_thread_stack_ptr(void){
+    void * result=NULL;
+    asm volatile ("MRS %0, psp\n\t" : "=r" (result) );
+    return(result);
+}
+&nbsp;
+//This writes the PSP so that the task table stack pointer can be used again
+static inline void wr_thread_stack_ptr(void * ptr){
+    asm volatile ("MSR psp, %0\n\t" : : "r" (ptr) );
+}</pre><p>This is the function for the actual context switcher. This context switcher uses the MSP for task 0 (assumed to be the kernel) and the PSP for other tasks. &nbsp;It is also possible to use the PSP for the kernel and just use the MSP during interrupt handling.</p><pre class="c">&nbsp;
+//This is the context switcher
+void context_switcher(void){
+    task_table[current_task].sp = rd_proc_stack_ptr(); //Save the current task's stack pointer
+    do {
+        current_task++;
+        if ( current_task == MAX_TASKS ){
+            current_task = 0;
+            *((uint32_t*)stack) = MAIN_RETURN; //Return to main process using main stack
+            break;
+  } else if ( task_table[current_task].flags &amp; EXEC_FLAG ){ //Check to see if this task should be skipped
+            //change to unprivileged mode
+            *((uint32_t*)stack) = THREAD_RETURN; //Use the thread stack upon handler return
+            break;
+  }
+    } while(1);
+    wr_proc_stack_ptr( task_table[current_task].sp ); //write the value of the PSP to the new task
+}</pre><p>The following diagram shows the chronology of the stack pointer when a switch happens between task one and task two. Note that because this implementation uses the MSP for task zero, the mechanics of a context switch are slightly different when switching to and from task zero. A context switching implementation can just as easily use the PSP for all tasks and the MSP for interrupts by using <i>THREAD_RETURN</i> rather than <i>MAIN_RETURN</i> above.</p><center> </center>
+<img width="550" src="../img/psp-chronology.png" />
+
+<h2>Initialization </h2>
+<p>Once the context switcher is set to run, there needs to be a mechanism to start new threads. Starting a new thread involves finding an available entry in the task table and initializing the new tasks stack. The first thing that must be done is to initialize the main stack's task table entry.</p>
+<pre class="c">&nbsp;
+//This defines the stack frame that is saved  by the hardware
+typedef struct {
+  uint32_t r0;
+  uint32_t r1;
+  uint32_t r2;
+  uint32_t r3;
+  uint32_t r12;
+  uint32_t lr;
+  uint32_t pc;
+  uint32_t psr;
+} hw_stack_frame_t;
+&nbsp;
+//This defines the stack frame that must be saved by the software
+typedef struct {
+  uint32_t r4;
+  uint32_t r5;
+  uint32_t r6;
+  uint32_t r7;
+  uint32_t r8;
+  uint32_t r9;
+  uint32_t r10;
+  uint32_t r11;
+} sw_stack_frame_t;
+&nbsp;
+static char m_stack[sizeof(sw_stack_frame_t)];
+&nbsp;
+void task_init(void){
+     ...
+     task_table[0].sp = m_stack + sizeof(sw_stack_frame_t);
+     ....
+}</pre><h1>Creating a New Task </h1>
+<p>Other tasks can then be started using the following function.</p>
+<pre class="c">
+int new_task(void *(*p)(void*), void * arg, void * stackaddr, int stack_size){
+    int i, j;
+    void * mem;
+    uint32_t * argp;
+    void * pc;
+    hw_stack_frame_t * process_frame;
+    //Disable context switching to support multi-threaded calls to this function
+    systick_disable_irq();
+    for(i=1; i &lt; MAX_TASKS; i++){
+        if( core_proc_table[i].flags == 0 ){
+            process_frame = (hw_stack_frame_t *)(stackaddr - sizeof(hw_stack_frame_t));
+            process_frame-&gt;r0 = (uint32_t)arg;
+            process_frame-&gt;r1 = 0;
+            process_frame-&gt;r2 = 0;
+            process_frame-&gt;r3 = 0;
+            process_frame-&gt;r12 = 0;
+            process_frame-&gt;pc = ((uint32_t)p);
+            process_frame-&gt;lr = (uint32_t)del_process;
+            process_frame-&gt;psr = 0x21000000; //default PSR value
+            core_proc_table[i].flags = IN_USE_FLAG | EXEC_FLAG;
+            core_proc_table[i].sp = mem + 
+                stack_size - 
+                sizeof(hw_stack_frame_t) - 
+                sizeof(sw_stack_frame_t);
+            break;
+        }
+    }
+    systick_enable_irq();  //Enable context switching
+    if ( i == MAX_TASKS ){
+        //New task could not be created
+        return 0;
+    } else {
+        //New task ID is i
+        return i;
+    }
+}
+&nbsp;
+//This is called when the task returns
+void del_process(void){
+  task_table[current_task_index].flags = 0; //clear the in use and exec flags
+  SCB-&gt;ICSR |= (1&lt;&lt;28); //switch the context
+  while(1); //once the context changes, the program will no longer return to this thread
+}</pre> <h1>Conclusion</h1>
+<p>ARM, with the Cortex M architecture, delivers valuable hardware resources to enable context switching. &nbsp;The interrupts support both round robing and FIFO style scheduling while the dual stacks allow the kernel process and interrupts to execute on a dedicated stack. &nbsp;With just a few software routines to perform the context switching, initialize the system, and create new stacks, system developers can create a functioning pre-emptive kernel.</p><p>For more information on context switching on the Cortex-M3, see&nbsp;the Cortex-M3 technical reference manual from ARM.</p><!-- START: Articles Anywhere --><!-- END: Articles Anywhere --> </div>
+</body>
+</html>
