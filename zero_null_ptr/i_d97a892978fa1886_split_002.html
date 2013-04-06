@@ -1,0 +1,282 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>A zero pointer is not a null pointer [LWN.net]</title>
+    <link href="http://lwn.net/images/favicon.png" type="image/png" rel="icon"/>
+    <link href="http://lwn.net/headlines/Comments" type="application/rss+xml" rel="alternate" title="LWN: All posted comments"/>
+    <link href="http://lwn.net/headlines/342330/" type="application/rss+xml" rel="alternate" title="LWN: Comments on &quot;A zero pointer is not a null pointer&quot;"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body alink="Green" vlink="Green" link="Blue" class="calibre">
+<div class="ArticleText">
+<h2>A zero pointer is not a null pointer</h2>
+        Posted Jul 21, 2009 10:57 UTC (Tue) by <b class="calibre13">epa</b> (subscriber, #39769)<br class="calibre14"/>
+         
+        Parent article: <a href="http://lwn.net/Articles/342330/" class="calibre4 pcalibre pcalibre1 pcalibre2">Fun with NULL pointers, part 1</a>
+        <p>
+        Since the zero page can be mapped and therefore 0x0 is a valid address, the zero bit pattern should not be used for the null pointer.  The null pointer is supposed to be an invalid pointer that never points to any addressable memory.  From the C99 standard:
+</p>
+
+<blockquote>
+If a null pointer constant is converted to a
+pointer type, the resulting pointer, called a null pointer, is guaranteed to compare unequal to a pointer to any object or function.</blockquote>
+
+<p>
+The C runtime should use some other magic value to represent the null pointer - and the kernel should promise never to map any addressable memory there.
+</p>
+        <hr width="60%" class="calibre16"/>
+           (<a href="https://lwn.net/login?target=/Articles/342558/" class="calibre4 pcalibre pcalibre1 pcalibre2">Log in</a> to post comments)
+           <p class="calibre6">
+           
+</p></div> <!-- ArticleText -->
+<p class="calibre6"><a name="Comments" class="calibre4 pcalibre pcalibre1 pcalibre2" id="Comments"></a>
+
+<a name="CommAnchor342560" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor342560"></a>
+</p><div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 21, 2009 11:07 UTC (Tue) by <b class="calibre13">tialaramex</b> (subscriber, #21167)
+       [<a href="http://lwn.net/Articles/342560/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+Now why would you want people to spill coffee all over their keyboards?<br class="calibre14"/>
+</div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor342780" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor342780"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 22, 2009 9:02 UTC (Wed) by <b class="calibre13">epa</b> (subscriber, #39769)
+       [<a href="http://lwn.net/Articles/342780/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+It would be possible to keep 0x0 for the null pointer while respecting the C99 standard: the compiler would need to put in a couple of extra instructions for every pointer comparison making sure that 0x0 != P for any value of P.  Optionally, it could also put in a check before every pointer dereference making sure the pointer is not 0x0 and causing a SIGSEGV if it is (since the memory layout can no longer be relied on to guarantee that).<br class="calibre14"/>
+</div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor343318" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343318"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 24, 2009 20:38 UTC (Fri) by <b class="calibre13">giraffedata</b> (subscriber, #1954)
+       [<a href="http://lwn.net/Articles/343318/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <blockquote class="calibre15">
+It would be possible to keep 0x0 for the null pointer while respecting the C99 standard: the compiler would need to put in a couple of extra instructions for every pointer comparison making sure that 0x0 != P for any value of P.
+</blockquote>
+<p class="calibre6">
+Do we know Gcc doesn't do this?  Seems like it would have to, to be C99 compliant.
+
+</p><blockquote class="calibre15">
+Optionally, it could also put in a check before every pointer dereference making sure the pointer is not 0x0 and causing a SIGSEGV if it is (since the memory layout can no longer be relied on to guarantee that).
+</blockquote>
+<p class="calibre6">
+But then how would you represent a pointer to a data structure that resides at address 0?  A pointer should be able to do that.
+</p><p class="calibre6">
+It would of course be unrealistically expensive on typical machines to represent a pointer with anything but a simple address, but pointer comparisons are rare enough that a few extra instructions for them seems worthwhile to maintain the null pointer concept.
+</p><p class="calibre6">
+Regardless of how the compiler chooses to represent pointers (null or otherwise), the optimization in question is logically sound.  C99 says a dereference of a null pointer causes undefined behavior, so either a) tun is non-null and !tun must be false or b) tun is null and !tun can be anything, including false.
+
+  </p></div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor343336" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343336"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 24, 2009 22:06 UTC (Fri) by <b class="calibre13">nix</b> (subscriber, #2304)
+       [<a href="http://lwn.net/Articles/343336/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+GCC certainly doesn't insert code checking if a pointer is NULL before <br class="calibre14"/>
+every pointer dereference. Considering how common pointer dereferencing is <br class="calibre14"/>
+in C and related languages, this would be a substantial slowdown for no <br class="calibre14"/>
+real gain, given that multiuser OSes invariably trap such things, and <br class="calibre14"/>
+non-multiuser OSes are specialist environments in which attacks by hostile <br class="calibre14"/>
+local users are not so common (yet).<br class="calibre14"/>
+<p class="calibre6">
+That kernel space has to work when the lower part of its address space is <br class="calibre14"/>
+effectively under the control of a hostile attacker is a unique problem <br class="calibre14"/>
+which it is really not worth changing the C standard for, nor imposing <br class="calibre14"/>
+vast overheads on all userspace code. -fno-delete-null-pointer-checks does <br class="calibre14"/>
+the job.<br class="calibre14"/>
+</p></div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor343376" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343376"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 25, 2009 2:51 UTC (Sat) by <b class="calibre13">giraffedata</b> (subscriber, #1954)
+       [<a href="http://lwn.net/Articles/343376/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <blockquote class="calibre15">
+GCC certainly doesn't insert code checking if a pointer is NULL before 
+every pointer dereference. 
+</blockquote>
+<p class="calibre6">
+Sure, but that wouldn't improve standards compliance anyway.  I asked if GCC generates extra code to comply with the C99 requirement that a null pointer not be equal to any non-null one (while still allowing the existence of pointers to a data structure that resides at address 0).  Thinking about it now, though, I don't see how any such code is possible since a null pointer still has to compare equal to another null pointer.
+</p><p class="calibre6">
+</p><blockquote class="calibre15">
+That kernel space has to work when the lower part of its address space is 
+effectively under the control of a hostile attacker is a unique problem 
+which it is really not worth changing the C standard for, 
+</blockquote>
+<p class="calibre6">
+There has been no proposal to deal with this by changing the standard,
+which GCC apparently ignores anyhow.  And objection to GCC's conflation of null pointers and zero-address pointers wasn't that it's a security problem but that it's a basic correctness problem.  Even without a hostile page 0, unless you proclaim data structures at address 0 don't exist, this optimization breaks code.
+
+  </p></div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor343400" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343400"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 25, 2009 12:49 UTC (Sat) by <b class="calibre13">nix</b> (subscriber, #2304)
+       [<a href="http://lwn.net/Articles/343400/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+GCC doesn't ignore the standard: you simply can't have data structures <br class="calibre14"/>
+that reside at address zero. Shaving off 1/2^32 or less of the address <br class="calibre14"/>
+space, and disabling an optimization in the one place that cares about <br class="calibre14"/>
+this (the kernel) does not seem like a terrible cost to me.<br class="calibre14"/>
+<p class="calibre6">
+Data structures at address zero do not exist on any sane C platform.<br class="calibre14"/>
+</p><p class="calibre6">
+</p></div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor343434" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343434"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 25, 2009 23:18 UTC (Sat) by <b class="calibre13">PaXTeam</b> (subscriber, #24616)
+       [<a href="http://lwn.net/Articles/343434/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+<span class="QuotedText">&gt; Data structures at address zero do not exist on any sane C platform.</span><br class="calibre14"/>
+<p class="calibre6">
+so platforms without an MMU are not sane?<br class="calibre14"/>
+</p></div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor343462" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343462"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 26, 2009 18:27 UTC (Sun) by <b class="calibre13">nix</b> (subscriber, #2304)
+       [<a href="http://lwn.net/Articles/343462/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+Well, you can't access a structure at address zero on such a platform <br class="calibre14"/>
+without either disabling all optimizations that involve knowing which <br class="calibre14"/>
+pointers are null (as the kernel now is) and taking great care to ensure <br class="calibre14"/>
+that you never need anything that can point to said structure to be NULL <br class="calibre14"/>
+at any time, or defining the null pointer to be other than all-bits-zero <br class="calibre14"/>
+(allowed, but weird, about as rare as platforms with strange word sizes).<br class="calibre14"/>
+<p class="calibre6">
+I'd say that trying to access structures at address zero, MMU or no MMU, <br class="calibre14"/>
+is extremely unusual and not really sane to handle in a general-purpose <br class="calibre14"/>
+compiler. (GCC goes further than I would expect in actually having a <br class="calibre14"/>
+switch that makes it possible to use such a barmy thing.)<br class="calibre14"/>
+</p><p class="calibre6">
+</p></div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<a name="CommAnchor343395" class="calibre4 pcalibre pcalibre1 pcalibre2" id="CommAnchor343395"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A zero pointer is not a null pointer</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jul 25, 2009 9:37 UTC (Sat) by <b class="calibre13">spitzak</b> (guest, #4593)
+       [<a href="http://lwn.net/Articles/343395/" class="calibre4 pcalibre pcalibre1 pcalibre2">Link</a>]
+    </p>
+    <div class="calibre14">
+That won't work, plenty of code assumes that comparing two NULL pointers for equality will return <br class="calibre14"/>
+true.<br class="calibre14"/>
+<p class="calibre6">
+</p></div>
+
+  </div>
+  <p class="calibre6">
+  </p><div class="CommentReplyButton">
+    </div>
+  
+</div>
+</div>
+</div>
+<!-- MC -->
+<td class="RightColumn">
+<noscript>&lt;a href='http://rotation.linuxnewmedia.com/www/delivery/ck.php?n=aac9a909&amp;amp;cb=1450994' target='_blank'&gt;&lt;img src='http://rotation.linuxnewmedia.com/www/delivery/avw.php?zoneid=27&amp;amp;n=aac9a909' border='0' alt='' /&gt;&lt;/a&gt;</noscript> 
+</td>
+<!-- endpage -->
+
+        <div class="calibre3" style="text-align:center">
+        <p class="calibre6">
+        <span class="calibre17">
+        Copyright © 2013, Eklektix, Inc.<br class="calibre14"/>
+        Comments and public postings are copyrighted by their creators.<br class="calibre14"/>
+        Linux  is a registered trademark of Linus Torvalds<br class="calibre14"/>
+        </span>
+        </p></div>
+        
+            </body></html>

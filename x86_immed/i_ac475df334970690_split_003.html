@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 Immediate 操作数的种种迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre6" id="calibre_pb_3">2. 由 operand size override 造成的迷惑 </h2>
+<p class="calibre4">就是由于上面所说的 4 种 <strong class="calibre5">immediate</strong> 长度，可以进行 <strong class="calibre5">operand size override</strong> 操作，但是对于<strong class="calibre5"> Ib</strong> 类型的 <strong class="calibre5">immediate </strong>是不能改变其 <strong class="calibre5">size</strong> 的。</p>
+<p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre15">2.1 企图对 b 类型的 immediate 进行 override </h3>
+<p class="calibre4">当对<strong class="calibre5"> b</strong> 类型的 operand 进行 <strong class="calibre5">operand size override</strong> 操作时，是不会得到你想要的结果的，<strong class="calibre5">b </strong>类型的 size 固定为 byte </p>
+<p class="calibre4">（1）<span class="STYLE">mov al, 1</span> 的指令编码是 <span class="STYLE1">b0 01 </span>那么如果下面的编码企图对 byte 进行 override 是收不得效果的：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4"><strong class="calibre5"><span class="STYLE2">66</span> b0 01</strong></p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">上面的意图是想使用 <strong class="calibre5">66H prefix</strong> 进行 override，但是 immediate 始终还是<strong class="calibre5"> byte</strong> 大小。</p>
+<p class="calibre4">为什么得不到想要的效果呢？请看一看 operand size override 的规则表：<a href="http://www.mouseos.com/x64/prefix.html#t431" target="_blank">http://www.mouseos.com/x64/prefix.html#t431</a> </p>
+<p class="calibre4">在这个规则表中 <strong class="calibre5">default operand size </strong>为 <strong class="calibre5">16/32/64 </strong>可以做相应的 <strong class="calibre5">override </strong>操作，但是对于 default operand size 为 bytes 这类型的 operand 不能进行 overide 操作。</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4"><span class="calibre19">本质原因是：</span></p>
+      <p class="calibre4">    对于 operand size 为 <strong class="calibre5">b</strong> 类型的 operand 它没有 <strong class="calibre5">effective operand size</strong> 可供 <strong class="calibre5">override</strong>，<span class="STYLE3">所以它的 operand size 是固定 <strong class="calibre5">byte</strong></span></p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">（2）当然也别指望能对指令：<span class="STYLE">mov byte ptr [eax], 1 </span>进行 operand size override 操作数</p>
+<p class="calibre4"><span class="STYLE3"><strong class="calibre5">mov byte ptr [eax], 1</strong></span> 的指令编码是： <span class="STYLE2"><strong class="calibre5">c6 00 01 </strong></span></p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4"> <strong class="calibre5"><span class="STYLE2">66</span> c6 00 01</strong></p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">同样 immediate 结果还是 byte</p>
+<p class="calibre4">（3）看看对于 JMP Jb 指令如何：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">00000000  EB00              jmp short 0x2<br class="calibre9"/>00000002  90                nop<br class="calibre9"/>00000003  90                nop</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">如果企图去 override JMP Jb 指令</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">00000000  <span class="STYLE2"><strong class="calibre5">66</strong></span>EB00            o16 jmp short 0x3<br class="calibre9"/>
+        00000003  90                nop<br class="calibre9"/>00000004  90                nop</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">JMP Jb 指令的 immediate 还是 byte </p>
+<p class="calibre4">可见：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4"><span class="calibre19">对于 b 类型 size 的 immediate operand 来说：</span></p>
+      <p class="calibre4">    对该类型的机器指令使用 <strong class="calibre5">66H prefix</strong> 进行 operand size override 是不会改变它的<span class="STYLE1">指令边界</span>。也就是说：不会改变 immediate 的长度。 </p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+<p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre15">2.2 对 z 与 v 类型的 immediate 操作数进行 override </h3>
+<p class="calibre4">接下来看看正常的 operand size override 情形</p>
+<ul class="calibre7">
+  <li class="calibre8"><strong class="calibre5">z</strong> 的 effective operand size 是 word 或 double word</li>
+  <li class="calibre8"><strong class="calibre5">v</strong> 的 effective operand size 是 word, double word 以及 quad word </li>
+</ul>
+<p class="calibre4">因此：可以使用 <strong class="calibre5">66H prefix</strong> 来进行调整到 word 或 double word，使用 REX prefix 可以调整到 quad word</p>
+<h3 class="calibre15">2.2.1 将 word 调整到 double word </h3>
+<p class="calibre4">当指令的 <strong class="calibre5">default operand size</strong> 为 <strong class="calibre5">16</strong> 位时，可以使用 <strong class="calibre5">66H prefix</strong> 调整到 <strong class="calibre5">32</strong> 位 </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+<p class="calibre4">    <span class="STYLE3"><strong class="calibre5">bits 16</strong></span></p>
+      <p class="calibre4">    mov <span class="STYLE2"><strong class="calibre5">eax</strong></span>, 1</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">上面这段代码设指令的 default operand size 为 <strong class="calibre5">16</strong> 位，代码中使用了<strong class="calibre5"> 32</strong> 位的 operand（eax 寄存器），那么编译器会进行 <strong class="calibre5">operand size override</strong> 操作。 </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">00000000  <span class="STYLE2"><strong class="calibre5">66</strong></span>B801000000      mov eax,0x1</p></td>
+    </tr>
+  </tbody></table>
+<h3 class="calibre15">2.2.2　将 double word 调整到 word</h3>
+  <p class="calibre4">当指令的 <strong class="calibre5">default operand size</strong> 为 <strong class="calibre5">32 </strong>位时，可以使用 <strong class="calibre5">66H prefix</strong> 调整到<strong class="calibre5"> 16 </strong>位</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17"><p class="calibre4">    <span class="STYLE3"><strong class="calibre5">bits 32 </strong></span></p>
+          <p class="calibre4">    mov <span class="STYLE2"><strong class="calibre5">ax</strong></span>, 1</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">这段代码和上面的代码是相反的，在 32 位代码下使用 16 位的 operand（ax 寄存器），同样编译器会进行 <strong class="calibre5">operand size override</strong> 操作。</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17"><p class="calibre4">00000000  <span class="STYLE2"><strong class="calibre5">66</strong></span>B80100      mov ax,0x1</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">immediate 变成了 16 位长，指令边界也改变了。</p>
+  <h3 class="calibre15">2.2.3 将 double word 调整到 quad word </h3>
+  <p class="calibre4">在 64 位模式下，可以使用 <strong class="calibre5">REX prefix</strong> 将 <strong class="calibre5">32</strong> 位 operand 调整到 <strong class="calibre5">64</strong> 位 operand，必须使 <strong class="calibre5">REX.W = 1</strong>（使用 64 位扩展 size）</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17"><p class="calibre4">    <span class="STYLE3"><strong class="calibre5">bits 64 </strong></span></p>
+          <p class="calibre4">    mov <span class="STYLE2"><strong class="calibre5">rax</strong></span>, 1</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">在 64 位代码下，大多数指令的 default operand size 是 <strong class="calibre5">32 </strong>位，上面的代码使用了 64 位的 operand（rax 寄存器），编译器会使用 <strong class="calibre5">REX prefix（REX.W = 1）</strong>进行调整到 <strong class="calibre5">64</strong> 位</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17"><p class="calibre4">00000000  <span class="STYLE2"><strong class="calibre5">48</strong></span>B80100000000000000      mov rax,0x1</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">immediate 变成了 64 位长 </p>
+  <h3 class="calibre15">2.2.4 将 quad word 调整到 word </h3>
+  <p class="calibre4">在 64 位代码下，一部分指令的 default operand size 是 64 位的，典型的指令如 <strong class="calibre5">push</strong></p>
+  <p class="calibre4">x64 指令体系下允许使用 <strong class="calibre5">66H prefix </strong>将 <strong class="calibre5">64</strong> 位 operand 调整到 <strong class="calibre5">16 </strong>位 operand，如下代码：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">    <span class="STYLE3"><strong class="calibre5">bits 64</strong></span></p>
+      <p class="calibre4">    push <strong class="calibre5">word 0x01</strong></p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">push 指令的 default operand size 是 64 位的，而代码中却使用了 16 位的 operand， 因此编译器会使用 <strong class="calibre5">66H prefix</strong> 进行 override </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre17">
+      <p class="calibre4">00000000  <span class="STYLE2"><strong class="calibre5">66</strong></span>680100          push word 0x1</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">immediate 的长度变成了 16 位，指令边界也改变了。</p>
+  <p class="calibre4">实际上，这里还有一些是关于 <strong class="calibre5">default operand size ＝ 64</strong> 的迷惑的地方，详见另一篇：《解开 64 位模式下 operand size 的迷惑》：<a href="http://www.mouseos.com/x64/puzzle03.html" target="_blank">http://www.mouseos.com/x64/puzzle03.html</a></p>
+  <p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p><p class="calibre9" style="margin:0pt; border:0pt; height:1em"> </p>
+    </body></html>

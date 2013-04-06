@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 Immediate 操作数的种种迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre6" id="calibre_pb_2">1. Immediate 的长度 </h2>
+<p class="calibre4">在整个 x86/x64 指令系统里，<strong class="calibre5">immediate</strong> 操作数的长度有：</p>
+<ul class="calibre7">
+  <li class="calibre8">byte</li>
+  <li class="calibre8">word</li>
+  <li class="calibre8">double word</li>
+  <li class="calibre8">quad word</li>
+</ul>
+<p class="calibre4">在 x86/x64 的指令编码使用 2 组字符描述每 1 个 operand 属性：
+</p><ul class="calibre7">
+  <li class="calibre8">operand type</li>
+  <br class="calibre9"/><li class="calibre8">operand size</li>
+</ul>
+<p class="calibre4">用 1 组大写字母来表示 <strong class="calibre5">operand type</strong>，用 1 组小写字母来表示<strong class="calibre5"> operand size</strong>, 例如：<strong class="calibre5">Iz</strong> 表示 operand 是 immediate，大小是<strong class="calibre5"> z </strong> (16位/32位）
+<table border="1" class="calibre10">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td width="144" class="calibre13"><div class="calibre14"><strong class="calibre5">operand 表示法 </strong></div></td>
+    <td width="125" class="calibre13"><div class="calibre14"><strong class="calibre5">opcode</strong></div></td>
+    <td width="286" class="calibre13"><div class="calibre14"><strong class="calibre5">immediate size</strong></div></td>
+    <td width="313" class="calibre13"><div class="calibre14">示例指令</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">I<strong class="calibre5">b</strong></div></td>
+    <td class="calibre13"><div class="calibre14">MOV al,Ib </div></td>
+    <td class="calibre13"><div class="calibre14">byte</div></td>
+    <td class="calibre13"><div class="calibre14">mov al, 1 </div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">I<strong class="calibre5">z</strong></div></td>
+    <td class="calibre13"><div class="calibre14">MOV Ev, Iz</div></td>
+    <td class="calibre13"><div class="calibre14">word 或者 double word </div></td>
+    <td class="calibre13"><div class="calibre14">mov eax, 0x00000001 </div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">I<strong class="calibre5">v</strong></div></td>
+    <td class="calibre13"><div class="calibre14">MOV rax, Iv </div></td>
+    <td class="calibre13"><div class="calibre14">word, double word 或者 quad word </div></td>
+    <td class="calibre13"><div class="calibre14">mov rax, 0x0000000000000001 </div></td>
+  </tr>
+</tbody></table>
+</p><p class="calibre4">在 operand 表示法里：<strong class="calibre5">I</strong> 字母表示 <strong class="calibre5">operand type</strong> 为 Immediate</p>
+<ul class="calibre7">
+  <li class="calibre8"><strong class="calibre5">b</strong> --- byte</li>
+  <li class="calibre8"><strong class="calibre5">z</strong> --- word, dword</li>
+  <li class="calibre8"><strong class="calibre5">v </strong>--- word, dword, qword    </li>
+</ul>
+<p class="calibre4"><strong class="calibre5">v</strong> operand size 仅仅出现在 x64 指令集中，当出现这个 operand size 时表示可以接 64 位的操作数。</p>
+<p class="calibre4"> </p>
+</body></html>
