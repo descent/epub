@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en-US">
+  <head>
+    <meta content="abdf8f68-2169-4635-acbe-fd8981ebd4d8" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.24)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>x64 体系 64 位扩展技术的实现</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="u9c1b76f2-72cd-48ff-bade-6daa62eac293" playOrder="1">
+      <navLabel>
+        <text>Start</text>
+      </navLabel>
+      <content src="i_c54f8d87aaddfe19_split_000.html"/>
+    </navPoint>
+  </navMap>
+</ncx>

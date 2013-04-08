@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="Unknown" opf:role="aut">邓志</dc:creator>
+    <meta name="calibre:timestamp" content="2013-04-08T05:39:07.457274+00:00"/>
+    <dc:title>x86/x64 指令的编码构造</dc:title>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">a46fd553-5c46-49eb-8d43-081b96680cf5</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="i_5d3b19e77d0b751d_split_000.html" id="html2" media-type="application/xhtml+xml"/>
+    <item href="i_5d3b19e77d0b751d_split_001.html" id="html1" media-type="application/xhtml+xml"/>
+    <item href="opcode_fields.png" id="added" media-type="image/png"/>
+    <item href="page_styles.css" id="page_css" media-type="text/css"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="html2"/>
+    <itemref idref="html1"/>
+  </spine>
+  <guide/>
+</package>

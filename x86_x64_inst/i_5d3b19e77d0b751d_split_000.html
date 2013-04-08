@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>x86/x64 指令的编码构造</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h1 class="calibre1" id="calibre_pb_0">x86/x64 指令的编码构造</h1>
+<div class="calibre2"><a href="http://www.mouseos.com/x64/default.html">返 回</a></div>
+<hr class="calibre3"/>
+<p class="calibre4">这里我们将完整地讨论一下整个 x86/x64 指令的编码结构，主要是了解 opcode 的组成结构。</p>
+<h3 class="calibre5">了解 opcode 组成有什么用？ 看清指令编码的本质！ </h3>
+<p class="calibre4">下面有 2 条指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre9">
+      <p class="calibre4">mov eax, ebx<br class="calibre10"/>mov al, bl</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">第 1 条指令：</p>
+<ul class="calibre11">
+  <li class="calibre12">frist operand 是 eax 寄存器，32 位</li>
+  
+  <li class="calibre12">second operand 是 ebx 寄存器，32 位 </li>
+</ul>
+<p class="calibre4">第 2 条指令：</p>
+<ul class="calibre11">
+  <li class="calibre12">frist operand 是 al 寄存器，8 位</li>
+  <li class="calibre12">second operand 是 bl 寄存器，8 位 </li>
+</ul>
+<p class="calibre4">这 2 条指令编译的结果是：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre9">
+      <p class="calibre4">00000000  89D8              mov eax,ebx<br class="calibre10"/>00000002  88D8              mov al,bl</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">它们的 <strong class="calibre13">opcode </strong>是不同的，但是它们的 <strong class="calibre13">ModRM</strong> 是完全一样的。对它们来说 <strong class="calibre13">ModRM</strong> 相同意味着寻址模式是一样的。</p>
+<ul class="calibre11">
+  <li class="calibre12">第 1 条指令使用 opcode 为 <span class="STYLE">89 </span></li>
+  <li class="calibre12">第 2 条指令使用 opcode 为 <span class="STYLE">88 </span></li>
+</ul>
+<p class="calibre4">这 2 个 opcode 之间是否存在什么相同之处，又有什么不同呢？的确！它们之间存在一定的关系。</p>
+<p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+</body></html>

@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>x64 体系 64 位扩展技术的实现</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre6" id="calibre_pb_1">1. x64 体系的扩展资源 </h2>
+<p class="calibre4">从 32 位扩展到 64 位变化比从 16 位扩展到 32 位要大，x64 体系下的改变主要是：</p>
+<ul class="calibre7">
+  <li class="calibre8">64 位的寄存器</li>
+  <li class="calibre8">64 位的地址</li>
+  <li class="calibre8">新增的寄存器与寻址模式 </li>
+</ul>
+<strong class="calibre9">表1：通用寄存器编码表</strong><p class="calibre5" style="margin:0pt; border:0pt; height:0pt"> </p><p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<table border="1" class="calibre10">
+  <tbody class="calibre11"><tr class="calibre12"><td width="107" height="25" class="calibre13"><div class="calibre14"><strong class="calibre9">寄存器编码</strong></div></td>
+    <td width="97" class="calibre13"><div class="calibre14"><strong class="calibre9">16</strong></div></td>
+    <td width="114" class="calibre13"><div class="calibre14"><strong class="calibre9">32</strong></div></td>
+	<td width="131" class="calibre13"><div class="calibre14"><strong class="calibre9">64</strong></div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">000</div></td>
+    <td class="calibre13"><div class="calibre14">ax</div></td>
+    <td class="calibre13"><div class="calibre14">eax</div></td>
+    <td width="131" class="calibre13"><div class="calibre14">rax</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">001</div></td>
+    <td class="calibre13"><div class="calibre14">cx</div></td>
+    <td class="calibre13"><div class="calibre14">ecx</div></td>
+    <td class="calibre13"><div class="calibre14">rcx</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">010</div></td>
+    <td class="calibre13"><div class="calibre14">dx</div></td>
+    <td class="calibre13"><div class="calibre14">edx</div></td>
+    <td class="calibre13"><div class="calibre14">rdx</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">011</div></td>
+    <td class="calibre13"><div class="calibre14">bx</div></td>
+    <td class="calibre13"><div class="calibre14">ebx</div></td>
+    <td class="calibre13"><div class="calibre14">rbx</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">100</div></td>
+    <td class="calibre13"><div class="calibre14">sp</div></td>
+    <td class="calibre13"><div class="calibre14">esp</div></td>
+    <td class="calibre13"><div class="calibre14">rsp</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">101</div></td>
+    <td class="calibre13"><div class="calibre14">bp</div></td>
+    <td class="calibre13"><div class="calibre14">ebp</div></td>
+    <td class="calibre13"><div class="calibre14">rbp</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">110</div></td>
+    <td class="calibre13"><div class="calibre14">si</div></td>
+    <td class="calibre13"><div class="calibre14">esi</div></td>
+    <td class="calibre13"><div class="calibre14">rsi</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre13"><div class="calibre14">111</div></td>
+    <td class="calibre13"><div class="calibre14">di</div></td>
+    <td class="calibre13"><div class="calibre14">edi</div></td>
+    <td class="calibre13"><div class="calibre14">rdi</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1000</div></td>
+    <td class="calibre15"><div class="calibre14">r8w</div></td>
+    <td class="calibre15"><div class="calibre14">r8d</div></td>
+    <td class="calibre15"><div class="calibre14">r8</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1001</div></td>
+    <td class="calibre15"><div class="calibre14">r9w</div></td>
+    <td class="calibre15"><div class="calibre14">r9d</div></td>
+    <td class="calibre15"><div class="calibre14">r9</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1010</div></td>
+    <td class="calibre15"><div class="calibre14">r10w</div></td>
+    <td class="calibre15"><div class="calibre14">r10d</div></td>
+    <td class="calibre15"><div class="calibre14">r10</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1011</div></td>
+    <td class="calibre15"><div class="calibre14">r11w</div></td>
+    <td class="calibre15"><div class="calibre14">r11d</div></td>
+    <td class="calibre15"><div class="calibre14">r11</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1100</div></td>
+    <td class="calibre15"><div class="calibre14">r12w</div></td>
+    <td class="calibre15"><div class="calibre14">r12d</div></td>
+    <td class="calibre15"><div class="calibre14">r12</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1101</div></td>
+    <td class="calibre15"><div class="calibre14">r13w</div></td>
+    <td class="calibre15"><div class="calibre14">r13d</div></td>
+    <td class="calibre15"><div class="calibre14">r13</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1110</div></td>
+    <td class="calibre15"><div class="calibre14">r14w</div></td>
+    <td class="calibre15"><div class="calibre14">r14d</div></td>
+    <td class="calibre15"><div class="calibre14">r14</div></td>
+  </tr>
+  <tr class="calibre12">
+    <td class="calibre15"><div class="calibre14">1111</div></td>
+    <td class="calibre15"><div class="calibre14">r15w</div></td>
+    <td class="calibre15"><div class="calibre14">r15d</div></td>
+    <td class="calibre15"><div class="calibre14">r15</div></td>
+  </tr>
+</tbody></table>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre16">1.1 64 位的寄存器</h3>
+<p class="calibre4">x64 体系的寄存器扩展为 64 位。如上表所示，32 位宽的通用寄存器 eax ~ edi 扩展成为 rax ~ rdi </p>
+<h3 class="calibre16">1.2 64 位的地址 </h3>
+<p class="calibre4">64 位模式下的缺省地址是 64 位的。</p>
+<h3 class="calibre16">1.3 新增的寄存器与寻址模式</h3>
+<p class="calibre4">上表中的蓝色部分是 x64 下新增的通用寄存器 r8 ~ r15，如上表所示这些 64 位的寄存器还可以有 16 位和 32 位宽的相应寄存器。64 位模式下还增加了 <strong class="calibre9">[rip + disp32]</strong> 的寻址模式。 </p>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+</body></html>

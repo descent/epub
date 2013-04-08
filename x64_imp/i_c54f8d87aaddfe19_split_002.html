@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>x64 体系 64 位扩展技术的实现</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre6" id="calibre_pb_2">2. 访问 64 位的寄存器 </h2>
+<p class="calibre4">x64 设计其中一个原则是：从 32 位的基础上平滑地扩展为 64 位。基于这个原则下，x64 的最终设计方案导致在 64 位模式下，绝大部分指令的 <strong class="calibre9">default operand size</strong> 是 32 位。关于 x64 体系的 32 位平滑扩展到 64 位技术，我将在 <strong class="calibre9">【x86 &amp; x64 沉思录】</strong> 中详细探讨。</p>
+<p class="calibre4">由于指令的 <strong class="calibre9">default operand size</strong> 是 32 位。因此，必须要有一个方法去访问 64 位的数据和地址。 x64 指令体系新增 <strong class="calibre9">REX prefix</strong> 用来支持 64 位访问。 </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4"><span class="calibre19">REX prefix：</span></p>
+      <p class="calibre4"><br class="calibre5"/>0100 X X X X<br class="calibre5"/>---- - - - -<br class="calibre5"/>     | | | |<br class="calibre5"/>     | | | +---------&gt; B: 用来扩展 SIB.base, ModRM.r/m 以及 Opcode.reg<br class="calibre5"/>     | | |<br class="calibre5"/>     | | +-----------&gt; X: 用来扩展 SIB.index 域<br class="calibre5"/>     | |<br class="calibre5"/>     | +-------------&gt; R: 用来扩展 ModRM.reg 域<br class="calibre5"/>     |<br class="calibre5"/>     +---------------&gt; W: operand <strong class="calibre9">width </strong>标志位，当 W = 0 时使用 default operand size<br class="calibre5"/>
+                                                         W = 1 时使用 64 位的 operand size</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4"><strong class="calibre9">REX prefix </strong>的取值范围是 <strong class="calibre9">40 ~ 4F</strong></p>
+<ul class="calibre7">
+  <li class="calibre8">REX.W 标志位： 用来提供 64 位宽度的 <strong class="calibre9">operand size</strong> 或 <strong class="calibre9">address size </strong></li>
+  <li class="calibre8">REX.R 标志位： 用来提供 64 位的寄存器，这个寄存器由 <strong class="calibre9">ModRM.reg</strong> 域来提供</li>
+  <li class="calibre8">REX.X 标志位： 用来提供 memory 操作数中 <strong class="calibre9">基址加变址</strong> 寻址模式中的 <strong class="calibre9">index</strong> 寄存器 </li>
+  <li class="calibre8">REX.B 标志位： 用来提供 <strong class="calibre9">base</strong> 寄存器以及 <strong class="calibre9">register</strong> 操作数 </li>
+</ul>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre16">2.1 访问缺省的 operand size </h3>
+<p class="calibre4"><strong class="calibre9">REX.W</strong> 标志位用来指示指令的 operand size 使用 default operand size 还是 64 位。</p>
+<ul class="calibre7">
+  <li class="calibre8"><strong class="calibre9">REX.W = 0</strong> 使用 default operand size，即 32 位的 operand size</li>
+  <li class="calibre8"><strong class="calibre9">REX.W = 1</strong> 使用 64 位 operand size，即扩展为 64 位 </li>
+</ul>
+<p class="calibre4">下面这条指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="STYLE1"><strong class="calibre9">mov eax, [r8]</strong></p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">指令的 <strong class="calibre9">目标/源操作数</strong> 都是 32 位的，它使用 <strong class="calibre9">default operand size</strong>，但是地址模式是 64 位的，并且 base 寄存器是新增 <strong class="calibre9">r8</strong> 寄存器。将 base 寄存器设为 <strong class="calibre9">r8</strong> 寄存器是为了<strong class="calibre9"> 使用 REX prefix </strong>这条指令的编码是：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td class="calibre20"><p class="STYLE2"><strong class="calibre9">41 8b 00 </strong></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">它的<strong class="calibre9"> REX prefix</strong> 是 <span class="STYLE3"><strong class="calibre9">41</strong></span>，下面看看 REX prefix 的结构：</p>
+
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4">REX = <span class="STYLE3"><strong class="calibre9">41</strong></span></p>
+<p class="calibre4">0100 0 0 0 1<br class="calibre5"/>---- - - - -<br class="calibre5"/>  4  W R X B</p>
+      <p class="calibre4">     |<br class="calibre5"/>     +----------------&gt; REX.W = 0：使用 default operand size     </p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4"></p>
+<p class="calibre4">指令编码使用了 <strong class="calibre9">REX.W = 0 </strong>指令的 operand size 是 32 位的。</p>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre16">2.2 使用扩展的 64 位寄存器</h3>
+<p class="calibre4">下面这条指令：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4">bits 64<br class="calibre5"/>    mov eax, ebx</p></td>
+    </tr>
+</tbody></table>
+<p class="calibre4">使用 32 位的 operand，这时候它并不需要 REX prefix，因为它不访问 64 位的寄存器，它的指令编码是：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="STYLE2"><strong class="calibre9">89 D8</strong></p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">如果改为使用 64 位的寄存器： </p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td class="calibre20"><p class="calibre4">bits 64<br class="calibre5"/>
+          mov rax, rbx</p></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">它需要利用 REX prefix 进行 64 位的扩展访问，它的指令编码是：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td class="calibre20"><p class="STYLE2"><strong class="calibre9">48 89 D8</strong></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">这个 <strong class="calibre9">48 </strong>字节就是 <strong class="calibre9">REX prefix</strong>，这个 REX prefix 结构如下：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4">0100 1 0 0 0<br class="calibre5"/>---- - - - -<br class="calibre5"/> 4   W R X B</p>
+      <p class="calibre4"><br class="calibre5"/>REX.W = 1 说明使用 64 位的 operand size<br class="calibre5"/>REX.R，REX.X 以及 REX.B 都为 0 这是说明指令不需要访问扩展的寄存器</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre16">2.3 访问新增的 64 位寄存器 </h3>
+  <p class="calibre4">REX.R，REX.X 以及 REX.B 用来访问新增的 64 位寄存器和 64 位地址中的新增的 base 和 index 寄存器。</p>
+  <p class="calibre4">如下代码：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4">bits 64<br class="calibre5"/>
+          mov rax, r9<br class="calibre5"/>
+          mov r10, r15</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre16">2.3.1 第 1 条指令的源操作数是新增的 r8 寄存器，目标操作数是原有扩展为 64 位的 rax 寄存器</h3>
+  <p class="calibre4">对于第 1 条指令 <span class="STYLE">mov rax, r9 </span>它的机器编码是：</p>
+  <ul class="calibre7">
+    <li class="calibre8"><span class="STYLE3"><strong class="calibre9">4c 89 c8</strong></span></li>
+    <li class="calibre8"><span class="STYLE4">49 8b c1</span>  </li>
+  </ul>
+  <p class="calibre4">这 2 个机器编码都是正确的。而大多数编译趋向生成 <span class="STYLE4"><strong class="calibre9">4c 89 c8 </strong></span>（使用 <strong class="calibre9">89</strong> <strong class="calibre9">opcode</strong> 码）</p>
+  <p class="calibre4">来看看<span class="STYLE4"><strong class="calibre9"> 4c 89 c8 </strong></span>这个编码中的 REX prefix 与 ModRM 结构：</p>
+
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4">REX = <span class="STYLE4">4c </span>                            ModRM = <span class="STYLE4">c8</span></p>
+<p class="calibre4"><br class="calibre5"/>0100 1 1 0 0                      11  001  000   <br class="calibre5"/>---- - - - -                      --  ---  ---<br class="calibre5"/>  4  W R X B                      mod reg  r/m  </p>
+      <p class="calibre4">       |   |                           |    |<br class="calibre5"/>       |   |       0 + 000 = 0000      |    |<br class="calibre5"/>       |   +---------------------------|----+<br class="calibre5"/>       |                               |<br class="calibre5"/>       |        1 + 001 = 1001         |<br class="calibre5"/>       +-------------------------------+</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4"></p>
+
+  <ul class="calibre7">
+    <li class="calibre8">REX.R + ModRM.reg = 1001（r9 寄存器编码） </li>
+    <li class="calibre8">REX.B + ModRM.r/m = 0000（rax 寄存器编码） </li>
+  </ul>
+  <p class="calibre4">REX.R 扩展 ModRM.reg 域产生 4 位的寄存器编码。这个编码就是 r9 寄存器。 而 REX.B 扩展 ModRM.r/m 域，同样产生 4 位的寄存器编码，这是 rax 寄存器的编码值。 </p>
+  <p class="calibre4"><span class="STYLE4">89</span> Opcode 表达为：<strong class="calibre9">MOV <span class="STYLE5">Ev, Gv</span></strong> </p>
+  <ul class="calibre7">
+    <li class="calibre8">目标操作数<span class="STYLE5"><strong class="calibre9"> Ev</strong></span> --- 它的 <strong class="calibre9">operand 类型 </strong>是 memory 或者 register（GPRs），<strong class="calibre9">operand size</strong> 是 <strong class="calibre9">v</strong> 属性 </li>
+    <li class="calibre8">源操作数是 <span class="STYLE5"><strong class="calibre9">Gv</strong></span> --- 它的 <strong class="calibre9">operand type</strong> 是 GPRs（通用寄存器），<strong class="calibre9">operand size</strong> 是 <strong class="calibre9">v </strong>属性</li>
+  </ul>
+<p class="calibre4"> <strong class="calibre9">E</strong> 类型的 opernad 由 <strong class="calibre9">ModRM.r/m</strong> 提供，而 <strong class="calibre9">G</strong> 类型的 operand 由 <strong class="calibre9">ModRM.reg </strong>提供，因此：第 1 种编码方式：</p>
+<ul class="calibre7">
+  <li class="calibre8">源操作数是 <strong class="calibre9">REX.R + ModRM.reg = 1001</strong>（r9 寄存器） </li>
+  <li class="calibre8">目标操作数 <strong class="calibre9">REX.B + ModRM.r/m = 0000</strong>（rax 寄存器）</li>
+</ul>
+<p class="calibre4"><span class="STYLE4">8b</span> Opcode 表达为：<strong class="calibre9">MOV <span class="STYLE5">Gv, Ev</span></strong>，它与 <span class="STYLE4">89</span> Opcode 的 operands 正好相反，那么它的编码： <span class="STYLE4">49 8b c1</span></p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td class="calibre18"><p class="calibre4">REX = <span class="STYLE4">49 </span>                            ModRM = <span class="STYLE4">c1</span></p>
+        <p class="calibre4"><br class="calibre5"/>
+          0100 1 0 0 1                       11  000  001   <br class="calibre5"/>
+          ---- - - - -                      --  ---  ---<br class="calibre5"/>
+            4  W R X B                      mod reg  r/m  </p>
+      <p class="calibre4">       |   |                           |    |<br class="calibre5"/>
+               |   |       1 + 001 = 1001      |    |<br class="calibre5"/>
+               |   +---------------------------|----+<br class="calibre5"/>
+               |                               |<br class="calibre5"/>
+               |        0 + 000 = 0000         |<br class="calibre5"/>
+               +-------------------------------+</p></td>
+  </tr>
+</tbody></table>
+<p class="calibre4"></p>
+<ul class="calibre7">
+  <li class="calibre8">源操作数是 <strong class="calibre9">REX.B + ModRM.r/m = 1001</strong>（r9 寄存器编码）</li>
+  <li class="calibre8">目标操作数 <strong class="calibre9">REX.R + ModRM.reg = 0000</strong>（rax 寄存器编码） </li>
+</ul>
+<p class="calibre4">由这 2 个 Opcode 所描述的 operand 类型都是一样的，只是顺序不同。因此对于这类型的指令就产生了两种<strong class="calibre9"> 编码方式</strong></p>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre16">2.3.2 第 2 条指令的源操作数是新增 r15 寄存器，目标操作数也是新增的 r10 寄存器</h3>
+<p class="calibre4">对于第 2 条指令：<span class="STYLE5"><strong class="calibre9">mov r10, r15 </strong></span>它的机器编码同样有 2 种编码方式：</p>
+<ul class="calibre7">
+  <li class="calibre8"><span class="STYLE4">4d 89 fa</span></li>
+  <li class="calibre8"><span class="STYLE4">4d 8b d7</span> </li>
+</ul>
+<p class="calibre4">其 Opcode 原理和第 1 条指令是一样的。 下面看看 <span class="STYLE4">4d 89 fa</span> 编码中的 REX prefix 与 ModRM 结构：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td class="calibre18"><p class="calibre4">REX = <span class="STYLE4">4d </span>                            ModRM = <span class="STYLE4">fa</span></p>
+        <p class="calibre4"><br class="calibre5"/>
+          0100 1 1 0 1                       11 111  010   <br class="calibre5"/>
+          ---- - - - -                      --  ---  ---<br class="calibre5"/>
+            4  W R X B                      mod reg  r/m  </p>
+      <p class="calibre4">       |   |                           |    |<br class="calibre5"/>
+               |   |       1 + 010 = 1010      |    |<br class="calibre5"/>
+               |   +---------------------------|----+<br class="calibre5"/>
+               |                               |<br class="calibre5"/>
+               |        1 + 111 = 1111         |<br class="calibre5"/>
+               +-------------------------------+</p></td>
+  </tr>
+</tbody></table>
+<ul class="calibre7">
+  <li class="calibre8">源操作数是 <strong class="calibre9">REX.R + ModRM.reg = 1111</strong>（r15 寄存器） </li>
+  <li class="calibre8">目标操作数 <strong class="calibre9">REX.B + ModRM.r/m = 1010</strong>（r10 寄存器）</li>
+</ul>
+<p class="calibre4">第 2 种编码方式在这里就不再重复赘述了。</p>
+<p class="calibre4"> </p>
+<h3 class="calibre16">2.4 扩展 Opcode.reg 域 </h3>
+<p class="calibre4">REX.B 其中一个扩展功能是对内嵌在 opcode 码内的寄存器进行扩展。 下面是这类指令的典型指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4">bits 64<br class="calibre5"/>
+          mov r10, 0x01<br class="calibre5"/>
+      </p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">这类指令的典型特征是：<strong class="calibre9">不需要 ModRM 字节</strong> 进行 operand 寻址。</p>
+  <p class="calibre4">这条指令同样可以有两种编码方式，下面我们来看看生成的典型指令编码是（大多数编译器选择生成）：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4">00000000  <span class="STYLE4">49</span><span class="STYLE5"><strong class="calibre9">BA</strong></span>0100000000000000  mov r10,0x1<br class="calibre5"/>
+      </p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">其中 <span class="STYLE4">49</span> 是 REX prefix，<span class="STYLE4">BA</span>  是 Opcode 码，剩下的字节是 immediate 部分。它的 REX prefix　是：</p>
+<p class="calibre4">
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4">REX = <span class="STYLE4">49</span>                       Opcode = <span class="STYLE4">BA</span></p>
+<p class="calibre4">0100 1 0 0 1                  1011 1 010<br class="calibre5"/>---- - - - -                  ---- - ---<br class="calibre5"/>     W R X B                       w reg </p>
+<p class="calibre4">           |                          |<br class="calibre5"/>           |                          |<br class="calibre5"/>           +--------------------------+</p>
+      <p class="calibre4">                REX.B + Opcode.reg = 1010</p></td>
+    </tr>
+</tbody></table>
+</p>
+  <p class="calibre4"><strong class="calibre9">Opocde.reg </strong>是 010，那么 <strong class="calibre9">REX.B + Opcode.reg</strong> = 1 + 010 =<strong class="calibre9"> 1010</strong> （r10 寄存器编码） 这类指令并不多。</p>
+  <p class="calibre4"><br class="calibre5"/>
+  </p>
+  </body></html>

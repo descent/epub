@@ -1,0 +1,553 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>x86/x64 指令的编码构造</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre14" id="calibre_pb_1">1. opcode 的组成 </h2>
+<p class="calibre4">在 opcode 里也存在着不同的域，但是这些<span class="calibre15"><strong class="calibre13">域定义显得很混乱并且格式不定</strong></span>。</p>
+<p class="calibre4">以 <strong class="calibre13">89</strong> 和 <strong class="calibre13">88</strong> opcode 为例，看看它们的 opcode 构成：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">opcode =<span class="calibre17"> <strong class="calibre13">89</strong></span>                                   opcode = <span class="calibre17"><strong class="calibre13">88</strong></span></p>
+      <p class="calibre4"><br class="calibre10"/>1000 100 1                                    1000 100 0<br class="calibre10"/>-------- -                                    -------- -<br class="calibre10"/>         w                                             w<br class="calibre10"/>     <br class="calibre10"/>         |                                             |<br class="calibre10"/>         |                                             |<br class="calibre10"/>         +---&gt; default operand size                    +------&gt; byte</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">可以看出实际上 <strong class="calibre13">opcode.w</strong> 用来控制 operan size</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">1000 100 <span class="calibre17"><strong class="calibre13">w</strong></span><br class="calibre10"/>
+  -------- -<br class="calibre10"/>         |<br class="calibre10"/>         |<br class="calibre10"/>         +-----------&gt; width 域</p>
+      <p class="calibre4"><br class="calibre10"/>当 w = 0 时：operand size 是 byte <br class="calibre10"/>当 w = 1 时：operand size 是 default operand size</p></td>
+    </tr>
+  </tbody></table>
+  <ul class="calibre11">
+    <li class="calibre12">w = 0 时 operand size 是 <strong class="calibre13">byte</strong></li>
+    <li class="calibre12">w = 1 时 operand size 是 <strong class="calibre13">16</strong> 或 <strong class="calibre13">32</strong> 位，也就是指令的 <strong class="calibre13">default operand size </strong></li>
+  </ul>
+  <p class="calibre4">opcode <strong class="calibre13"><span class="calibre17">88 </span></strong>和 opcode <span class="calibre17"><strong class="calibre13">89</strong></span> 之间区别仅仅凭 <strong class="calibre13">opcode.w</strong> 来控制 operand size，因此 opcode <strong class="calibre13">88</strong> 的操作数是 <strong class="calibre13">byte</strong>，opcode <strong class="calibre13">89</strong> 的操作数是 <strong class="calibre13">16/32 </strong>位</p>
+  <ul class="calibre11">
+    <li class="calibre12"><strong class="calibre13">88</strong> ===&gt; MOV E<strong class="calibre13">b</strong>, G<strong class="calibre13">b</strong>  </li>
+    <li class="calibre12"><strong class="calibre13">89</strong> ===&gt; MOV E<strong class="calibre13">v</strong>, G<strong class="calibre13">v</strong> </li>
+  </ul>
+  <p class="calibre4">和前面探讨有关 operand size 的话题一样， <strong class="calibre13">w = 1</strong> 时的 default operand size 是可以进行 <strong class="calibre13">operand size override</strong> 的。</p>
+  <p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre5">1.1 opcode 的组成域</h3>
+  <p class="calibre4">看看 Intel 文档上的一个表格：</p>
+  <p class="calibre4"><img src="opcode_fields.png" width="530"/> </p>
+  <p class="calibre4">实际上用在 <strong class="calibre13">opcode </strong>上的域有：</p>
+  <ul class="calibre11">
+    <li class="calibre12">reg 域</li>
+    <li class="calibre12">w 域</li>
+    <li class="calibre12">s 域</li>
+    <li class="calibre12">sreg2 域</li>
+    <li class="calibre12">sreg3 域</li>
+    <li class="calibre12">tttn 域</li>
+    <li class="calibre12">d 域 </li>
+  </ul>
+<p class="calibre4"> 这些表格上的域并非每个 opcode 都有，这些域的存在大多情况下意味着指令有<strong class="calibre13">相同的寻址模式</strong></p>
+<p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre5">1.2 Opcode.reg 用来提供嵌在 opcode 内的寄存器编码 </h3>
+<p class="calibre4">opcode.reg 域是 3 位值，从<strong class="calibre13"> 000 ~ 111 </strong>表示 <strong class="calibre13">eax ~ edi</strong> 共 <strong class="calibre13">7 </strong>个通用寄存器。</p>
+<p class="calibre4">下的指令：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+  <tbody class="calibre7"><tr class="calibre8">
+    <td class="calibre9">inc ecx<br class="calibre10"/>
+      inc edx</td>
+  </tr>
+</tbody></table>
+<p class="calibre4">它们的编码是：</p>
+<ul class="calibre11">
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">41</span></strong></li>
+  <li class="calibre12"><span class="calibre17"><strong class="calibre13">42</strong></span></li>
+</ul>
+<p class="calibre4">那么它们的 opcode 结构如图：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">opcode = 41                         opcode = 42</p>
+<p class="calibre4">0100 0 001                          0100 0 010<br class="calibre10"/>------ ---                          ------ ---<br class="calibre10"/>       reg                                 reg</p>
+      <p class="calibre4">        |                                   |<br class="calibre10"/>        |                                   |<br class="calibre10"/>        V                                   V<br class="calibre10"/>      ecx 寄存器                          edx 寄存器</p></td>
+    </tr>
+  </tbody></table>
+
+<p class="calibre4">这类指令代表示整个 <strong class="calibre13">inc reg</strong> 指令家族，它们的 opcode 根据提供的 registers 编码码不同，范围是 <strong class="calibre13">40 ~ 47 </strong>，事实上从 <strong class="calibre13">48 ~ 4F</strong> 是 <strong class="calibre13">dec reg</strong> 指令家族</p>
+  <p class="calibre4">值得一提的是：<strong class="calibre13">inc reg 和 dec reg </strong>指令族在 64 位模式下，它变成了 <strong class="calibre13">REX prefix</strong> </p>
+  <p class="calibre4">当指令变为：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre9">inc rcx<br class="calibre10"/>
+        inc rdx</td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">它们使用的是 <strong class="calibre13">FF /0</strong> 和 <strong class="calibre13">FF /1</strong> 指令族，这种情况下 opcode 并不提供 reg 域，而是由 <strong class="calibre13">ModRM.r/m</strong> 来提供 registers 编码。</p>
+  <p class="calibre4">再来看一看另 2 条指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre9">mov cl, 0x01 <br class="calibre10"/>
+      mov ecx, 0x01 </td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">它们的编码是：</p>
+  <ul class="calibre11">
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">b1 01 </span></strong></li>
+  <li class="calibre12"><span class="calibre17"><strong class="calibre13">b9 01 00 00 00</strong></span></li>
+</ul>
+  <p class="calibre4">同样它们也是<strong class="calibre13">来自一个指令家族</strong>的。它们的操作是：MOV <strong class="calibre13">reg,</strong> <strong class="calibre13">immediate</strong></p>
+  <p class="calibre4">但是它们的情况稍复杂一点，看一看它们的 opcode 结构：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">opcode = b1                         opcode = b9</p>
+<p class="calibre4"><br class="calibre10"/>1011 0 001                          0100 1 001<br class="calibre10"/>---- - ---                          ---- - ---<br class="calibre10"/>     w reg                               w reg</p>
+      <p class="calibre4">     |  |                                |  |<br class="calibre10"/>     |  |                                |  |<br class="calibre10"/>     |  +--------------------------------|--+<br class="calibre10"/>     |               opcode.reg          |<br class="calibre10"/>     |                                   |<br class="calibre10"/>     |                                   |<br class="calibre10"/>     +-----------------------------------+<br class="calibre10"/>                  opcode.w</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">这个指令族的 opcode 码有两个域：</p>
+  <ul class="calibre11">
+    <li class="calibre12">w 域</li>
+    <li class="calibre12">reg 域 </li>
+  </ul>
+  <p class="calibre4">也就是说这个指令族的 opcode 中的 <strong class="calibre13">operand size</strong> 和 <strong class="calibre13">register</strong> 都是可变的，因此这个指令族就产生了共 <strong class="calibre13">16 个 opcode 码</strong></p>
+  <p class="calibre4">从 <strong class="calibre13">b0 ~ bf</strong> 都代表着这个指令家族，分别为：</p>
+  <ul class="calibre11">
+    <li class="calibre12">MOV <strong class="calibre13">reg8</strong>, <strong class="calibre13">imme8</strong></li>
+    <li class="calibre12">MOV <strong class="calibre13">reg16/reg32/reg64</strong>，<strong class="calibre13">imme16/imme32/imme64</strong>  </li>
+  </ul>
+  <p class="calibre4">当这 2 条指令变为：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre9">mov r9b, 0x01 <br class="calibre10"/>
+        mov r9, 0x01 </td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">很显然，它们需要 <strong class="calibre13">REX prefix</strong> 进行扩展寄存器，指令编码变为：</p>
+    <ul class="calibre11">
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">41 b1 01 </span></strong></li>
+  <li class="calibre12"><span class="calibre17"><strong class="calibre13">49 b9 01 00 00 00 00 00 00 00</strong></span></li>
+</ul>
+<p class="calibre4">第 1 条指令的 REX prefix 与 opcode 结构图如下：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">REX = 41                    opcode = b1</p>
+<p class="calibre4"><br class="calibre10"/>0100 0 0 0 1                1011 0 001<br class="calibre10"/>---- - - - -                ---- - ---<br class="calibre10"/>  4  W R X B                     w reg</p>
+      <p class="calibre4">           |                        |<br class="calibre10"/>           |                        |<br class="calibre10"/>           +------------------------+<br class="calibre10"/>              REX.B 扩展 opcode.reg</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">这里 <strong class="calibre13">REX.W = 0</strong> 使用 default operand size，<strong class="calibre13">opcode.w = 0</strong> 也就是：byte </p>
+  <p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre5">1.3 Opcode.w 提供指令的 operand size，而 Opcode.d 提供 operand direction </h3>
+  <p class="calibre4">在 x86/x64 指令集中有为数不少因 operand size 和 operand directioon 不同而产生的指令对，如：</p>
+<table width="645" border="1" height="224" class="calibre19">
+  <tbody class="calibre7"><tr class="calibre8">
+    <td width="179" height="25" class="calibre20"><div class="calibre2"><strong class="calibre13">指令</strong></div></td>
+    <td width="233" class="calibre20"><div class="calibre2"><strong class="calibre13">操作数</strong></div></td>
+    <td width="211" class="calibre20"><div class="calibre2"><strong class="calibre13">操作数</strong></div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">ADD</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">ADC</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">AND</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">XOR</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">OR</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">SBB</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">SUB</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">CMP</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+  <tr class="calibre8">
+    <td class="calibre20"><div class="calibre2">MOV</div></td>
+    <td class="calibre20"><div class="calibre2">Eb, Gb 和 Ev, Gv </div></td>
+    <td class="calibre20"><div class="calibre2">Gb, Eb 和 Gv, Ev </div></td>
+  </tr>
+</tbody></table>
+
+  <p class="calibre4">上面只是列举了一部分这类指令，每条这样的指令可以有 <strong class="calibre13">4</strong> 个变种，也就是这样的指令可以产生 <strong class="calibre13">4</strong> 个 <strong class="calibre13">opcode</strong> 码：</p>
+  <ul class="calibre11">
+    <li class="calibre12"><strong class="calibre13">opcode.w</strong> 用来控制 operand size </li>
+    <li class="calibre12"><strong class="calibre13">opcode.d </strong>用来控制 operand direction </li>
+  </ul>
+  <p class="calibre4">这样就会有 <strong class="calibre13">2 个 operand size</strong> 版本，和<strong class="calibre13"> 2 个 operand direction</strong> 版本：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4"><span class="calibre21">ADD 指令：</span><br class="calibre10"/></p>
+      <p class="calibre4">0000 00 d w<br class="calibre10"/>------- - -<br class="calibre10"/>        | |<br class="calibre10"/>        | |<br class="calibre10"/>        | +---------------&gt; opcode.w 控制 operand size<br class="calibre10"/>        |<br class="calibre10"/>        +-----------------&gt; opcode.d 控制 operand direction</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">上面是 ADD 指令其中的 4 个 opcode 的结构，那么它的 4 个版本是：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">opcode = <span class="calibre17"><strong class="calibre13">00</strong></span>                                        opcode = <span class="calibre17"><strong class="calibre13">01</strong></span></p>
+<p class="calibre4"><br class="calibre10"/>0000 00 0 0                                        0000 00 0 1     <br class="calibre10"/>------- - -                                        ------- - - <br class="calibre10"/>        | |                                                | |<br class="calibre10"/>        | |                                                | |<br class="calibre10"/>        | +------&gt; operand size = byte                     | +------&gt; operand size = default operand size<br class="calibre10"/>        |                                                  |<br class="calibre10"/>        +--------&gt; register --&gt; reg/mem                    +--------&gt; register --&gt; reg/mem</p>
+<p class="calibre4"> </p>
+<p class="calibre4"> </p>
+<p class="calibre4"><br class="calibre10"/>opcode = <span class="calibre17"><strong class="calibre13">02</strong></span>                                        opcode = <span class="calibre17"><strong class="calibre13">03</strong></span></p>
+      <p class="calibre4"><br class="calibre10"/>0000 00 1 0                                        0000 00 1 1     <br class="calibre10"/>------- - -                                        ------- - - <br class="calibre10"/>        | |                                                | |<br class="calibre10"/>        | |                                                | |<br class="calibre10"/>        | +------&gt; operand size = byte                     | +------&gt; operand size = default operand size<br class="calibre10"/>        |                                                  |<br class="calibre10"/>        +--------&gt; reg/mem --&gt; register                    +--------&gt; reg/mem --&gt; register</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">因此：<strong class="calibre13">opcode.d </strong>的控制如下：</p>
+  <table width="695" border="1" height="98" class="calibre19">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre20"><div class="calibre2"><strong class="calibre13">opcode.d</strong></div></td>
+      <td class="calibre20"><div class="calibre2"><strong class="calibre13">frist operand（目标操作数） </strong></div></td>
+      <td class="calibre20"><div class="calibre2"><strong class="calibre13">second opernad（源操作数） </strong></div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"> <div class="calibre2"><strong class="calibre13">= 0 </strong></div></td>
+      <td class="calibre20"><div class="calibre2">memory 或 register </div></td>
+      <td class="calibre20"><div class="calibre2">register</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2"><strong class="calibre13">= 1</strong> </div></td>
+      <td class="calibre20"><div class="calibre2">register</div></td>
+      <td class="calibre20"><div class="calibre2">memory 或 register </div></td>
+    </tr>
+  </tbody></table>
+<p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre5">1.4 opcode.s 控制符号位 </h3>
+  <p class="calibre4">这类指令是针对含有 immediate 操作数的计算类指令，如下指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre9"><p class="calibre4">add bl, 1</p>
+          <p class="calibre4">add ebx, <span class="calibre15"><strong class="calibre13">byte</strong></span> 1 </p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4"> 为了看到它们相应的 opcode 结果，第 2 条指令需要对 immediate 强制定为 byte 大小。它们的指令编码是：</p>
+    <ul class="calibre11">
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">80 c3 01 </span></strong></li>
+  <li class="calibre12"><span class="calibre17"><strong class="calibre13">83 c3  01</strong></span></li>
+</ul>
+  <p class="calibre4">对于这类指令的计算结果是需要确定是 <strong class="calibre13">signed</strong> 还是 <strong class="calibre13">unsigned</strong> 数，当是 singed 时会产生<strong class="calibre13"> signed-extended </strong>行为</p>
+  <p class="calibre4">看看这对指令的 opcode 结构： </p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">opcode = <span class="calibre17"><strong class="calibre13">80</strong></span>                                        opcode = <span class="calibre17"><strong class="calibre13">83</strong></span></p>
+      <p class="calibre4"><br class="calibre10"/>1000 00 0 0                                        1000 00 1 1     <br class="calibre10"/>------- - -                                        ------- - -<br class="calibre10"/>        s w                                                s w<br class="calibre10"/>   <br class="calibre10"/>        | |                                                | |<br class="calibre10"/>        | |                                                | |<br class="calibre10"/>        | +------&gt; operand size = byte                     | +------&gt; operand size = default operand size<br class="calibre10"/>        |                                                  |<br class="calibre10"/>        +--------&gt; unsigned                                +--------&gt; singed（signed-extended）</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">opcode 83 会产生一个 signed-extended 行为。 </p>
+    <p class="calibre4">所以，从这里可以了解到指令的细节，当一条指令如下：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+      <tbody class="calibre7"><tr class="calibre8">
+        <td class="calibre9"><p class="calibre4">add ebx, 1</p>
+        </td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4">当编译为：</p>
+	    <ul class="calibre11">
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">81 c3 01 00 00 00</span></strong></li>
+</ul>
+    <p class="calibre4">immediate 是 unsigned 数，它的大小为 32 位。</p>
+    <p class="calibre4">当编译为：</p>
+ <ul class="calibre11">
+  <li class="calibre12"><span class="calibre17"><strong class="calibre13">83 c3  01</strong></span></li>
+</ul>
+    <p class="calibre4">immediate 是 signed 数，它的大小为 8 位。</p>
+	<p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+    <h3 class="calibre5">1.5 Opcode.sreg2 与 Opcode.sreg3 提供 segment register 编码 </h3>
+    <p class="calibre4">在 opcode 的 sreg 域里有 2 个版本：</p>
+    <ul class="calibre11">
+      <li class="calibre12">2 位的 sreg 值版本：<strong class="calibre13">sreg2</strong></li>
+      <li class="calibre12">3 位的 sreg 值版本：<strong class="calibre13">sreg3 </strong></li>
+    </ul>
+    <p class="calibre4"><strong class="calibre13">Opcode.sreg2</strong> 只能表达 4 个 segment resiters </p>
+    <table width="274" border="1" height="156" class="calibre19">
+      <tbody class="calibre7"><tr class="calibre8">
+        <td width="120" class="calibre20"><div class="calibre2"><strong class="calibre13">opcode.sreg2</strong></div></td>
+        <td width="138" class="calibre20"><div class="calibre2"><strong class="calibre13">寄存器</strong></div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">00</div></td>
+        <td class="calibre20"><div class="calibre2">ES</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">01</div></td>
+        <td class="calibre20"><div class="calibre2">CS</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">10</div></td>
+        <td class="calibre20"><div class="calibre2">SS</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">11</div></td>
+        <td class="calibre20"><div class="calibre2">DS</div></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4"><strong class="calibre13">PUSH sreg</strong> 指令家族的 Opcode 结构：</p>
+	  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">PUSH sreg 家族：</p>
+      <p class="calibre4"><br class="calibre10"/>000  XX  110<br class="calibre10"/>---  --  ---<br class="calibre10"/>    sreg2<br class="calibre10"/>     <br class="calibre10"/>     |<br class="calibre10"/>     |<br class="calibre10"/>     +----------------&gt; sreg: ES, CS, SS, DS</p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4"><strong class="calibre13">POP sreg</strong> 指令家族 Opcode 结构：</p>
+	  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">POP sreg 家族：</p>
+<p class="calibre4"><br class="calibre10"/>000  XX  111<br class="calibre10"/>---  --  ---<br class="calibre10"/>    sreg2<br class="calibre10"/>     <br class="calibre10"/>     |<br class="calibre10"/>     |<br class="calibre10"/>     +----------------&gt; sreg: ES, SS, DS</p>
+<p class="calibre4"> </p>
+      <p class="calibre4">注意：<span class="calibre17"><strong class="calibre13">CS 寄存器不存在 POP sreg 家族内</strong></span></p></td>
+    </tr>
+  </tbody></table>
+    <p class="calibre4">x86/x64 指令集中不存在 <strong class="calibre13">POP CS</strong> 这条指令，CS 寄存器控制着整个 x86/x64 体系的指令分支流程和 <strong class="calibre13">privilege level</strong>，x86/x64 体系不允许直接通过 POP 来改变 CS，这是原因之一。其二是：<strong class="calibre13">0F</strong> 是 <strong class="calibre13">escape prefix</strong> 用来引导 <strong class="calibre13">opcode</strong></p>
+    <p class="calibre4">下面 2 条指令： </p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+      <tbody class="calibre7"><tr class="calibre8">
+        <td class="calibre9"><p class="calibre4">push ds </p>
+            <p class="calibre4">pop ds </p></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4">它们的编码是：</p>
+    <ul class="calibre11">
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">1e</span></strong> --- <strong class="calibre13">opcode.sreg2 = 11</strong></li>
+  <li class="calibre12"><strong class="calibre13"><span class="calibre17">1f</span></strong> --- <strong class="calibre13">opcode.serg2 = 11</strong></li>
+</ul>	
+    <p class="calibre4"> </p>
+    <p class="calibre4"><strong class="calibre13">opcode.sreg3 </strong>有 3 位可以表达 8 个寄存器：</p>
+    <table width="287" border="1" height="194" class="calibre19">
+      <tbody class="calibre7"><tr class="calibre8">
+        <td width="120" class="calibre20"><div class="calibre2"><strong class="calibre13">opcode.sreg3</strong></div></td>
+        <td width="138" class="calibre20"><div class="calibre2"><strong class="calibre13">寄存器</strong></div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">000</div></td>
+        <td class="calibre20"><div class="calibre2">ES</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">001</div></td>
+        <td class="calibre20"><div class="calibre2">CS</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">010</div></td>
+        <td class="calibre20"><div class="calibre2">SS</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">011</div></td>
+        <td class="calibre20"><div class="calibre2">DS</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">100</div></td>
+        <td class="calibre20"><div class="calibre2">FS</div></td>
+      </tr>
+      <tr class="calibre8">
+        <td class="calibre20"><div class="calibre2">101</div></td>
+        <td class="calibre20"><div class="calibre2">GS</div></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre4"><strong class="calibre13">opcode.sreg3</strong> 使用在 PUSH/POP <strong class="calibre13">FS</strong> 和 <strong class="calibre13">GS</strong> 寄存器上，这 4 条指令的 <strong class="calibre13">opcode</strong> 是 <strong class="calibre13">2 bytes</strong> 的 </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4"><strong class="calibre13">PUSH FS/GS 指令</strong>：</p>
+<p class="calibre4"><br class="calibre10"/>0000 1111 : 10 XXX 000<br class="calibre10"/>---------   -- --- ---<br class="calibre10"/>   0F          sreg3  <br class="calibre10"/>                <br class="calibre10"/>                 |<br class="calibre10"/>                 |<br class="calibre10"/>                 +----------&gt; sreg：FS 和 GS</p>
+<p class="calibre4"> </p>
+<p class="calibre4"><strong class="calibre13"><br class="calibre10"/>
+  POP FS/GS 指令：</strong></p>
+      <p class="calibre4"><br class="calibre10"/>0000 1111 : 10 XXX 001<br class="calibre10"/>---------   -- --- ---<br class="calibre10"/>   0F          sreg3  <br class="calibre10"/>                <br class="calibre10"/>                 |<br class="calibre10"/>                 |<br class="calibre10"/>                 +----------&gt; sreg：FS 和 GS</p></td>
+    </tr>
+  </tbody></table>	
+  <h3 class="calibre5"> </h3>
+  <h3 class="calibre5">1.6 Opcode.tttn 为指令提供条件</h3>
+  <p class="calibre4"><strong class="calibre13">opcode.tttn</strong> 为 x86/x64 指令集里的 <strong class="calibre13">CMOVcc</strong>，<strong class="calibre13">SETcc</strong> 以及 <strong class="calibre13">Jcc</strong> 指令家族提供条件码，<strong class="calibre13">opcode.tttn</strong> 条件码有 <strong class="calibre13">4 </strong>位，共表达 <strong class="calibre13">16</strong> 个条件码：</p>
+  <table width="1013" border="1" height="440" class="calibre19">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td width="115" height="32" class="calibre20"><div class="calibre2"><strong class="calibre13">opcode.tttn</strong></div></td>
+      <td width="143" class="calibre20"><div class="calibre2"><strong class="calibre13">rflags 标志位</strong></div></td>
+      <td width="161" class="calibre20"><div class="calibre2"><strong class="calibre13">cc 助记符 </strong></div></td>
+      <td width="112" class="calibre20"><div class="calibre2"><strong class="calibre13">类型</strong></div></td>
+      <td width="298" class="calibre20"><div class="calibre2"><strong class="calibre13">描述</strong></div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0000</div></td>
+      <td class="calibre20"><div class="calibre2">OF = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">O</div></td>
+      <td rowspan="2" class="calibre20"><div class="calibre2">signed</div></td>
+      <td class="calibre20"><div class="calibre2">溢出</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0001</div></td>
+      <td class="calibre20"><div class="calibre2">OF = 0 </div></td>
+      <td class="calibre20"><div class="calibre2">NO</div></td>
+      <td class="calibre20"><div class="calibre2">没溢出</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0010</div></td>
+      <td class="calibre20"><div class="calibre2">CF = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">C, B, NAE </div></td>
+      <td rowspan="6" class="calibre20"><div class="calibre2"><strong class="calibre13">unsigned</strong></div></td>
+      <td class="calibre20"><div class="calibre2">有进位，低于，不高于等于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0011</div></td>
+      <td class="calibre20"><div class="calibre2">CF = 0 </div></td>
+      <td class="calibre20"><div class="calibre2">NC, NB, AE </div></td>
+      <td class="calibre20"><div class="calibre2">没进位，不低于，高于等于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0100</div></td>
+      <td class="calibre20"><div class="calibre2">ZF = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">Z, E </div></td>
+      <td class="calibre20"><div class="calibre2">为零，等于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0101</div></td>
+      <td class="calibre20"><div class="calibre2">ZF = 0 </div></td>
+      <td class="calibre20"><div class="calibre2">NZ, NE</div></td>
+      <td class="calibre20"><div class="calibre2">不为零，不等于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0110</div></td>
+      <td class="calibre20"><div class="calibre2">CF = 1 or ZF = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">BE, NA </div></td>
+      <td class="calibre20"><div class="calibre2">低于等于，不高于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">0111</div></td>
+      <td class="calibre20"><div class="calibre2">CF = 0 and ZF = 0</div></td>
+      <td class="calibre20"><div class="calibre2">NBE, A </div></td>
+      <td class="calibre20"><div class="calibre2">不低于等于，高于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1000</div></td>
+      <td class="calibre20"><div class="calibre2">SF = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">S</div></td>
+      <td rowspan="2" class="calibre20"><div class="calibre2">signed</div></td>
+      <td class="calibre20"><div class="calibre2">符号位置位</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1001</div></td>
+      <td class="calibre20"><div class="calibre2">SF = 0 </div></td>
+      <td class="calibre20"><div class="calibre2">NS</div></td>
+      <td class="calibre20"><div class="calibre2">无符号位</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1010</div></td>
+      <td class="calibre20"><div class="calibre2">PF = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">P, PE </div></td>
+      <td rowspan="2" class="calibre20"><div class="calibre2">---</div></td>
+      <td class="calibre20"><div class="calibre2">奇偶位置位</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1011</div></td>
+      <td class="calibre20"><div class="calibre2">PF = 0 </div></td>
+      <td class="calibre20"><div class="calibre2">NP, PO </div></td>
+      <td class="calibre20"><div class="calibre2">无奇偶位</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1100</div></td>
+      <td class="calibre20"><div class="calibre2">(SF xor OF) = 1 </div></td>
+      <td class="calibre20"><div class="calibre2">L, NGE </div></td>
+      <td rowspan="4" class="calibre20"><div class="calibre2">signed</div></td>
+      <td class="calibre20"><div class="calibre2">小于，不大于等于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1101</div></td>
+      <td class="calibre20"><div class="calibre2">(SF xor OF) = 0 </div></td>
+      <td class="calibre20"><div class="calibre2">NL, GE </div></td>
+      <td class="calibre20"><div class="calibre2">不小于，大小等于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1110</div></td>
+      <td class="calibre20"><p class="calibre22">(SF xor OF) = 1 </p>
+      <p class="calibre22">or ZF = 1 </p></td>
+      <td class="calibre20"><div class="calibre2">LE, NG </div></td>
+      <td class="calibre20"><div class="calibre2">小于等于，不大于</div></td>
+    </tr>
+    <tr class="calibre8">
+      <td class="calibre20"><div class="calibre2">1111</div></td>
+      <td class="calibre20"><p class="calibre22">(SF xor OF) = 0</p>
+      <p class="calibre22">and ZF = 0  </p></td>
+      <td class="calibre20"><div class="calibre2">NLE, G </div></td>
+      <td class="calibre20"><div class="calibre2">不小于等于，大于</div></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">有些 <strong class="calibre13">cc 助记符</strong>里可以有几中表示法，如：<strong class="calibre13">CMOVL</strong> 指令可以写为 <strong class="calibre13">CMOVNGE</strong> 每个条件码都是根据 <strong class="calibre13">rflags</strong> 寄存器里的相应的示志位</p>
+  <p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre5">1.6.1 CMOVcc 家族 </h3>
+  <p class="calibre4"><strong class="calibre13">CMOVcc</strong> 指令族 <strong class="calibre13">opcode</strong> 从<strong class="calibre13"> 0F 40 ~ 0F 4F</strong>，它们的 opcode 结构如下：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16">
+<p class="calibre4">CMOVcc 指令族：</p>
+      <p class="calibre4"><br class="calibre10"/>0000 1111 : 0100 tttn<br class="calibre10"/>---------   ---- ----<br class="calibre10"/>   0F             |<br class="calibre10"/>                  |<br class="calibre10"/>                  |<br class="calibre10"/>                  |<br class="calibre10"/>                  +----------&gt; tttn: 0000 ~ 1111</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre5">1.6.2 SETcc 家族 </h3>
+  <p class="calibre4"><strong class="calibre13">SETcc</strong> 指令族 <strong class="calibre13">opcode</strong> 从 <strong class="calibre13">0F 90 ~ 0F 9F</strong>，它们的 opcode 结构如下：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16"><p class="calibre4">SETcc 指令族：</p>
+          <p class="calibre4"><br class="calibre10"/>
+            0000 1111 : 1001 tttn<br class="calibre10"/>
+            ---------   ---- ----<br class="calibre10"/>
+               0F             |<br class="calibre10"/>
+                              |<br class="calibre10"/>
+                              |<br class="calibre10"/>
+                              |<br class="calibre10"/>
+                              +----------&gt; tttn: 0000 ~ 1111</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre10" style="margin:0pt; border:0pt; height:1em"> </p>
+  <h3 class="calibre5">1.6.3　Jcc 家族 </h3>
+  <p class="calibre4"><strong class="calibre13">Jcc</strong> 指令族 <strong class="calibre13">opcode</strong> 从 <strong class="calibre13">0F 80 ~ 0F 8F</strong>，它们的 opcode 结构如下：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre6">
+    <tbody class="calibre7"><tr class="calibre8">
+      <td class="calibre16"><p class="calibre4">Jcc 指令族：</p>
+          <p class="calibre4"><br class="calibre10"/>
+            0000 1111 : 1000 tttn<br class="calibre10"/>
+            ---------   ---- ----<br class="calibre10"/>
+               0F             |<br class="calibre10"/>
+                              |<br class="calibre10"/>
+                              |<br class="calibre10"/>
+                              |<br class="calibre10"/>
+                              +----------&gt; tttn: 0000 ~ 1111</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4"> </p>
+  <hr class="calibre3"/>
+<h3 class="calibre23">版权 mik 所有，转载请注明出处</h3>
+
+
+
+</body></html>
