@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>令人迷惑的 Current Operand-size attribute（当前operand-size属性）</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h3 class="calibre1">4.令人迷惑的 Current Operand-size attribute（当前operand-size属性）</h3>
+<hr class="calibre2"/>
+<p class="calibre3">某日，我写下一条指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre4">
+    <tbody class="calibre5"><tr class="calibre6">
+      <td class="calibre7">
+<p class="Code"><span lang="X-NONE"><span class="calibre8"><span class="calibre9">
+
+fnstenv <strong class="calibre10">dword</strong> [cs: (state - 0x1000)]                 ; CS:stat = 0x0100:XXXX
+
+
+<oU0003Ap/></span></span></span></p>
+
+     </td>
+    </tr>
+  </tbody></table>
+<p class="calibre3"><strong class="calibre10">fnsetenv</strong> 指令保存 x87 environment 在一个 <strong class="calibre10">14 bytes</strong> 或 <strong class="calibre10">28 bytes</strong> 的内存区域（buffer），这个 buffer 的大小由 current operand-size attribute 来决定，当 operand-size 为 word 时 buffer 是 14 bytes，当 operand-size 为 dword 时 buffer 是 28 bytes。
+</p><p class="calibre3">在 16 位模式下，我想保存在 28 bytes 的 buffer 上（注意：指令中加了 <em class="calibre11">dword</em>），于是我使用 dword 想将 default operand size（16 位) override 为 32 位，蛮以为会正确，可是 nasm 编译出错了：<strong class="calibre10">mismatch in operand sizes</strong>
+</p><p class="calibre3">我一下给迷惑了：这条指令的 default operand size 不能被 override ? 
+</p><p class="calibre3">反复看着 Intel manual 这段话：
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre4">
+    <tbody class="calibre5"><tr class="calibre6">
+      <td class="calibre7">
+<p class="Code"><span lang="X-NONE"><span class="calibre8"><span class="calibre9">
+
+show the layout in
+memory of the stored environment, depending on the operating mode of the
+processor (protected or real) and the current operand-size attribute (16-bit or
+32-bit).
+
+
+<oU0003Ap/></span></span></span></p>
+
+     </td>
+    </tr>
+</tbody></table>
+  </p><p class="calibre3">被保存的 x87 envionment 大小依赖于 processor 当前模式和 operand-size 当前属性，思考了许久，终于恍然大悟，关键在于这个<strong class="calibre10"> current operand-size attribute</strong> 上：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre4">
+  <tbody class="calibre5"><tr class="calibre6">
+    <td class="calibre12">
+什么是 current operand-size attribute?<br class="calibre13"/>    是<strong class="calibre10">整条指令当前的 operand-size 属性</strong>，并不是指令中 operand 的 operand-size attribute    </td>
+  </tr>
+</tbody></table>
+  <p class="calibre3">对于这些不规则的指令 operand size，我们并不能对 <strong class="calibre10">operand 的 operand-size</strong> 进行 override，但可以对<strong class="calibre10">指令的 operand-size</strong> 进行 override  </p>
+  <p class="calibre3">为了达到这个目的，于是我可以这样做：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre4">
+    <tbody class="calibre5"><tr class="calibre6">
+      <td class="calibre7">
+<p class="Code"><span lang="X-NONE"><span class="calibre8"><span class="calibre9">
+
+
+<strong class="calibre10">db 0x66</strong>                                  ; current operand-size override to 32-bit<br class="calibre13"/>
+fnstenv [cs: (state - 0x1000)]           ; the current default operand-size is 16-bit
+
+<oU0003Ap/></span></span></span></p>
+
+     </td>
+    </tr>
+  </tbody></table>
+    <p class="calibre3">使用 66H prefix 来进行 override current operand-size attribute，那么这个结果就是我想要的结果了。</p>
+  <p class="calibre3">同理，现在我们来看一看另一些典型的不规则的 operand-size 指令：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre4">
+    <tbody class="calibre5"><tr class="calibre6">
+      <td class="calibre7">
+<p class="Code"><span lang="X-NONE"><span class="calibre8"><span class="calibre9">
+
+
+lgdt <strong class="calibre10">dword</strong> [GDT_BASE]                       ; error
+
+<oU0003Ap/></span></span></span></p>
+
+     </td>
+    </tr>
+  </tbody></table>
+    <p class="calibre3">上面的出错结果和原因是一样的。不能对 operand 的 operand-size 进行 override，同样下面是正确的：</p>
+	
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre4">
+      <tbody class="calibre5"><tr class="calibre6">
+        <td class="calibre7"><p class="Code"><span lang="X-NONE"><span class="calibre8"><span class="calibre9"> <strong class="calibre10">db 0x66</strong>                               ; OK!<br class="calibre13"/>
+          lgdt [GDT_BASE]                       ; OK!
+          <oU0003Ap/>
+        </span></span></span></p></td>
+      </tr>
+    </tbody></table>
+    <p class="calibre3">关于 x87 envionment 的例子，可以参考这里：<a href="http://www.mouseos.com/arch/x87Environment.html" target="_blank">http://www.mouseos.com/arch/x87Environment.html</a> </p>
+    <p class="calibre3"> </p>
+    <hr class="calibre2"/>
+<div class="calibre14"><strong class="calibre10">版权所有 mik</strong>  <em class="calibre11">2008 - 2011</em> </div>
+<p class="calibre3"> </p>
+
+
+</body></html>

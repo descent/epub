@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="Unknown" opf:role="aut">邓志</dc:creator>
+    <meta name="calibre:timestamp" content="2013-04-08T05:21:31.766623+00:00"/>
+    <dc:title>令人迷惑的 Current Operand-size attribute (当前 operand-size 属性)</dc:title>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">11edb48f-3017-4bdc-96e8-089325d24047</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="i_ccf8d4e239cef8b6.html" id="html" media-type="application/xhtml+xml"/>
+    <item href="page_styles.css" id="page_css" media-type="text/css"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="html"/>
+  </spine>
+  <guide/>
+</package>
