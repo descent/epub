@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 64 位模式下 operand size 的迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre7" id="calibre_pb_2">1. 什么类型指令的 default operand size 是 64 位 </h2>
+<p class="calibre4">有两类指令的 default operand size 是 64 位的，它们是基于：</p>
+<ul class="calibre8">
+  <li class="calibre9"><strong class="calibre5">rip</strong>（<strong class="calibre5">ip/eip</strong>）或者说：指令指针（<strong class="calibre5">I</strong>nstruction <strong class="calibre5">P</strong>ointer）</li>
+  <li class="calibre9"><strong class="calibre5">rsp</strong>（<strong class="calibre5">sp/esp</strong>）或者说：栈指针（<strong class="calibre5">S</strong>tack <strong class="calibre5">P</strong>ointer） </li>
+</ul>
+<p class="calibre4">第 1 类是基于 <strong class="calibre5">rip</strong>（instruction pointer）的分支转移指令（<strong class="calibre5">near branches</strong> 类指令），这类指令的 <strong class="calibre5">immediate 操作数</strong>是基于 <strong class="calibre5">rip</strong> 的偏移量。第 2 类是基于 <strong class="calibre5">rsp</strong>（stack pointer）的栈操作指令，它们是 <strong class="calibre5">push/pop</strong> 类指令。</p>
+<p class="calibre4">对于 <strong class="calibre5">defalut operand size</strong> 为 <strong class="calibre5">64 </strong>位的指令，它的指令编码中并不需要 <strong class="calibre5">REX.W = 1  </strong></p>
+<p class="calibre6" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre10">1.1 Near branches 类指令 </h3>
+<p class="calibre4">这类指令的操作数是 <strong class="calibre5">immediate，</strong>这个 <strong class="calibre5">immediate </strong>是基于 <strong class="calibre5">rip </strong>的偏移量，分支指令中的 <strong class="calibre5">immediate 操作数</strong>包含 <strong class="calibre5">Ib </strong>与<strong class="calibre5"> Iz</strong></p>
+<p class="calibre4">关于 immediate 有关的描述，请参见：<a href="http://www.mouseos.com/x64/doc9.html" target="_blank">http://www.mouseos.com/x64/doc9.html</a> 以及: <a href="http://www.mouseos.com/x64/puzzle02.html" target="_blank">http://www.mouseos.com/x64/puzzle02.html</a></p>
+<table border="1" class="calibre11">
+  <tbody class="calibre12"><tr class="calibre13">
+    <td width="99" height="55" class="calibre14"><div class="calibre15"><strong class="calibre5">指令名</strong></div></td>
+    <td width="152" class="calibre14"><div class="calibre15"><strong class="calibre5">Opcode 码 </strong></div></td>
+    <td width="147" class="calibre14"><div class="calibre15"><strong class="calibre5">immediate 属性 </strong></div></td>
+    <td width="179" class="calibre14"><div class="calibre15"><strong class="calibre5">immediate size </strong></div></td>
+    <td width="281" class="calibre14"><div class="calibre15"><strong class="calibre5">描述</strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="36" class="calibre14"><div class="calibre15"><strong class="calibre5">call</strong></div></td>
+    <td class="calibre14"><div class="STYLE">E8</div>      <div class="calibre15"></div></td>
+    <td class="calibre14"><div class="STYLE1">Jz</div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+    <td class="calibre14"><div class="calibre15">基于 rip 偏移量的 call 指令 </div></td>
+  </tr>
+  
+  <tr class="calibre13">
+    <td rowspan="3" class="calibre14"><div class="calibre15"><strong class="calibre5">jmp</strong></div></td>
+    <td class="calibre14"><div class="STYLE">EB</div></td>
+    <td class="calibre14"><div class="STYLE1">Jb</div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">8</strong></div></td>
+    <td rowspan="3" class="calibre14"><div class="calibre15">基于 rip 偏移量的 jmp 指令</div></td>
+  </tr>
+  <tr class="calibre13">
+    <td class="calibre14"><div class="STYLE">E9</div></td>
+    <td class="calibre14"><div class="STYLE1">Jz</div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td class="calibre14"><div class="STYLE2"><strong class="calibre5">FF /4 </strong></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Ev</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 64 </strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td rowspan="2" class="calibre14"><div class="calibre15"><strong class="calibre5">jcc</strong></div></td>
+    <td height="36" class="calibre14"><div class="STYLE">70 <span class="STYLE4">~ </span>7F</div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Jb</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">8</strong></div></td>
+    <td rowspan="2" class="calibre14"><div class="calibre15">条件 jmp 指令</div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="40" class="calibre14"><div class="STYLE">0F 80 <span class="STYLE4">~ </span>0F 8F </div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Jz</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="34" class="calibre14"><div class="calibre15"><strong class="calibre5">jrcx</strong></div></td>
+    <td class="calibre14"><div class="STYLE2"><strong class="calibre5">E3</strong></div>      <div class="STYLE2"></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Jb</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">8</strong></div></td>
+    <td class="calibre14"><div class="calibre15">jmp 指令使用 cx/ecx/rcx 为条件</div></td>
+  </tr>
+  
+  <tr class="calibre13">
+    <td height="37" class="calibre14"><div class="calibre15"><strong class="calibre5">loop</strong></div></td>
+    <td class="calibre14"><div class="STYLE2"><strong class="calibre5">E0, E1, E2 </strong></div>      <div class="STYLE2"></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Jb</strong></div>      </td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">8</strong></div></td>
+    <td class="calibre14"><div class="calibre15">条件循环指令</div></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">上面这类基于 rip 的 <strong class="calibre5">near branches</strong> 指令的 default operand size 是 64 位的。，一部分有 <strong class="calibre5">Ib</strong> 和 <strong class="calibre5">Iz</strong> 两个版本，一部分只有其中一个属性。</p>
+<p class="calibre4">这为指令的进行的操作是：</p>
+  <table>
+    <tbody class="calibre12"><tr class="calibre13">
+      <td class="calibre17">
+      <p class="calibre4">rip = rip + <strong class="calibre5">offset（<span class="STYLE5">immediate</span>）</strong></p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">这个 <strong class="calibre5">offset</strong> 就是指令中的 <strong class="calibre5">immediate</strong> 操作数，它是个 <strong class="calibre5">signed</strong> 值，这个 offset 无论是 <strong class="calibre5">Ib</strong> 属性还是<strong class="calibre5"> Iz</strong> 属性，它们都会<strong class="calibre5">符号扩展到 64 位</strong>，然后加上当前的 <strong class="calibre5">rip</strong>（指令指针），这类指令的 operand size 是 <strong class="calibre5">rip</strong> 宽度（64 位） 
+</p><p class="calibre4">但是：对于<strong class="calibre5"> JMP</strong> 指令中 <strong class="calibre5">Opcode</strong> 为 <span class="STYLE5"><strong class="calibre5">FF /4 </strong></span>的情况有些例外，这个 Opcode 的操作数并不是基于 <strong class="calibre5">rip </strong>的 <strong class="calibre5">offset</strong>（immediate），<span class="STYLE6"><strong class="calibre5">rip = reg64</strong></span> 或 <span class="STYLE6"><strong class="calibre5">rip = [mem64]</strong></span>，它的 deafult operand size 同样是 64 位的。它的 operand size 只有 <strong class="calibre5">16 </strong>和 <strong class="calibre5">64</strong> 位</p>
+<p class="calibre4"> </p>
+<h3 class="calibre10">1.2 基于 rsp 的栈操作指令 </h3>
+<p class="calibre4">这类指令将<strong class="calibre5">显式</strong>或<strong class="calibre5">隐式</strong>地对 <strong class="calibre5">stack</strong> 进行相关的操作，它们包括：</p>
+<table border="1" class="calibre11">
+  <tbody class="calibre12"><tr class="calibre13">
+    <td width="99" height="55" class="calibre14"><div class="calibre15"><strong class="calibre5">指令名</strong></div></td>
+    <td width="152" class="calibre14"><div class="calibre15"><strong class="calibre5">Opcode 码 </strong></div></td>
+    <td width="147" class="calibre14"><div class="calibre15"><strong class="calibre5">Operand 属性 </strong></div></td>
+    <td width="179" class="calibre14"><div class="calibre15"><strong class="calibre5">operand size </strong></div></td>
+    <td width="281" class="calibre14"><div class="calibre15"><strong class="calibre5">描述</strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td rowspan="2" height="36" class="calibre14"><div class="calibre15"><strong class="calibre5">call</strong></div></td>
+    <td height="36" class="calibre14"><div class="STYLE">FF /2 </div>
+        <div class="calibre15"></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Ev</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 64</strong></div></td>
+    <td class="calibre14"><div class="calibre15">rip = reg64 或 rip = [memory] </div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="29" class="calibre14"><div class="STYLE2"><strong class="calibre5">E8</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><span class="STYLE6"><strong class="calibre5">Jz</strong></span></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+    <td class="calibre14"><div class="calibre15">rip = rip + offset </div></td>
+  </tr>
+  
+  <tr class="calibre13">
+    <td rowspan="4" class="calibre14"><div class="calibre15"><strong class="calibre5">push</strong></div></td>
+    <td height="32" class="calibre14"><div class="STYLE">FF /6 </div></td>
+    <td class="calibre14"><div class="STYLE1">Ev</div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16，64</strong></div></td>
+    <td class="calibre14"><div class="calibre15">  </div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="28" class="calibre14"><div class="calibre15"><span class="STYLE5"><strong class="calibre5">50</strong></span> <strong class="calibre5">~</strong> <span class="STYLE5"><strong class="calibre5">57</strong> </span></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">reg16/reg64 </strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 64 </strong></div></td>
+    <td class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td height="32" class="calibre14"><div class="STYLE2"><strong class="calibre5">68</strong></div></td>
+    <td class="calibre14"><div class="STYLE1">Iz</div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+    <td class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td height="35" class="calibre14"><div class="STYLE">6A</div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Ib</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">8</strong></div></td>
+    <td class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td rowspan="2" height="45" class="calibre14"><div class="calibre15"><strong class="calibre5">pop</strong></div></td>
+    <td height="45" class="calibre14"><div class="STYLE2"><strong class="calibre5">8F /0 </strong></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Ev</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 64 </strong></div></td>
+    <td rowspan="2" class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td height="31" class="calibre14"><div class="STYLE2"><strong class="calibre5">58 ~ 5F </strong></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">reg16/reg64</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 64</strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="34" class="calibre14"><div class="calibre15"><strong class="calibre5">enter</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><span class="STYLE5"><strong class="calibre5">c8</strong></span></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Iw, Ib </strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 8 </strong></div></td>
+    <td class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td height="36" class="calibre14"><div class="calibre15"><strong class="calibre5">leave</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><span class="STYLE5"><strong class="calibre5">c9</strong></span></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">---</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">---</strong></div></td>
+    <td class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td rowspan="2" class="calibre14"><div class="calibre15"><strong class="calibre5">ret</strong></div></td>
+    <td height="29" class="calibre14"><div class="STYLE2"><strong class="calibre5">c2</strong></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Iw</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16</strong></div></td>
+    <td rowspan="2" class="calibre14"> </td>
+  </tr>
+  <tr class="calibre13">
+    <td height="30" class="calibre14"><div class="STYLE2"><strong class="calibre5">c3</strong></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">---</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">---</strong></div></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">这类指令的 <strong class="calibre5">default operand size</strong> 也是 <strong class="calibre5">64</strong> 位，可以被 <strong class="calibre5">override </strong>为 <strong class="calibre5">16</strong> 位。</p>
+<p class="calibre6" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre10">1.3 far branches 指令</h3>
+<p class="calibre4">然而对于远跳转指令来说，它的 default operand size 依然是<strong class="calibre5"> 32</strong> 或 <strong class="calibre5">48</strong> 位 <strong class="calibre5">far pointer</strong>（16:16 或 16:32）</p>
+<p class="calibre4">在 64 位模式下有效的 <strong class="calibre5">far branches</strong> 指令有： </p>
+<table border="1" class="calibre11">
+  <tbody class="calibre12"><tr class="calibre13">
+    <td width="99" height="55" class="calibre14"><div class="calibre15"><strong class="calibre5">指令名</strong></div></td>
+    <td width="152" class="calibre14"><div class="calibre15"><strong class="calibre5">Opcode 码 </strong></div></td>
+    <td width="147" class="calibre14"><div class="calibre15"><strong class="calibre5">Operand 属性 </strong></div></td>
+    <td width="179" class="calibre14"><div class="calibre15"><strong class="calibre5">operand size </strong></div></td>
+    <td width="281" class="calibre14"><div class="calibre15"><strong class="calibre5">描述</strong></div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="5" class="calibre14"><div class="calibre15"><strong class="calibre5">jmp</strong></div></td>
+    <td height="36" class="calibre14"><div class="STYLE">FF /5 </div>
+        <div class="calibre15"></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Mp</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+    <td class="calibre14"><div class="calibre15">far pointer 从 [mem] 获得 </div></td>
+  </tr>
+  <tr class="calibre13">
+    <td height="29" class="calibre14"><div class="calibre15"><strong class="calibre5">call</strong></div></td>
+    <td height="29" class="calibre14"><div class="STYLE2"><strong class="calibre5">FF /3 </strong></div></td>
+    <td class="calibre14"><div class="STYLE3"><strong class="calibre5">Mp</strong></div></td>
+    <td class="calibre14"><div class="calibre15"><strong class="calibre5">16, 32 </strong></div></td>
+    <td class="calibre14"><div class="calibre15">far pointer 从 [mem] 获得 </div></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">这类指令的 <strong class="calibre5">operand size</strong> 是 32 位（16:16）或者 48 位（16:32） </p>
+<p class="calibre4"> </p>
+</body></html>

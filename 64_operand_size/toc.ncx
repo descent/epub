@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en-US">
+  <head>
+    <meta content="2f01744f-097f-4743-8a0c-6c815991d479" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.24)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>解开 64 位模式下 operand size 的迷惑</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="u64e743a8-79ea-452c-ad95-38505e3a0c33" playOrder="1">
+      <navLabel>
+        <text>Start</text>
+      </navLabel>
+      <content src="i_da7e1683686a17c9_split_000.html"/>
+    </navPoint>
+  </navMap>
+</ncx>

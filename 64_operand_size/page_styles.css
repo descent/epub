@@ -1,0 +1,9 @@
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+
+@font-face {
+  font-family: "DroidSans", serif, sans-serif;
+  src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+}   
