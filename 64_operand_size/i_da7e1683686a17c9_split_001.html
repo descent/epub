@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 64 位模式下 operand size 的迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h1 class="calibre3" id="calibre_pb_1">mik</h1>
+<p class="calibre4">在 64 位模式下（<strong class="calibre5">CS.L = 1 &amp; CS.D = 0</strong>）情况稍有些特殊，大部分指令的 <strong class="calibre5">default operand size</strong> 都是 <strong class="calibre5">32</strong> 位的，但是有一部分指令的 <strong class="calibre5">default operand size</strong> 是<strong class="calibre5"> 64</strong> 位的。可是 <strong class="calibre5">default address size </strong>是 <strong class="calibre5">64</strong> 位的。</p>
+<p class="calibre4">这里主要探讨什么类型的指令是 64 位的？为什么在 64 位下，default operand size 却是 32 位？为什么需要这样设计？</p>
+<p class="calibre6" style="margin:0pt; border:0pt; height:1em"> </p>
+</body></html>

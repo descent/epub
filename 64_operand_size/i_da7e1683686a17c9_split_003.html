@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>解开 64 位模式下 operand size 的迷惑</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre7" id="calibre_pb_3">2. operand size override 情况</h2>
+<p class="calibre4">上面 2 类指令的 default operand size 是 64 位，但是最终的 operand size 还是需要取决是否 <strong class="calibre5">operand size override </strong></p>
+<p class="calibre4">当对上述的指令进行 operand size override 时，情况会是怎样呢？下面看看几个例子</p>
+<p class="calibre6" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre10">2.1 对 near branches 指令进行 operand size override </h3>
+<pre>
+bits 64
+  call next
+  call word next
+next:  
+</pre>
+
+<p class="calibre4">在上面的代码中，其中有一条指令将 operand size 设为<strong class="calibre5"> word</strong>，从而进行了 <strong class="calibre5">operand size override</strong> 操作，下面是 nasm 编译器的结果： </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre12"><tr class="calibre13">
+      <td class="calibre18">
+      <p class="calibre4">00000000  E8<span class="STYLE7">04000000</span>        call dword 0x9<br class="calibre6"/>00000005  <span class="STYLE5"><strong class="calibre5">66</strong></span>E8<span class="STYLE5"><strong class="calibre5">0000</strong></span>          call word 0x9</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">可以看出，在未 override 情况下，指令的 immediate 是 dword（32 位），而使用了 <strong class="calibre5">66H prefix</strong> 进行 override 后，指令的 immediate 变成了 word（16 位） </p>
+<p class="calibre4">经过 <strong class="calibre5">operand size override</strong> 后指令的 <strong class="calibre5">immediate</strong> 变成了 <strong class="calibre5">16</strong> 位。</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre12"><tr class="calibre13">
+      <td class="calibre17">
+<p class="calibre4">指令的 immediae 被调整为 16 位，指令的最终 operand size 根据 override 而也变成了 16 位 </p>
+      </td>
+    </tr>
+  </tbody></table>
+  <p class="STYLE8"><strong class="calibre5">rip 将被截断为 16 位，致使指令最终的 operand size 是 16 位的。 </strong></p>
+  <p class="calibre4"> </p>
+  <h3 class="calibre10">2.2 对 rsp 相关类指令进行 operand size override </h3>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre12"><tr class="calibre13">
+      <td class="calibre18">
+      <p class="calibre4">bits 64<br class="calibre6"/>    push 0x11223344<br class="calibre6"/>    push word 0x11223344</p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">上面代码中同样将 32 位的 immediate 调整为 16 位，nasm 编译结果为：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre16">
+    <tbody class="calibre12"><tr class="calibre13">
+      <td class="calibre18">
+      <p class="calibre4">00000000  68<span class="STYLE5"><strong class="calibre5">44332211 </strong></span>     push 0x11223344<br class="calibre6"/>
+        00000005  <span class="STYLE5"><strong class="calibre5">66</strong></span>68<span class="STYLE5"><strong class="calibre5">4433</strong></span>        push 0x3344</p></td>
+    </tr>
+</tbody></table>
+  <p class="calibre4">和 2.1 中同样的结果，使用了 <strong class="calibre5">66H prefix</strong> 将 32 位的 immediate 调整为 16 位。 指令的 operand size 也变为 16 位。 </p>
+  <p class="calibre4">实际上这里修改了 <strong class="calibre5">stack pointer </strong>的宽度，由<span class="STYLE5"><strong class="calibre5">原来 64 位的 rsp 变成了 16 位的 sp</strong></span>，因此经过 operand size override，指令执行后将向栈压入 16 位的值，并且 rsp 加上 2</p>
+  <ul class="calibre8">
+    <li class="calibre9"><strong class="calibre5">rsp = rsp - 2</strong></li>
+    <li class="calibre9">[rsp] = <span class="STYLE9">0x3344</span>  </li>
+  </ul>
+<p class="calibre4"> </p>
+    <hr class="calibre2"/>
+  <div class="calibre15">所有权限 mik 所有，转载请注明出处
+</div>
+	  <p class="calibre4"> </p>
+
+
+</body></html>

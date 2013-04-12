@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en-US">
+  <head>
+    <meta content="5d1a6950-0407-4580-9d8e-e1eb369ae86e" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.24)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>理解 current operand-size attribute</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="ud7f59072-09a4-46fe-abfb-710ec3b0a5f4" playOrder="1">
+      <navLabel>
+        <text>Start</text>
+      </navLabel>
+      <content src="i_ec6163b44077682b.html"/>
+    </navPoint>
+  </navMap>
+</ncx>

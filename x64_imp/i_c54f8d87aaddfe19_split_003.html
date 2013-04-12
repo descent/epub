@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>x64 体系 64 位扩展技术的实现</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre6" id="calibre_pb_3">3. 访问 64 位地址 </h2>
+  <p class="calibre4">在 64 位模式下，<strong class="calibre9">default address size</strong> 是 64 位的，如果有以下指令：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4">bits 64<br class="calibre5"/>    mov rax, <span class="STYLE5"><strong class="calibre9">[eax]</strong></span></p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">那么它将产生 <strong class="calibre9">address size override</strong> 操作编码。生成的指令编码是：</p>
+    <ul class="calibre7">
+      <li class="calibre8"><span class="STYLE4">67 48 8b 00</span> </li>
+    </ul>
+    <p class="calibre4">使用了 <strong class="calibre9">67H prefix</strong> 进行 address size override</p>
+    <p class="calibre4">与 <strong class="calibre9">operand size</strong> 情形不同，在 64 位模式下 <strong class="calibre9">不应该使用 32 位地址</strong>，没有理由去使用 32 位地址。而应该使用 64 位的地址，上面指令应该改为：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+      <tbody class="calibre11"><tr class="calibre12">
+        <td class="calibre20"><p class="calibre4">bits 64<br class="calibre5"/>
+              mov rax, <span class="STYLE5"><strong class="calibre9">[rax]</strong></span></p></td>
+      </tr>
+    </tbody></table>
+	<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+    <h3 class="calibre16">3.1 在地址中使用新增的寄存器 </h3>
+    <p class="calibre4">在基于寄存器间接寻址模式中使用了新增的寄存器，那么 <strong class="calibre9">REX prefix</strong> 中相应的扩展位为<strong class="calibre9"> 1</strong>，<strong class="calibre9">REX.B</strong> 和 <strong class="calibre9">REX.X</strong> 用来扩展地址寻址模式中的寄存器 </p>
+    <ul class="calibre7">
+      <li class="calibre8"><strong class="calibre9">REX.X</strong> --- 扩展 <strong class="calibre9">index</strong> 寄存器</li>
+      <li class="calibre8"><strong class="calibre9">REX.B</strong> --- 扩展 <strong class="calibre9">base</strong> 寄存器 </li>
+    </ul>
+<p class="calibre4">看一看下面的指令：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4"><strong class="calibre9">mov eax, [<span class="STYLE5">r10</span> + <span class="STYLE5">r12</span> * 8]</strong></p></td>
+    </tr>
+  </tbody></table>
+<p class="calibre4">它的编码是：</p>
+<ul class="calibre7">
+  <li class="calibre8"><span class="STYLE3"><strong class="calibre9">43 8b 04 e2</strong></span></li>
+</ul>
+<p class="calibre4">看一看 REX prefix 与 SIB 字节结构： </p>
+<p class="calibre4">
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4">REX = 43                           SIB = e2</p>
+<p class="calibre4">0100 0 0 1 1                    11   100  010<br class="calibre5"/>---- - - - -                    --   ---  ---<br class="calibre5"/>  4  W R X B                  scale index base </p>
+      <p class="calibre4">         | |                         |     |  <br class="calibre5"/>         | |     1 + 010 = 1010      |     |<br class="calibre5"/>         | +-------------------------|-----+<br class="calibre5"/>         |                           |<br class="calibre5"/>         +---------------------------+<br class="calibre5"/>                 1 + 100 = 1100</p></td>
+    </tr>
+</tbody></table>
+</p>
+<ul class="calibre7">
+  <li class="calibre8"><strong class="calibre9">index </strong>寄存器是：<strong class="calibre9">REX.X + SIB.index</strong> = 1 + 100 = 1100（r12 寄存器编码）</li>
+  <li class="calibre8"><strong class="calibre9">base </strong>寄存器是：<strong class="calibre9">REX.B + SIB.base</strong> = 1 + 010 = 1010（r10 寄存器编码） </li>
+</ul>
+<p class="calibre4">这条指令的寻址模式是 <strong class="calibre9">基址＋变址</strong>，基址使用了新增的 r10 寄存器，变址使用了 r12 寄存器。因此 REX prefix 需要使用 REX.X 与 REX.B 进行扩展 index 和 base 寄存器。</p>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre16">3.2 使用直接地址值的情况 </h3>
+<p class="calibre4">在使用直接地址值的情况下是不需要进行扩展的。如下</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+  <tbody class="calibre11"><tr class="calibre12">
+    <td class="calibre20"><p class="calibre4"><strong class="calibre9">mov rax, <span class="STYLE5">[0x000000138fc2c000]</span></strong></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre4">它的编码是：</p>
+<ul class="calibre7">
+  <li class="calibre8"><span class="STYLE3"><strong class="calibre9">48 a1 00 c0 c2 8f 13 00 00 00 </strong></span></li>
+</ul>
+<p class="calibre4">这里的 REX.RXB 将会被忽略</p>
+<p class="calibre5" style="margin:0pt; border:0pt; height:1em"> </p>
+<h3 class="calibre16">3.3 使用新的地址寻址模式 </h3>
+<p class="calibre4">在 64 位模式下新增了 <span class="STYLE5"><strong class="calibre9">[rip + disp32]</strong></span> 这种寻址模式：基于 rip 的偏移模式，但是对于一些编译器来说，在语法层面上来说，并不直接支持这样写法，比如：<strong class="calibre9">nasm</strong>，另一个例子是 <strong class="calibre9">yasm</strong> 它对 <strong class="calibre9">rip-relative</strong> 就很好地直接支持。</p>
+<p class="calibre4">在 <strong class="calibre9">yasm</strong> 下，有下面的代码： </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+<p class="calibre4">bits 64<br class="calibre5"/>    mov rax, [rip + 0x08]</p>
+      <p class="calibre4">offset_table:    <br class="calibre5"/>    dq 0x0<br class="calibre5"/>    dq 0x8<br class="calibre5"/>    dq 0x10</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">它们的编码组织起来象下面这样：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20">
+      <p class="calibre4">00000000  488B<span class="STYLE3"><strong class="calibre9">05</strong></span>08000000        mov rax,[rip + 0x08]<br class="calibre5"/>
+        00000007  0000000000000000      <br class="calibre5"/>0000000F  0800000000000000<br class="calibre5"/>00000017  1000000000000000</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">关键在于 <strong class="calibre9">ModRM</strong> 字节：</p>
+    <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre18">
+<p class="calibre4">ModRM = <span class="STYLE3"><strong class="calibre9">05</strong></span></p>
+      <p class="calibre4">  00  000  101<br class="calibre5"/>  --  ---  --- <br class="calibre5"/> mod  reg  r/m<br class="calibre5"/>      <br class="calibre5"/>            |<br class="calibre5"/>            |<br class="calibre5"/>            +---------------&gt; r/m = 101 提供 [rip + disp32] 寻址模式</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4">ModRM.r/m = 101 时，<strong class="calibre9">在 64 位模式下</strong>，它的寻址模式是：<strong class="calibre9">[rip + disp32]</strong>，在 ModRM 字节后面跟着 <strong class="calibre9">displacement</strong> 部分。</p>
+  <p class="calibre4">在 nasm 下，语法形式有很大差别： </p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre17">
+    <tbody class="calibre11"><tr class="calibre12">
+      <td class="calibre20"><p class="calibre4">bits 64<br class="calibre5"/>
+            mov rax, <span class="STYLE5"><strong class="calibre9">[rel 0xf]</strong></span></p>
+          <p class="calibre4">offset_table:    <br class="calibre5"/>
+                dq 0x0<br class="calibre5"/>
+                dq 0x8<br class="calibre5"/>
+                dq 0x10</p></td>
+    </tr>
+  </tbody></table>
+  <p class="calibre4"><strong class="calibre9">rel </strong>关键字告诉 nasm 将使用 <strong class="calibre9">relative</strong> 的地址模式，与之相对应的是 <strong class="calibre9">abs</strong> 关键字，使用 <strong class="calibre9">absolute </strong>地址模式</p>
+  <p class="calibre4"><strong class="calibre9">[rel 0xf]  </strong>表明要取得 <strong class="calibre9">[0xf]</strong> 地址，它是由 <strong class="calibre9">rip + 0x08 </strong>而得来的。因此 nasm 会生成 <strong class="calibre9">rip-relative</strong> 的编码，最终的指令编码和 yasm 是一样的。 </p>
+<p class="calibre4"> </p>
+<hr class="calibre3"/>
+<h3 class="calibre21">版权 mik 所有，转载请注明出处</h3>
+<p class="calibre4"> </p>
+
+
+</body></html>

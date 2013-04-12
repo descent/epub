@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>理解 current operand-size attribute</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
+<link href="page_styles.css" type="text/css" rel="stylesheet"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre1" id="calibre_pb_0">理解 current operand-size attribute</h2>
+<hr class="calibre2"/>
+<p class="calibre3"><strong class="calibre4">current operand-size attribute</strong>（当前操作数大小属性）在整个 x86/x64 指令编码体系中相当重要，特别是对一些<strong class="calibre4">不规则</strong>的 operand-size 来说尤为重要。</p>
+<p class="calibre3">某日，我写下一条指令：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+  <tbody class="calibre6"><tr class="calibre7">
+    <td class="calibre8"><p class="Code"><span lang="X-NONE" xmlU0003Alang="X-NONE"><span class="calibre9"><span class="calibre10"> fnstenv <strong class="calibre4">dword</strong> [cs: (state - 0x1000)]                 ; CS:stat = 0x0100:XXXX
+      <oU0003Ap/>
+    </span></span></span></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre3">很遗憾，这样写法是<strong class="calibre4">错误</strong>的，fnstenv 指令的是 operand 是一个 <strong class="calibre4">14 bytes </strong>或 <strong class="calibre4">28 bytes</strong> 内存区域 buffer，用来保存 x87 environment，这是典型的不规则 operand-size（所谓不规则 operand-size 是指：非正常的 byte/word/doubleword/quadword 类 operand-size）。</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+  <tbody class="calibre6"><tr class="calibre7">
+    <td class="calibre8"><p class="Code"><span lang="X-NONE" xmlU0003Alang="X-NONE"><span class="calibre9"><span class="calibre10"> show the layout in
+      memory of the stored environment, depending on the operating mode of the
+      processor (protected or real) and the current operand-size attribute (16-bit or
+      32-bit).
+      <oU0003Ap/>
+    </span></span></span></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre3">这条指令的 operand-size 最终由 <strong class="calibre4">current operand-size attribute</strong> 来决定，在一般的规则 operand-size 情况下我们可以对 operand 进行 operand-size override 操作，可以在这里我们不能对这个不规则的 operand size 进行 override 操作。</p>
+<h3 class="calibre11">1. 更改 current operand-size attribute</h3>
+<h3 class="calibre11">1.1 default operand-size attribute</h3>
+<p class="calibre3">每条指令都有 default operand-size attribute，某些指令或者某些指令的部分 operand default operand-size 是不可改变的。指令的 default operand-size attribute 是由 processor mode 决定，可是更深一层实际上真正决定 default operand-size 是由 <strong class="calibre4">CS.D</strong> 标志位，在 long mode 下还将由 <strong class="calibre4">CS.L</strong> 标志位决定。</p>
+<p class="calibre3">关于 default operand-size attribute 更详细的描述，请参见这里：<a href="http://www.mouseos.com/x64/operand_size.html" target="_blank">http://www.mouseos.com/x64/operand_size.html</a></p>
+<h3 class="calibre11">1.2 operand-size override</h3>
+<p class="calibre3">正如，前面所说的，对于一般的<strong class="calibre4">规则 operand-size</strong> 我们可以直接对 operand 进行 operand-size override 操作，如下：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+    <tbody class="calibre6"><tr class="calibre7">
+      <td class="calibre8">
+<p class="Code"><span lang="X-NONE"><span class="calibre9"><span class="calibre10">
+
+
+</span></span></span></p><p class="calibre3"><span class="calibre9"><span class="calibre10">         bits 16</span></span></p>
+<p class="calibre3"><span class="calibre9"><span class="calibre10">... ...</span></span></p>
+<p class="calibre3"><span class="calibre9"><span class="calibre10">mov <strong class="calibre4">dword</strong> [bx], 1                     ; operand size override to 32-bit</span></span></p>
+
+<span class="calibre9"><span class="calibre10"><oU0003Ap/></span></span><p class="calibre3"></p>
+
+     </td>
+    </tr>
+  </tbody></table>
+<p class="calibre3">在 16 位模式下，指令的 default operand-size attribute 是 16 位，我们可以像这样对 operand 进行 override operand-size 操作。在汇编语法（这里使用 nasm 语法）层面上在 operand 前面加了 dword 前缀，在 intel 语法上是这样：mov <strong class="calibre4">dword pt</strong><strong class="calibre4">r</strong> [bx], 1</p>
+<p class="calibre3">然而之所以可以直接使用前缀进行 override 是因为<strong class="calibre4">前缀词</strong>在 operand 的 effective operand size 的合理范围内。但是我们不能对不规则的 operand-size 使用<strong class="calibre4">直接的前缀词</strong>进行 override 操作，像本文开始的那条指令用法，就是错误的：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+  <tbody class="calibre6"><tr class="calibre7">
+    <td class="calibre8"><p class="Code"><span lang="X-NONE" xmlU0003Alang="X-NONE"><span class="calibre9"><span class="calibre10"> fnstenv <strong class="calibre4">dword</strong> [cs: (state - 0x1000)]                 ; <strong class="calibre4">Error</strong>: can't override with dword prefix!
+      <oU0003Ap/>
+    </span></span></span></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre3">fnstenv 指令合理的 operand-size 范围是：<strong class="calibre4">14 bytes</strong> 以及 <strong class="calibre4">28 bytes</strong>，想直接使用前缀词改变 operand-size attribute，将会得到的错误是： <strong class="calibre4">mismatch in operand sizes</strong>（没有匹配的 operand sizes） </p>
+<p class="calibre3">可是我们如果确实想更改指令的 default operand-size attribute，怎么办呢？我们可以这样：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+  <tbody class="calibre6"><tr class="calibre7">
+    <td class="calibre8"><p class="Code"><span lang="X-NONE" xmlU0003Alang="X-NONE"><span class="calibre9"><span class="calibre10"> <strong class="calibre4">db 0x66</strong>                                  ; current operand-size override to 32-bit<br class="calibre12"/>
+      fnstenv [cs: (state - 0x1000)]           ; the current default operand-size is 16-bit
+      <oU0003Ap/>
+    </span></span></span></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre3">使用 66H prefix 进行明码的 override 操作，指令的 <strong class="calibre4">current operand-size attribute</strong> 将会变为 32-bit，那么 fnstenv 指令的执行结果是保存 <strong class="calibre4">28 bytes</strong> 的 x87 environment，而不是缺省的 14 bytes。</p>
+<p class="calibre3">我们依然能找到许多这样的例子，如下面： </p>
+
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+  <tbody class="calibre6"><tr class="calibre7">
+    <td class="calibre8"><p class="Code"><span lang="X-NONE" xmlU0003Alang="X-NONE"><span class="calibre9"><span class="calibre10"> lgdt <strong class="calibre4">dword</strong> [GDT_BASE]                       ; error
+      <oU0003Ap/>
+    </span></span></span></p></td>
+  </tr>
+</tbody></table>
+<p class="calibre3">正确做法：</p>
+<table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+  <tbody class="calibre6"><tr class="calibre7">
+    <td class="calibre8"><p class="Code"><span lang="X-NONE" xmlU0003Alang="X-NONE"><span class="calibre9"><span class="calibre10"> <strong class="calibre4">db 0x66</strong>                               ; OK!<br class="calibre12"/>
+      lgdt [GDT_BASE]                       ; OK!
+      <oU0003Ap/>
+    </span></span></span></p></td>
+  </tr>
+</tbody></table>
+<h3 class="calibre11">1.3 例外的例子</h3>
+<p class="calibre3">正如你会想到的，确实，我们也能找到常用的一些例外的例子：</p>
+  <table width="95%" cellpadding="6" border="0" cellspacing="0" class="calibre5">
+    <tbody class="calibre6"><tr class="calibre7">
+      <td class="calibre8">
+<p class="Code"><span lang="X-NONE"><span class="calibre9"><span class="calibre10">
+
+
+</span></span></span></p><p class="calibre3"><span class="calibre9"><span class="calibre10">         bits 16</span></span></p>
+<p class="calibre3"><span class="calibre9"><span class="calibre10">... ...</span></span></p>
+<p class="calibre3"><span class="calibre9"><span class="calibre10">jmp far <strong class="calibre4">dword</strong> [bx]                 ; OK! 32 bit far pointer(<strong class="calibre4">16:16</strong>) override to 48 bit far pointer(<strong class="calibre4">16:32</strong>)</span></span></p>
+
+<span class="calibre9"><span class="calibre10"><oU0003Ap/></span></span><p class="calibre3"></p>
+
+     </td>
+    </tr>
+  </tbody></table>
+<p class="calibre3">这情形也是常见的，将 32-bit far pointer 改变为 48-bit far pointer，编译器支持这种语法形式，你不必使用明码进行 override（当然，你也可能使用明码方式） </p>
+<p class="calibre3"> </p>
+<hr class="calibre2"/>
+<div class="calibre13"><strong class="calibre4">版权所有 mik</strong>  <em class="calibre14">2008 - 2011</em> </div>
+<p class="calibre3"> </p>
+
+
+</body></html>
