@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="../styles/dotepub.css" type="text/css" />
+  <title>Dotepub.com</title>
+</head>
+
+<body>
+	<p class="">
+<strong>摘要：</strong>Dyad作者、資深C++工程師Shawn McGrathz在空閒時翻看了Doom3的源代碼，發出了這樣的驚嘆：「這是我見過的最整潔、最優美的代碼！」「Doom 3的源代碼讓我對那些優秀的程序員刮目相看。」因此有了本文。</p><div class=""> 
+<h2>最少模板</h2> <hr/>
+<p>id「犯了不少C++的禁忌」，他們重寫了所有需要的STD函數。我個人對STD愛恨交織。在Dyad，我調試構建時常使用它來管理動態資源；在發佈時又會處理所有的資源，避免使用任何STL函數，以求盡快地加載。STL很不錯，因為它提供了快速的通用數據結構；它又很糟糕，因為使用它經常導致代碼醜陋不堪，甚至容易出錯。例如std::vector&lt;T&gt;
+類，如果我想迭代每一個元素：</p>
+<pre>
+std::vector&lt;myType&gt; vector_of_type;
+for (std::vector&lt;myType&gt;::iterator it = vector_of_type.being();
+  it != vector_of_type.end() ; ++it)
+  {
+  }
+</pre>
+
+<p>在C++11中要簡單些：</p>
+
+<pre>
+for (auto it = vector_of_type.being(); it != vector_of_type.end() ; ++it)
+{
+}
+</pre>
+<p>但我個人並不喜歡自動化，雖然它簡化了代碼編寫，卻導致代碼更難閱讀，最起碼我現在是這麼認為的。</p><p>STD有的函數、算法甚至非常荒謬，比如要從std::vector中刪除一個值：</p>
+<pre>
+vec.erase(std::remove(vec.begin(), vec.end(), val), vec.end());
+</pre>
+<p>你必須每次都能拼寫正確！id除去了其中所以含糊不清的部分：他們使用自己的通用容器、字符串類等等。他們編寫的類比起STL要更加專一，易於理解。id還儘可能地避免使用模板，而且使用自己定製的內存分配器。STD代碼裡則充斥著無意義的垃圾模板，而且不易於閱讀。</p><p>C++代碼很難寫好，所以你需要不斷地努力，不相信的話可以去看看Microsoft和GCC的STD代碼，這是我見過的最難看的代碼！</p><p>id通過不濫用泛型就簡單地解決了這個問題。他們編寫了HashTable&lt;V&gt;和HashIndex類，HashTable強制key類型是const char *，而HashIndex是int-&gt;int對。這看起來像是很糟糕的C++實例。他們「本應該」只有一個HashTable類，然後為編寫局部特殊化：KeyType = const char *，然後專門 &lt;int, int&gt;。</p><p>當然，id的做法完全正確，也保證了代碼的優美。</p><p>對比更鮮明的是，Hash生成「C++優秀實踐」和id做法的比較：</p>
+<pre>
+template&lt;typename T&gt;
+class ComputeHashForType
+{
+  int operator()(const T &amp;v) const
+  {
+    return v.computeHash();
+  }
+}
+</pre>
+
+<p>為特定類型專門化：</p>
+
+<pre>
+template&lt;&gt;
+class ComputeHashForType
+{
+  int operator()(const T &amp;v) const
+  {
+    // compute hash for string;
+  }
+}
+</pre>
+
+<p>這樣你可以把 ComputeHashForType 當作HashComputer傳給HashTable：</p>
+<pre>
+template&lt;typename KeyType, typename Val Type, typename HashComputer = ComputeHashForType&gt;
+class HashTable
+{
+  ...
+}
+</pre>
+
+
+<p>這和我的做法很相近，看起來很聰明，但實際上很難看！因為，如果可選的模板參數很多怎麼辦？</p><p>這種情況下函數定義要更糟：</p><p>如果沒有代碼高亮，我甚至不能區分出方法名！</p><p>我也曾看到其它引擎試圖通過卸載模板參數規範到無數的typedef，這更糟糕！也許這利於理解，但卻導致了本地代碼和整個系統邏輯的斷層，所以缺乏美感。例如：</p><p>以及：</p><p>你這樣使用兩者：</p><p>你會產生疑惑：StringHashTable內存分配器——StringAllocator會涉及全局內存嗎？這裡導致了混淆，於是你又需要返回之前的代碼檢查（循環）……</p><p>Doom的做法和常規C++邏輯完全相反：它儘可能地避免泛型，除非有特別的意義。Doom的HashTable需要生成hash值時怎麼辦？它只需要調用idStr::GetHash()。</p><h2>C語言的餘韻</h2> <hr/><p>雖然我不清楚id團隊其他人的出身如何，但John Carmack基本上可以說是開發C應用起家的，id在Quake III之前開發遊戲用的都是C語言。我見過很多沒有C開發功底的C++程序員，編寫代碼都有非常重的C++特色，上面過度使用模板的情況只是其中一例，其它還有：</p><ul> <li>過度使用set/get方法</li> <li>使用字符串流</li> <li>過度使用操作符重載</li> </ul><p>id在以上方面都做得非常完美。</p><p>通常很多人會這樣創建一個類：</p><p>這樣不僅浪費行數，還需要花費更多的時間編來寫和閱讀代碼。相比之下：</p><p>如果你經常為var自增某個數字n呢？</p><p>相比於：</p><p>上面的例子明顯容易閱讀和編寫。</p><p>id從不使用字符流，字符流通常包含糟糕的操作符重載：&lt;&lt;</p><p>例如：</p><p>雖然它有很多好處，但是很難看，而且語法也讓人討厭。</p><p>id選擇printf()來代替，這樣也易於閱讀理解。我同意這樣的決定。</p><p>另一方面，Doom還儘量避免操作符重載。雖然操作符重載是非常優秀C++特性，但沒有操作符重載也就沒有歧義，更便於編寫和閱讀。</p><h2>橫向空間</h2> <hr/><p>這是我從Doom的代碼中最大的收穫，原來我是這樣編寫代碼的：</p><p>根據Doom3的編碼標準，始終使用相對於4個空格的tab，水平對齊其中所有類的定義：</p><p>他們很少在類的定義中嵌入內聯函數，我看到的唯一一次是代碼和函數聲明寫在了同一行，這種做法有點不符合規範。這種類定義的組織方式非常容易解析，不過需要更多的時間來編寫。</p><p>我討厭多餘的代碼編寫，但這種情況下，我只需要這次稍微多做一點工作，其他程序員在之後接手時就可以省下很多功夫。相信這裡的Doom3編程規範能夠幫助你理解其代碼之美。（有網友稱Google的C++編程規範與其也有很多相似之處。）</p><h2>方法名</h2> <hr/><p>我認為Doom在方法名方面缺乏規範，我個人會儘可能地以動詞開頭命名方法：</p><p>比這樣要好得多：</p><h2>以下是John Carmack本人的回覆：</h2> <hr/><p><span>從某些角度來看，我認為Quake3的代碼更加整潔，算是我C語言代碼的風格的一次進化，而非C++風格的第一次迭代。當然也可能因為總代碼行數更少，或者是因為我已經10年沒看過它的代碼引起的錯覺。我認為「好的C++」在可讀性方面比「好的C語言」更好，其它方面大體相同。</span></p><p>我開始掌握C++是在Doom3開發的時候——在這之前，我有豐富的C語言編程經驗，因為NeXT Objective-C編程的原因也有OOP（面向對象編程）背景，因此在使用C++的時候並沒有對其使用和習慣進行適當針對性的研究。現在回想起來，真希望提前看過Effective C++這樣的教程。團隊裡其他程序員雖然之前有C++編程經驗，但基本上也是按照我選擇和設置的風格在編程。</p><p>很多年來，我一直懷疑模板，一直在克制地使用它，不過最終確定自己更喜歡強類型，而非充滿奇怪的代碼的頭文件。關於STL的爭論在id內部一直沒有停息，顯得很有生氣。回想Doom3開始開發的時候，使用STL基本上算不得好主意，直到現在，即使是在遊戲中我們也仍然在爭論這件事。</p><p>關於const，我直到現在基本上還是一個nazi，我會斥責每一個不儘可能常量化變量和參數的程序員。</p><p>我現在的風格主要是在向函數式編程靠近，這樣可以捨去很多舊習，逐漸遠離一些OOP的方向。</p><p>關於C++函數式編程John Carmack寫過一篇《Functional Programming in C++》值得一讀！《程序員》對這篇文章做過編譯。</p><p>原文鏈接：KOTAKU</p><p>附：id-Software源代碼網站（GitHub）|Doom3源代碼（GitHub）|Doom3 BFG源代碼（GitHub）</p></div>
+</body>
+</html>
