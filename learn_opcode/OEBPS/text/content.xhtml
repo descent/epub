@@ -360,12 +360,79 @@ B7          1011 0111
 </pre><p>示例中的B7的二进制是1011 0111, 这是典型的4:4表示格式——1011表示的是B, 0111表示的是7, 这样, 1011 0111表示的就是B7了。</p><p>很容易理解吧？呵呵, 那么我们可不可以用另外一种方式来表示一个字节呢？</p><p>答案是肯定的：</p><pre>16进制      2进制的4:4格式      2进制的2:3:3格式
 B7          1011 0111           10 110 111
 3A          0011 1010           00 111 010
-</pre><p>请看, 我们在这里引进了一种新的表示格式：<strong>2:3:3</strong></p><p>它的特点是把一个字节的8位二进制分成3个部分：最高的2位表示的是一个东西, 接下来的3位表示的是另外一个东西, 以及最后的3位表示的是另另外一个东西。</p><p>好了, 明白了这一点后, 我们来开始吧！</p><p>首先回忆一下OpCode的组成格式：</p><ol><li>Prefixes</li><li>code</li><li><strong>ModR/M</strong></li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>请注意第三项：<strong>ModR/M</strong>, 它占一个字节, 其格式为：</p><pre>7 6  5        3  2 0
-Mod  Reg/Opcode  R/M
-</pre><p>可见, <strong>ModR/M</strong>是由Mod、Reg/Opcode和R/M三个部分组成的。每个部分所占的bit大小为：</p><pre>       Mod: 占最高位的6～7共2个bit
-Reg/Opcode: 占中间位的3～5共3个bit
-       R/M: 占最低位的0～2共3个bit
-</pre><p>呵呵, 正好是<strong>2:3:3</strong>的格式！</p><p><strong>ModR/M</strong>的具体描述如下面两个表, 第一个是16位的, 第二个是32位的：<br />
+</pre><p>请看, 我们在这里引进了一种新的表示格式：<strong>2:3:3</strong></p><p>它的特点是把一个字节的8位二进制分成3个部分：最高的2位表示的是一个东西, 接下来的3位表示的是另外一个东西, 以及最后的3位表示的是另另外一个东西。</p><p>好了, 明白了这一点后, 我们来开始吧！</p><p>首先回忆一下OpCode的组成格式：</p><ol><li>Prefixes</li><li>code</li><li><strong>ModR/M</strong></li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>请注意第三项：<strong>ModR/M</strong>, 它占一个字节, 其格式为：</p>
+
+<table border="1">
+<tbody>
+<tr>
+<td>
+7 6
+</td>
+<td>
+5 3
+</td>
+<td>
+2 0
+</td>
+</tr>
+
+<tr>
+
+<td>
+Mod
+</td>
+<td>
+Reg/Opcode
+</td>
+<td>
+R/M
+</td>
+
+</tr>
+</tbody>
+</table>
+<br/>
+<p>可见, <strong>ModR/M</strong>是由Mod, Reg/Opcode 和 R/M 三个部分组成的。每个部分所占的bit大小为：</p>
+
+
+<table border="1">
+<tbody>
+<tr>
+
+<td>
+Mod
+</td>
+
+<td>
+占最高位的6～7共2个bit
+</td>
+
+</tr>
+
+<tr>
+<td>
+Reg/Opcode
+</td>
+
+<td>
+占中间位的3～5共3个bit
+</td>
+</tr>
+
+<tr>
+<td>
+R/M
+</td>
+
+<td>
+占最低位的0～2共3个bit
+</td>
+</tr>
+
+</tbody>
+</table>
+<br/>
+<p>呵呵, 正好是<strong>2:3:3</strong>的格式！</p><p><strong>ModR/M</strong>的具体描述如下面两个表, 第一个是16位的, 第二个是32位的：<br />
 （截图自《IA-32 Intel Architecture Software Developer's Manual Volume 2: Instruction Set Reference》, 页码2-5, 2-6, 希望Intel不要因为版权问题找我的麻烦）</p>
 
  - 16位 -
