@@ -2,11 +2,11 @@
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookID" version="2.0">
 	<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
 		<dc:title>1. 什么是OpCode？</dc:title>
-		<dc:rights> (c) file:///home/descent/Documents/learningopcode/doc/opcode.htm</dc:rights>
-		<dc:creator opf:role="aut">file:///home/descent/Documents/learningopcode/doc/opcode.htm</dc:creator>
+		<dc:rights> (c) http://www.luocong.com/learningopcode.htm</dc:rights>
+		<dc:creator opf:role="aut">http://www.luocong.com/learningopcode.htm</dc:creator>
 		<dc:type>Web page</dc:type>
 		<dc:publisher>dotepub.com (http://dotepub.com)</dc:publisher>
-		<dc:source>file:///home/descent/Documents/learningopcode/doc/opcode.htm</dc:source>
+		<dc:source>http://www.luocong.com/learningopcode.htm</dc:source>
 		<dc:date opf:event="publication">2013-04-12</dc:date>
 		<dc:language>en</dc:language>
 		<dc:identifier id="BookID" opf:scheme="CustomID">dotepub-0b58d1114fe7b623cb15f5cb6393e0ba</dc:identifier>

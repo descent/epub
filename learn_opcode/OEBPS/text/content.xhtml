@@ -7,27 +7,85 @@
 </head>
 
 <body>
-	<br /><span class="filler"></span> <blockquote><p><i>Things have changed in the past two decades.</i></p>
+<blockquote><p><i>Things have changed in the past two decades.</i></p>
+<p>-- Bill Gates(1995)</p></blockquote>
 
-        <p>-- Bill Gates(1995)</p></blockquote>
-        <h2>什么是OpCode？</h2><p>不管计算机技术的发展如何日新月异，其最基本的东西是不会突然改变的。OpCode就是这其中的一样东西——因此，Bill Gates的这句话用在这里并不太合适。</p><p>在开始回答什么是OpCode之前，请让我先来提几个小问题。</p><ol><li>计算机只认识0和1吗？</li><li>如果上面的回答是“是”，那么我们平时写的程序源代码是0和1吗？</li><li>如果上面的回答是“不是”，那么计算机是怎么“知道”我们的程序的意思的？</li></ol><p>按顺序作答，依次是：</p><ol><li>是</li><li>不是</li><li>？？？</li></ol><p>最后一个问题的答案是……？我们来举个例子，在汇编语言中：</p><code><pre>NOP</pre></code><p>这条指令很简单，是吧？</p><p>在编译的时候，Assembler会扫描整个源代码。</p><p>在前面我们已经知道了，由于计算机只认识0和1，所以，源代码“NOP”是无法直接运行的。当Assembler遇到“NOP”的时候，为了生成让计算机能运行的“东西”（暂且这样称呼吧），就会以十六进制数“0x90”来代替它。</p><p>在这里，“0x90”就是“<tt>OpCode</tt>”，而“NOP”则是“助记符(<tt>mnemonic</tt>)”。</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>OpCode的全称</strong><p>OpCode就是Operation Code，意即操作码的意思。</p></td> </tr> </tbody></table> <h2>一个OpCode只对应一个助记符吗？</h2><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="8"> 示例：OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">NOP</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">XCHG AX, AX</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">XCHG EAX, EAX</td></tr></tbody></table><p>从上表中可以看出，同一个<tt>OpCode</tt>可以对应N个<tt>mnemonic</tt>。为什么会这样呢？原因现在不必深究，以后自然会明白的。</p><h2>一个助记符只对应一个OpCode吗？</h2><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="8"> 示例：OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>mnemonic</strong></td><td class="table_cells"><strong>OpCode</strong></td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x83C001</td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x0501000000</td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x81C001000000</td></tr></tbody></table><p>从上表中也可以看出，同一个<tt>mnemonic</tt>可以对应多个<tt>OpCode</tt>。原因同样留待以后再说。</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>OpCode与mnemonic的关系</strong><p>一个<tt>OpCode</tt>不只对应一个<tt>mnemonic</tt>。<br /><span class="filler"></span> 一个<tt>mnemonic</tt>不只对应一个<tt>OpCode</tt>。</p></td> </tr> </tbody></table> <h2>OpCode管中窥豹</h2><p>有6个域是OpCode可能会用到的，或者说OpCode是由这6个域组成的——不过请注意：它们的名字是什么，这并不重要——重要的是它们的排列顺序。</p><p>它们是：</p><ol><li>Prefixes</li><li>code</li><li>ModR/M</li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>OpCode的这6个域的详细介绍留待以后再说，现在首先要知道：</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> 在实际的使用中，并不是这所有的6个域都会被用到的，但是有一项却是一定会有的，那就是第2项：<tt>code</tt>，有些指令甚至只会用到<tt>code</tt>这一项。 </td> </tr> </tbody></table><p>例如：</p><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="10"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">0xC3</td><td class="table_cells">RETN</td></tr><tr><td class="table_cells">0x2F</td><td class="table_cells">DAS</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">NOP</td></tr><tr><td class="table_cells">0xAC</td><td class="table_cells">LODSB</td></tr></tbody></table><p>上表中的几个OpCode都只用到了<tt>code</tt>这一项。其中的最后一项：<tt>0xAC</tt>，让我们来看看能不能给它加上一些额外的“东西”：</p><code><pre>0xF3AC    REP LODSB</pre></code><p>可以看到：rep lodsb</p><p>为什么会多了个“<strong>rep</strong>”呢？是不是由额外的“<strong>F3</strong>”造成的呢？</p><p>Yes，猜对了，我们来看看它的OpCode格式描述，如下：（注：用{}包围起来的是域的名称）</p><code><pre>AC -- {code}
+<h2>什么是OpCode？</h2>
+<p>不管计算机技术的发展如何日新月异，其最基本的东西是不会突然改变的。OpCode就是这其中的一样东西——因此，Bill Gates的这句话用在这里并不太合适。</p><p>在开始回答什么是OpCode之前，请让我先来提几个小问题。</p>
+<ol><li>计算机只认识0和1吗？</li><li>如果上面的回答是“是”，那么我们平时写的程序源代码是0和1吗？</li>
+<li>如果上面的回答是“不是”，那么计算机是怎么“知道”我们的程序的意思的？</li></ol>
+<p>按顺序作答，依次是：</p><ol><li>是</li><li>不是</li><li>？？？</li></ol><p>最后一个问题的答案是……？我们来举个例子，在汇编语言中：</p>
+
+<pre>NOP</pre>
+
+<p>这条指令很简单，是吧？</p>
+<p>在编译的时候，Assembler会扫描整个源代码。</p>
+<p>在前面我们已经知道了，由于计算机只认识0和1，所以，源代码“NOP”是无法直接运行的。当Assembler遇到“NOP”的时候，为了生成让计算机能运行的“东西”（暂且这样称呼吧），就会以十六进制数“0x90”来代替它。</p><p>在这里，“0x90”就是“<tt>OpCode</tt>”，而“NOP”则是“助记符(<tt>mnemonic</tt>)”。</p>
+
+<strong>OpCode的全称</strong><p>OpCode就是Operation Code，意即操作码的意思。</p>
+
+<h2>一个OpCode只对应一个助记符吗？</h2>
+<table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="8"> 示例：OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">NOP</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">XCHG AX, AX</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">XCHG EAX, EAX</td></tr></tbody></table>
+
+<p>从上表中可以看出，同一个<tt>OpCode</tt>可以对应N个<tt>mnemonic</tt>。为什么会这样呢？原因现在不必深究，以后自然会明白的。</p><h2>一个助记符只对应一个OpCode吗？</h2><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="8"> 示例：OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>mnemonic</strong></td><td class="table_cells"><strong>OpCode</strong></td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x83C001</td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x0501000000</td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x81C001000000</td></tr></tbody></table><p>从上表中也可以看出，同一个<tt>mnemonic</tt>可以对应多个<tt>OpCode</tt>。原因同样留待以后再说。</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>OpCode与mnemonic的关系</strong><p>一个<tt>OpCode</tt>不只对应一个<tt>mnemonic</tt>。<br /><span class="filler"></span> 一个<tt>mnemonic</tt>不只对应一个<tt>OpCode</tt>。</p></td> </tr> </tbody></table> 
+
+<h2>OpCode管中窥豹</h2><p>有6个域是OpCode可能会用到的，或者说OpCode是由这6个域组成的——不过请注意：它们的名字是什么，这并不重要——重要的是它们的排列顺序。</p><p>它们是：</p><ol><li>Prefixes</li><li>code</li><li>ModR/M</li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>OpCode的这6个域的详细介绍留待以后再说，现在首先要知道：</p>
+
+在实际的使用中，并不是这所有的6个域都会被用到的，但是有一项却是一定会有的，那就是第2项：<tt>code</tt>,
+有些指令甚至只会用到<tt>code</tt>这一项。
+
+<p>例如：</p><table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="10"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">0xC3</td><td class="table_cells">RETN</td></tr><tr><td class="table_cells">0x2F</td><td class="table_cells">DAS</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">NOP</td></tr><tr><td class="table_cells">0xAC</td><td class="table_cells">LODSB</td></tr></tbody></table>
+<p>上表中的几个OpCode都只用到了<tt>code</tt>这一项。其中的最后一项：<tt>0xAC</tt>，让我们来看看能不能给它加上一些额外的“东西”：</p><code><pre>0xF3AC    REP LODSB</pre></code><p>可以看到：rep lodsb</p>
+
+<p>为什么会多了个“<strong>rep</strong>”呢？是不是由额外的“<strong>F3</strong>”造成的呢？</p><p>Yes，猜对了，我们来看看它的OpCode格式描述，如下：（注：用{}包围起来的是域的名称）</p>
+<pre>AC -- {code}
 F3 AC -- {Prefix}{code}
 因此，F3 就是域 Prefix
-</pre></code><p>在稍后的章节中我们会知道，<tt>F3</tt>表示的是<u><tt>Rep Prefix</tt></u>，它也能与<tt>movsb</tt>，<tt>stosb</tt>等指令联用，但是，具体细节在这里暂不深究。</p><p>让我再来强调一次：<strong>OpCode中的6个域是可选的（除了域<tt>code</tt>之外），不必都用上，但是<tt>code</tt>是一定会有的。</strong></p><p>知道了这一点，我们再来看一些例子：</p><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="14"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">27</td><td class="table_cells">DAA</td></tr><tr><td class="table_cells">2F</td><td class="table_cells">DAS</td></tr><tr><td class="table_cells">3F</td><td class="table_cells">AAS</td></tr><tr><td class="table_cells">37</td><td class="table_cells">AAA</td></tr><tr><td class="table_cells">D40A</td><td class="table_cells">AAM</td></tr><tr><td class="table_cells">D50A</td><td class="table_cells">AAD</td></tr></tbody></table><p>在Intel的文档中，上表中的所有指令都是1字节的，但是，我们能够看到<tt>AAM</tt>和<tt>AAD</tt>是2字节的，到底有什么不同呢？<br /><span class="filler"></span>先不要看下面的答案，试着自己想一想……</p><p>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span></p><p>We can see:</p><ol><li><tt>AAM</tt>和<tt>AAD</tt>都是2字节的，然而其余的4个指令都是1字节的。</li><li><tt>AAM</tt>和<tt>AAD</tt>的OpCode的第2个字节都是<strong>0Ah</strong>。</li></ol><p>如果你还没把大学里的汇编知识彻底还给老师的话，应该还记得<tt>AAM</tt>和<tt>AAD</tt>的描述：</p><code><pre>AAM : divide al by 10
+</pre>
+
+<p>在稍后的章节中我们会知道，<tt>F3</tt>表示的是<u><tt>Rep Prefix</tt></u>，它也能与<tt>movsb</tt>,
+<tt>stosb</tt>等指令联用, 但是，具体细节在这里暂不深究。</p>
+<p>让我再来强调一次：<strong>OpCode中的6个域是可选的（除了域<tt>code</tt>之外），不必都用上，但是<tt>code</tt>是一定会有的。</strong></p><p>知道了这一点，我们再来看一些例子：</p>
+<table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="14"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">27</td><td class="table_cells">DAA</td></tr><tr><td class="table_cells">2F</td><td class="table_cells">DAS</td></tr><tr><td class="table_cells">3F</td><td class="table_cells">AAS</td></tr><tr><td class="table_cells">37</td><td class="table_cells">AAA</td></tr><tr><td class="table_cells">D40A</td><td class="table_cells">AAM</td></tr><tr><td class="table_cells">D50A</td><td class="table_cells">AAD</td></tr></tbody></table><p>在Intel的文档中，上表中的所有指令都是1字节的，但是，我们能够看到<tt>AAM</tt>和<tt>AAD</tt>是2字节的，到底有什么不同呢？<br /><span class="filler"></span>先不要看下面的答案，试着自己想一想……</p><p>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span>.<br /><span class="filler"></span></p><p>We can see:</p><ol><li><tt>AAM</tt>和<tt>AAD</tt>都是2字节的，然而其余的4个指令都是1字节的。</li><li><tt>AAM</tt>和<tt>AAD</tt>的OpCode的第2个字节都是<strong>0Ah</strong>。</li></ol><p>如果你还没把大学里的汇编知识彻底还给老师的话，应该还记得<tt>AAM</tt>和<tt>AAD</tt>的描述：</p>
+
+<pre class="cmd">AAM : divide al by 10
 商   放在AH里
 余数 放在AL里
-</pre></code><code><pre>AAD : AL = AH * 10 + AL
-</pre></code><p>注意到了吗？两者的操作都与10有关。而且两者的OpCode的第二个字节都是10(<strong>0Ah</strong>)。</p><p>人类与动物的其中一个区别是具有思维的联想性。聪明的你是不是猜到了什么？</p><p>嗯……<strong>0Ah</strong>会不会是偶然的呢？它会不会是操作数的一部分？进一步地，<tt>AAM</tt>与<tt>AAD</tt>的指令格式会不会<strong>不是</strong>：</p><code><pre>D40A for AAM
+</pre>
+<br/>
+<pre class="cmd">AAD : AL = AH * 10 + AL
+</pre>
+
+<p>注意到了吗？两者的操作都与10有关。而且两者的OpCode的第二个字节都是10(<strong>0Ah</strong>)。</p>
+
+<p>人类与动物的其中一个区别是具有思维的联想性。聪明的你是不是猜到了什么？</p><p>嗯……<strong>0Ah</strong>会不会是偶然的呢？它会不会是操作数的一部分？进一步地，<tt>AAM</tt>与<tt>AAD</tt>的指令格式会不会<strong>不是</strong>：</p>
+
+<pre>D40A for AAM
 D50A for AAD
-</pre></code><p>而是：</p><code><pre>D4:imm8 for AAM
+</pre>
+<p>而是：</p><code><pre>D4:imm8 for AAM
 D5:imm8 for AAD
-</pre></code><p>以及，<tt>imm8</tt>可以是任何别的数字呢？（注：<tt>imm8</tt>表示8位的立即数）</p><p>答案是肯定的！</p><p>事实上，我们可以通过反汇编器得知，<strong>D407</strong>表示的是<tt>AAM</tt> <strong>7</strong>，<strong>D508</strong>表示的是<tt>AAD</tt> <strong>8</strong>，以此类推。</p><p>现在，我们又知道了一种新的指令格式：</p><code><pre>{code}{Immediate}（域2和域6）
-</pre></code><p>还有别的，以后再说。</p><h2>There's Something We Should Know...</h2><p>最后再强调一点：</p><ul><li>虽然并不是6个域都是必要的，但是，它们的排列顺序绝对不能乱，必须严格按照上面的顺序进行。有些域也许不会出现，但是只要出现了，编号小的域就绝对不允许出现在编号大的域的后面，反之亦然。</li></ul><p>例如，{<tt>Prefix</tt>}{<tt>code</tt>}的顺序绝对不允许变成{<tt>code</tt>}{<tt>Prefix</tt>}。</p><p>不相信？举个例子：<strong>4004</strong>和<strong>0440</strong>（假设在32位条件下）</p><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="6"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">4004</td><td class="table_cells">INC EAX</td></tr><tr><td class="table_cells">0440</td><td class="table_cells">ADD AL, 40h</td></tr></tbody></table><p>明白了吗？</p><p>理解了OpCode的规则，将有助于底层程序员明白一些鲜为人知的事情。在接下来的章节中，我们将学习OpCode的6个域的详细信息。
+</pre></code><p>以及，<tt>imm8</tt>可以是任何别的数字呢？（注：<tt>imm8</tt>表示8位的立即数）</p><p>答案是肯定的！</p><p>事实上，我们可以通过反汇编器得知，<strong>D407</strong>表示的是<tt>AAM</tt> <strong>7</strong>，<strong>D508</strong>表示的是<tt>AAD</tt> <strong>8</strong>，以此类推。</p><p>现在，我们又知道了一种新的指令格式：</p>
+
+<pre>{code}{Immediate}（域2和域6）
+</pre>
+
+<p>还有别的，以后再说。</p>
+<h2>There's Something We Should Know...</h2>
+<p>最后再强调一点：</p>
+虽然并不是6个域都是必要的，但是，它们的排列顺序绝对不能乱，必须严格按照上面的顺序进行。有些域也许不会出现，但是只要出现了，编号小的域就绝对不允许出现在编号大的域的后面，反之亦然。
+<p>例如，{<tt>Prefix</tt>}{<tt>code</tt>}的顺序绝对不允许变成{<tt>code</tt>}{<tt>Prefix</tt>}。</p><p>不相信？举个例子：<strong>4004</strong>和<strong>0440</strong>（假设在32位条件下）</p>
+
+<table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="6"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">4004</td><td class="table_cells">INC EAX</td></tr><tr><td class="table_cells">0440</td><td class="table_cells">ADD AL, 40h</td></tr></tbody></table>
+
+<p>明白了吗？</p><p>理解了OpCode的规则，将有助于底层程序员明白一些鲜为人知的事情。在接下来的章节中，我们将学习OpCode的6个域的详细信息。
 
 </p><br />
 
 
-<span class="filler"></span> <blockquote><p><i>Everything that has a beginning... Has an end.</i></p><p>-- Neo, The Movie - "The Matrix: Revolutions"(2003)</p></blockquote><h2>开始</h2><p>“从哪里开始，到哪里结束”，这是几乎所有的OpCode初学者都会问到的问题，具体来说，就是给定一串OpCode，计算机是如何知道哪里是某一条指令的开始，到哪里才是它的结束呢？</p><p>让我们照例从实例开始说明：</p><code><pre>EB:imm8
+<blockquote><p><i>Everything that has a beginning... Has an end.</i></p><p>-- Neo, The Movie - "The Matrix: Revolutions"(2003)</p></blockquote>
+
+<h2>开始</h2><p>“从哪里开始，到哪里结束”，这是几乎所有的OpCode初学者都会问到的问题，具体来说，就是给定一串OpCode，计算机是如何知道哪里是某一条指令的开始，到哪里才是它的结束呢？</p><p>让我们照例从实例开始说明：</p><code><pre>EB:imm8
 </pre></code><p>这是一条近跳转指令，翻译成mnemonic就是<tt>jmp</tt>，<tt>imm8</tt>表示一个8位的立即数，整条指令的意思是<tt>jmp</tt>到<tt>imm8</tt>的偏移后的地址去。</p><p>从上一章的内容中我们可以知道，这条OpCode的域格式是这样的：</p><code><pre>{code}{Immediate}
 </pre></code><p>一共是2个字节。</p><p>问题来了，我们用肉眼一看就知道，这代表2个字节，我们也知道这条指令应该是从<tt>EB</tt>开始，总长度是2个字节，到<tt>imm8</tt>为结束，可是计算机是怎么知道这一点的呢？假如有一串OpCode发送给处理器，例如“<tt>90EB0090</tt>”，让它从中找到这个<tt>jmp</tt>指令，它会不会认不出来呢？</p><p>又或者，传送一串OpCode给处理器，例如“<tt>EB1234</tt>”，它会不会把后面的<tt>34</tt>也算进了<tt>jmp</tt>的跳转范围呢？</p><p>答案是，不会的。</p><p>CPU有个寄存器叫做<tt>EIP</tt>，它储存了内存中的某个地址，这个地址会告诉CPU，哪里是当前指令的开始；但是，在CPU没有对OpCode进行解码之前，它并不会知道哪里才是指令的结束。</p><p>让我们来举个例子：</p><code><pre>00401000    90    NOP
 </pre></code><p>第一列表示的是内存中的地址，在这里是<tt>00401000</tt>，它同时也是<tt>EIP</tt>的值，此时<tt>EIP</tt> = <tt>00401000</tt><br /><span class="filler"></span>第二列表示的是OpCode，第三列表示的是mnemonic，相信不必多说，读者也能明白它们的意思：<tt>90</tt>对应<tt>NOP</tt></p><p>由于<tt>EIP</tt> = <tt>00401000</tt>，所以CPU会知道当前的指令应该是从内存单元中的<tt>00401000</tt>开始，在这里，储存了一个OpCode：<tt>90</tt>，接下来CPU会对<tt>90</tt>进行解码：</p><code><pre>OpCode：90

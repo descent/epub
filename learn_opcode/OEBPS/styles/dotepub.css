@@ -109,12 +109,16 @@ h1 {
 	padding: 0;
 }
 
-pre, code, tt, kbd {
-	font-size: 75%;
+.cmd{
+  border: 1px inset ; margin: 0px; overflow: auto; text-align: left;
+  font-family: georgia, times new roman, times roman, times, roman, serif;
 }
+
+
 pre {
-	white-space: pre-wrap;
-	text-align: left;
+  white-space: pre-wrap;
+  text-align: left;
+  font-family: georgia, times new roman, times roman, times, roman, serif;
 }
 
 /* no sembla que funcioni... */
