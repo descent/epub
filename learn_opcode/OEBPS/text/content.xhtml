@@ -7,9 +7,12 @@
 </head>
 
 <body>
+
+<a name="what_is_opcode">
 <h1>
 1. 什么是OpCode？
 </h1>
+</a>
 
 <blockquote><p><i>Things have changed in the past two decades.</i></p>
 <p>-- Bill Gates(1995)</p></blockquote>
@@ -89,9 +92,11 @@ D5:imm8 for AAD
 
 </p>
 
+<a name="begin_end">
 <h1>
 2. 从哪里开始，到哪里结束
 </h1>
+</a>
 
 <blockquote><p><i>Everything that has a beginning... Has an end.</i></p><p>-- Neo, The Movie - "The Matrix: Revolutions"(2003)</p></blockquote>
 
@@ -146,9 +151,11 @@ ELSE
 00401002    B0 40    MOV AL, 40
 </pre><p>嗯……提示一下：40表示的是inc eax……聪明的你, 明白了吗？</p><h2>结束</h2><p>本章到这里已经结束了, 但是……OpCode的学习只是刚刚开始而已, 请大家打好精神, 为后面的旅程作好准备！</p><br />
 
+<a name="prefix_1">
 <h1>
 3. Prefixes - Part I
 </h1>
+</a>
 
 To be, or not to be: that is the question.<br/>
 <p>-- William Shakespeare, "HAMLET".</p>
@@ -171,9 +178,11 @@ F3： REP
 </pre><p>都是前面讲过的内容, 不难吧？只是组合起来使用罢了。</p><p>不过……细心的读者可能会问：为什么要把66放在第一位, 把F3放在第二位呢？把它们的位置调换一下行不行？答案是：行！事实上它也可以写成：</p><pre>F3 66 AD
 </pre><p>效果是一样的！</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>Prefixes的特性</strong><p>一个OpCode中可以有多个Prefixes。<br /> 如果有多个Prefixes, 那么它们的顺序可以打乱, 不会有任何问题。</p></td> </tr> </tbody></table><p>最后, 我们还可以得出一个推论：</p><p>由于每个Prefixes会多占用1个字节, 所以也必定会导致处理器多使用一个指令周期进行解码——无论在时间还是空间上都会造成浪费。因此, 我们应该权衡在哪些场合才使用Prefixes, 如非必要, 应该减少对它的使用。</p><h2>Is it ALL?</h2><p>Of course not! 由于章节的篇幅问题, Prefixes的进一步讲解会放在后面的章节中继续进行, 我们会看到更多的有关Prefixes的信息。</p>
 
+<a name="prefix_2">
 <h1>
  4. Prefixes - Part II 
 </h1>
+</a>
 
 I'll be back.<br/>
 <p>-- Arnold Schwarzenegger, The Movie - "Terminator"(1984)</p>
@@ -347,9 +356,11 @@ The End Of Prefixes
 
 是的！关于Prefixes的格式学习到此就告一段落了。在接下来的章节中, 我们将会学习最激动人心的一部分：如何对OpCode进行手工解码。
 
+<a name="modrm">
 <h1>
 5. ModRM - Part I
 </h1>
+</a>
 
 道, 可道, 非常道。<br/>
 <p>-- 老子, 《道德经》</p>
