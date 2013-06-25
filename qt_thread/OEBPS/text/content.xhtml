@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="../styles/dotepub.css" type="text/css" />
+  <title>Dotepub.com</title>
+</head>
+
+<body>
+本文主要內容：<br />
+在任務一中，用四種方式實現：
+點擊界面按鈕，開線程運行一段程序，結果顯示在一個Label上。<br />
+
+<ol>
+<li>
+用不正確的方式得到看似正確的結果
+</li>
+<li>
+用Qt Manual 和 例子中使用的方法
+</li>
+<li>
+用一種好用但被Qt開發人員批判的方法
+</li>
+<li>
+用一種被開發人員強烈推薦，但Qt Manual和例子中隻字未提的方法 
+</li>
+</ol>
+
+為了簡單起見，本文只講如何做及其結果是什麼，而不講其原因是什麼（估計大家對原因也不會感興趣，詳見： QThread 使用探討  和 QThread使用方法）。
+<br/>
+本文只考慮兩個線程（即主線程和一個次線程）的情況。
+<br/>
+
+<h2>QWidget</h2>
+
+QWidget及其派生類均 不能在次線程中使用或創建
+<br/>
+<quote>
+Manual 中的原話：
+
+The GUI classes, notably QWidget and all its subclasses, are not reentrant. They can only be used from the main thread.
+
+因為不允許，所以嘗試這麼做的，幾乎很快都能回頭。畢竟signals和slots用起來確實蠻方便但是，回頭後，就理解和用對 QThread 了麼？
+</quote>
+
+<h2>QThread</h2>
+<p><strong>概念一</strong>：
+QThread 對象本身所在的線程 和它管理的線程不是同一個線程。前者是主線程; 後者是次線程。
+</p>
+
+<p><strong>概念二</strong>：
+你在QThread派生類中定義的槽是在主線程而不是在次線程中執行的。run 函數是線程的入口點，run內的代碼才是在次線程中運行的代碼
+</p>
+
+<p><strong>概念三</strong>：
+除了Manual和Qt例子中給出的用法外，QThread有一種更容易且被推薦的使用方法: QThread
+應該被看做是操作系統線程的接口或控制點，而不應該包含需要在新線程中運行的代碼;
+需要運行的代碼應該放到一個QObject的子類中，然後將該子類的對象moveToThread到新線程中。
+</p>
+
+
+關於本文的例子:<br/>
+為了代碼簡單，所有例子都是單一的源文件，保存為 main.cpp 你從代碼中包含的 #include「main.moc」應該能看出為了省幾行代碼，頭文件都是直接包含 QtCore 和 QtGui。
+<br/>
+
+為了清楚告訴大家槽函數分別是在那個線程運行的，調用了幾處 currentThreadId 函數 main 函數中輸出主線程
+ID
+<pre>
+qDebug() &lt;&lt;"main: " &lt;&lt;QThread::currentThreadId();
+</pre>
+
+run 函數中輸出次線程ID
+<pre>
+qDebug()&lt;&lt;"thread: "&lt;&lt;currentThreadId();
+</pre>
+
+槽函數中輸出其在哪個線程中執行
+<pre>
+qDebug()&lt;&lt;"slots1: "&lt;&lt;currentThreadId();
+</pre>
+<br/>
+
+因為用了qDebug，所以你的pro文件內最好加上 CONFIG+=console 同樣為了省代碼，例子中未考慮線程如何正常結束的問題。
+<br/>
+
+<h2>任務一</h2>
+<p>
+點擊界面按鈕，開線程運行一段程序，結果顯示在一個Label上。定義一個Widget，上面放置
+QPushButton 和 QLabel 定義一個Thread，執行我們的代碼，然後通知 Widget。
+</p>
+<h2>第一次嘗試</h2>
+
+很容易想到方法，代碼可以工作，結果正確。但 ... 未必和你想得一樣 
+<br/>
+Thread 中定義一個slot1函數，接受數據，計算其立方，然後將結果通過信號發出
+Widget 中按鈕每點擊一次，發出的數據加1，用label接受Thread的信號
+<br/>
+
+
+<pre>
+<b> 1</b> <font color="0000ff"><strong>#include <font color="#008000">&lt;QtCore&gt;</font></strong></font>
+<b> 2</b> <font color="0000ff"><strong>#include <font color="#008000">&lt;QtGui&gt;</font></strong></font>
+<b> 3</b> 
+<b> 4</b> <strong>class</strong> <font color="#2040a0">Thread</font><font color="4444FF">:</font><strong>public</strong> <font color="#2040a0">QThread</font>
+<b> 5</b> <font color="4444FF"><strong>{</strong></font>
+<b> 6</b> <font color="#2040a0">Q_OBJECT</font>
+<b> 7</b> <strong>public</strong><font color="4444FF">:</font>
+<b> 8</b> <font color="#2040a0">Thread</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF"><strong>{</strong></font><font color="4444FF"><strong>}</strong></font>
+<b> 9</b> <strong>public</strong> <font color="#2040a0">slots</font><font color="4444FF">:</font>
+<b>10</b> <strong>void</strong> <font color="#2040a0">slot1</font><font color="4444FF">(</font><strong>int</strong> <font color="#2040a0">v</font><font color="4444FF">)</font>
+<b>11</b> <font color="4444FF"><strong>{</strong></font>
+<b>12</b> <font color="#2040a0">qDebug</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">&lt;</font><font color="4444FF">&lt;</font><font color="#008000">&quot;slots1: &quot;</font><font color="4444FF">&lt;</font><font color="4444FF">&lt;</font><font color="#2040a0">currentThreadId</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>13</b> <font color="#2040a0">emit</font> <font color="#2040a0">sig1</font><font color="4444FF">(</font><font color="#2040a0">QString</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">number</font><font color="4444FF">(</font><font color="#2040a0">v</font><font color="4444FF">*</font><font color="#2040a0">v</font><font color="4444FF">*</font><font color="#2040a0">v</font><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>14</b> <font color="4444FF"><strong>}</strong></font>
+<b>15</b> <font color="#2040a0">signals</font><font color="4444FF">:</font>
+<b>16</b> <strong>void</strong> <font color="#2040a0">sig1</font><font color="4444FF">(</font><strong>const</strong> <font color="#2040a0">QString</font><font color="4444FF">&amp;</font> <font color="#2040a0">t</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>17</b> <strong>protected</strong><font color="4444FF">:</font>
+<b>18</b> <strong>void</strong> <font color="#2040a0">run</font><font color="4444FF">(</font><font color="4444FF">)</font>
+<b>19</b> <font color="4444FF"><strong>{</strong></font>
+<b>20</b> <font color="#2040a0">qDebug</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">&lt;</font><font color="4444FF">&lt;</font><font color="#008000">&quot;thread: &quot;</font><font color="4444FF">&lt;</font><font color="4444FF">&lt;</font><font color="#2040a0">currentThreadId</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>21</b> <font color="#2040a0">exec</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>22</b> <font color="4444FF"><strong>}</strong></font>
+<b>23</b> <font color="4444FF"><strong>}</strong></font><font color="4444FF">;</font>
+<b>24</b> 
+<b>25</b> <strong>class</strong> <font color="#2040a0">Widget</font><font color="4444FF">:</font><strong>public</strong> <font color="#2040a0">QWidget</font>
+<b>26</b> <font color="4444FF"><strong>{</strong></font>
+<b>27</b> <font color="#2040a0">Q_OBJECT</font>
+<b>28</b> <strong>public</strong><font color="4444FF">:</font>
+<b>29</b> <font color="#2040a0">Widget</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">:</font><font color="#2040a0">m_label</font><font color="4444FF">(</font><strong>new</strong> <font color="#2040a0">QLabel</font><font color="4444FF">)</font>, <font color="#2040a0">m_button</font><font color="4444FF">(</font><strong>new</strong> <font color="#2040a0">QPushButton</font><font color="4444FF">(</font><font color="#008000">&quot;Button&quot;</font><font color="4444FF">)</font><font color="4444FF">)</font>, <font color="#2040a0">m_thread</font><font color="4444FF">(</font><strong>new</strong> <font color="#2040a0">Thread</font><font color="4444FF">)</font>
+<b>30</b> <font color="4444FF"><strong>{</strong></font>
+<b>31</b> <font color="#2040a0">QVBoxLayout</font> <font color="4444FF">*</font> <font color="#2040a0">vbox</font> <font color="4444FF">=</font> <strong>new</strong> <font color="#2040a0">QVBoxLayout</font><font color="4444FF">(</font><strong>this</strong><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>32</b> <font color="#2040a0">vbox</font><font color="4444FF">-</font><font color="4444FF">&gt;</font><font color="#2040a0">addWidget</font><font color="4444FF">(</font><font color="#2040a0">m_label</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>33</b> <font color="#2040a0">vbox</font><font color="4444FF">-</font><font color="4444FF">&gt;</font><font color="#2040a0">addWidget</font><font color="4444FF">(</font><font color="#2040a0">m_button</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>34</b> <font color="#2040a0">setLayout</font><font color="4444FF">(</font><font color="#2040a0">vbox</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>35</b> <font color="#2040a0">connect</font><font color="4444FF">(</font><font color="#2040a0">m_button</font>,<font color="#2040a0">SIGNAL</font><font color="4444FF">(</font><font color="#2040a0">clicked</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">)</font>,<strong>this</strong>,<font color="#2040a0">SLOT</font><font color="4444FF">(</font><font color="#2040a0">onButtonClicked</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>36</b> <font color="#2040a0">connect</font><font color="4444FF">(</font><strong>this</strong>,<font color="#2040a0">SIGNAL</font><font color="4444FF">(</font><font color="#2040a0">clicked</font><font color="4444FF">(</font><strong>int</strong><font color="4444FF">)</font><font color="4444FF">)</font>,<font color="#2040a0">m_thread</font>,<font color="#2040a0">SLOT</font><font color="4444FF">(</font><font color="#2040a0">slot1</font><font color="4444FF">(</font><strong>int</strong><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>37</b> <font color="#2040a0">connect</font><font color="4444FF">(</font><font color="#2040a0">m_thread</font>,<font color="#2040a0">SIGNAL</font><font color="4444FF">(</font><font color="#2040a0">sig1</font><font color="4444FF">(</font><font color="#2040a0">QString</font><font color="4444FF">)</font><font color="4444FF">)</font>,<font color="#2040a0">m_label</font>,<font color="#2040a0">SLOT</font><font color="4444FF">(</font><font color="#2040a0">setText</font><font color="4444FF">(</font><font color="#2040a0">QString</font><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>38</b> <font color="#2040a0">m_thread</font><font color="4444FF">-</font><font color="4444FF">&gt;</font><font color="#2040a0">start</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>39</b> <font color="4444FF"><strong>}</strong></font>
+<b>40</b> <font color="#2040a0">signals</font><font color="4444FF">:</font>
+<b>41</b> <strong>void</strong> <font color="#2040a0">clicked</font><font color="4444FF">(</font><strong>int</strong> <font color="#2040a0">v</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>42</b> <strong>private</strong> <font color="#2040a0">slots</font><font color="4444FF">:</font>
+<b>43</b> <strong>void</strong> <font color="#2040a0">onButtonClicked</font><font color="4444FF">(</font><font color="4444FF">)</font>
+<b>44</b> <font color="4444FF"><strong>{</strong></font>
+<b>45</b> <strong>static</strong> <strong>int</strong> <font color="#2040a0">v</font> <font color="4444FF">=</font> <font color="#FF0000">0</font><font color="4444FF">;</font>
+<b>46</b> <font color="#2040a0">emit</font> <font color="#2040a0">clicked</font><font color="4444FF">(</font><font color="#2040a0">v</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>47</b> <font color="#2040a0">v</font><font color="4444FF">+</font><font color="4444FF">+</font><font color="4444FF">;</font>
+<b>48</b> <font color="4444FF"><strong>}</strong></font>
+<b>49</b> <strong>private</strong><font color="4444FF">:</font>
+<b>50</b> <font color="#2040a0">QLabel</font> <font color="4444FF">*</font> <font color="#2040a0">m_label</font><font color="4444FF">;</font>
+<b>51</b> <font color="#2040a0">QPushButton</font> <font color="4444FF">*</font> <font color="#2040a0">m_button</font><font color="4444FF">;</font>
+<b>52</b> <font color="#2040a0">Thread</font> <font color="4444FF">*</font> <font color="#2040a0">m_thread</font><font color="4444FF">;</font>
+<b>53</b> <font color="4444FF"><strong>}</strong></font><font color="4444FF">;</font>
+<b>54</b> 
+<b>55</b> <font color="0000ff"><strong>#include <font color="#008000">&quot;main.moc&quot;</font></strong></font>
+<b>56</b> <strong>int</strong> <font color="#2040a0">main</font><font color="4444FF">(</font><strong>int</strong> <font color="#2040a0">argc</font>, <strong>char</strong><font color="4444FF">*</font><font color="4444FF">*</font> <font color="#2040a0">argv</font><font color="4444FF">)</font>
+<b>57</b> <font color="4444FF"><strong>{</strong></font>
+<b>58</b> <font color="#2040a0">QApplication</font> <font color="#2040a0">app</font><font color="4444FF">(</font><font color="#2040a0">argc</font>, <font color="#2040a0">argv</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>59</b> <font color="#2040a0">qDebug</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">&lt;</font><font color="4444FF">&lt;</font><font color="#008000">&quot;main: &quot;</font><font color="4444FF">&lt;</font><font color="4444FF">&lt;</font><font color="#2040a0">QThread</font><font color="4444FF">:</font><font color="4444FF">:</font><font color="#2040a0">currentThreadId</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>60</b> <font color="#2040a0">Widget</font> <font color="#2040a0">w</font><font color="4444FF">;</font>
+<b>61</b> <font color="#2040a0">w</font>.<font color="#2040a0">show</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>62</b> <strong>return</strong> <font color="#2040a0">app</font>.<font color="#2040a0">exec</font><font color="4444FF">(</font><font color="4444FF">)</font><font color="4444FF">;</font>
+<b>63</b> <font color="4444FF"><strong>}</strong></font>
+</pre>
+
+
+<p>一切工作正常，但看看控制台輸出呢？</p>main: 3055777552 <br /><span class="filler"></span>thread: 3024481136 <br /><span class="filler"></span>slots1: 3055777552 <br /><span class="filler"></span>slots1: 3055777552 <br /><span class="filler"></span>slots1: 3055777552 <br /><span class="filler"></span>...<p>這兒明確告訴你，slot1 是在主線程中執行的。</p>嘗試二<p>我們試試 Qt Manual和 Qt 例子中採用的解決方案。</p><p>槽函數不是在主線程運行麼，而run函數不是次線程麼？那麼我們就：</p><ul><li>在槽函數中做個標記</li><li>在run函數中根據標記進行運行</li></ul><p>這樣以來，儘管槽函數在仍在主線程，但費時的計算代碼都在次線程了。</p><p>對Thread的類的改造如下(程序其他部分和 <strong>嘗試一</strong> 完全一樣)：</p>class Thread:public QThread <br /><span class="filler"></span>{ <br /><span class="filler"></span>Q_OBJECT public: <br /><span class="filler"></span>Thread(){} <br /><span class="filler"></span>public slots: <br /><span class="filler"></span>void slot1(int v) <br /><span class="filler"></span>{ <br /><span class="filler"></span>qDebug()&lt;&lt;"slots1: "&lt;&lt;currentThreadId(); <br /><span class="filler"></span>m_mutex.lock(); <br /><span class="filler"></span>m_vals.enqueue(v); <br /><span class="filler"></span>m_mutex.unlock(); <br /><span class="filler"></span>} <br /><span class="filler"></span>signals: <br /><span class="filler"></span>void sig1(const QString&amp; t); <br /><span class="filler"></span>protected: <br /><span class="filler"></span>void run() <br /><span class="filler"></span>{ <br /><span class="filler"></span>qDebug()&lt;&lt;"thread: "&lt;&lt;currentThreadId(); <br /><span class="filler"></span>while(1) { <br /><span class="filler"></span>m_mutex.lock(); <br /><span class="filler"></span>if (!m_vals.isEmpty()){ <br /><span class="filler"></span>int v = m_vals.dequeue(); <br /><span class="filler"></span>emit sig1(QString::number(v*v*v)); <br /><span class="filler"></span>} <br /><span class="filler"></span>m_mutex.unlock(); <br /><span class="filler"></span>} <br /><span class="filler"></span>} <br /><span class="filler"></span>private: <br /><span class="filler"></span>QQueue&lt;int&gt; m_vals; <br /><span class="filler"></span>QMutex m_mutex; <br /><span class="filler"></span>};<p>注意哦，因為 slot 函數在主線程中，而run函數在次線程中，所以二者需要 QMutex 實現對變量的安全訪問。如果你認真看過Qt自帶的例子，會發現它始終強調 QMutex 的使用。</p>嘗試三<p>嘗試二是"正統"的做法，但如過你用Google搜索過。那麼你可能不會選擇嘗試二，而是會使用下面的方法（其他部分和<strong> 嘗試一</strong> 完全一樣）</p>class Thread:public QThread <br /><span class="filler"></span>{ <br /><span class="filler"></span>Q_OBJECT public: <br /><span class="filler"></span>Thread(){ moveToThread(this); } <br /><span class="filler"></span>...<p>這樣以來，slot函數確實是在次線程工作的，看看控制台輸出</p>main: 3056785168 <br /><span class="filler"></span>thread: 3024444272 <br /><span class="filler"></span>slots1: 3024444272 <br /><span class="filler"></span>slots1: 3024444272 <br /><span class="filler"></span>...<p>很有意思？不是麼，一條 moveToThread(this)，移動到自己。然後問題解決了。</p><ul><li>因為前面說了，QThread 所在線程 和 它管理的線程不是同一個。</li><li>這樣，其實將自己移動到自己所管理的線程了。</li></ul><p>o(∩∩)o...哈哈，不要太高興哦，這個方法看起來比較舒服，但是<strong>它是被官方人員強烈批判的用法</strong></p>嘗試四<p>終於到我想寫的代碼了，這是Qt線程的開發者建議的使用方式，但很可惜。直到目前(Qt4.7.0)，手冊和例子中對此都隻字為提。</p><ul><li>我們不子類話QThread了，我們只需要子類話一個QObject，然後將其move到QThread就行了，看代碼：</li><li>不用子類化QThrad了，我們只需要子類話一個 QObject，需要在次線程中工作的代碼，直接放到它的槽中</li></ul>class Worker:public QObject <br /><span class="filler"></span>{ <br /><span class="filler"></span>Q_OBJECT <br /><span class="filler"></span>public: <br /><span class="filler"></span>Worker(){} <br /><span class="filler"></span>public slots: <br /><span class="filler"></span>void slot1(int v) <br /><span class="filler"></span>{ <br /><span class="filler"></span>qDebug()&lt;&lt;"slots1: "&lt;&lt;QThread::currentThreadId(); <br /><span class="filler"></span>emit sig1(QString::number(v*v*v)); <br /><span class="filler"></span>} <br /><span class="filler"></span>signals: <br /><span class="filler"></span>void sig1(const QString&amp; t); <br /><span class="filler"></span>};<ul><li>因為沒有Thread類了，只有Worker類，Widget代碼需做點改動</li></ul>class Widget:public QWidget <br /><span class="filler"></span>{ <br /><span class="filler"></span>Q_OBJECT public: <br /><span class="filler"></span>Widget():m_label(new QLabel), m_button(new QPushButton("Button")), m_worker(new Worker) <br /><span class="filler"></span>{ <br /><span class="filler"></span>QVBoxLayout * vbox = new QVBoxLayout(this); <br /><span class="filler"></span>vbox-&gt;addWidget(m_label); <br /><span class="filler"></span>vbox-&gt;addWidget(m_button); <br /><span class="filler"></span>setLayout(vbox); <br /><span class="filler"></span>QThread * thread = new QThread(this); <br /><span class="filler"></span>m_worker-&gt;moveToThread(thread); <br /><span class="filler"></span>connect(m_button,SIGNAL(clicked()),this,SLOT(onButtonClicked())); <br /><span class="filler"></span>connect(this,SIGNAL(clicked(int)),m_worker,SLOT(slot1(int))); <br /><span class="filler"></span>connect(m_worker,SIGNAL(sig1(QString)),m_label,SLOT(setText(QString))); <br /><span class="filler"></span>thread-&gt;start(); <br /><span class="filler"></span>} <br /><span class="filler"></span>signals: <br /><span class="filler"></span>void clicked(int v); <br /><span class="filler"></span>private slots: <br /><span class="filler"></span>void onButtonClicked() <br /><span class="filler"></span>{ <br /><span class="filler"></span>static int v = 0; <br /><span class="filler"></span>emit clicked(v); <br /><span class="filler"></span>v++; <br /><span class="filler"></span>} <br /><span class="filler"></span>private: <br /><span class="filler"></span>QLabel * m_label; <br /><span class="filler"></span>QPushButton * m_button; <br /><span class="filler"></span>Worker * m_worker; <br /><span class="filler"></span>};<p>main 函數還是和嘗試一完全一樣</p><p>控制台輸出結果如下</p>main: 3056961296 <br /><span class="filler"></span>slots1: 3024616304 <br /><span class="filler"></span>slots1: 3024616304 <br /><span class="filler"></span>....<p>一共兩個線程，且二者id不同，說明slot在次線程中</p><p>恩。這篇文字似乎又不短了，看來任務二要另起一篇了。</p>
+
+
+<br/>
+-- dbzhang800 於 20101023
+<br/>
+參考<ul><li>http://doc.qt.nokia.com/4.7/qthread.html</li><li>http://doc.qt.nokia.com/4.7/threads-qobject.html</li><li>http://labs.trolltech.com/blogs/2010/06/17/youre-doing-it-wrong/</li><li>http://labs.trolltech.com/blogs/2007/07/05/qthreads-no-longer-abstract/</li></ul>
+
+</body>
+</html>
