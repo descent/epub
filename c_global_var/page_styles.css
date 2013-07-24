@@ -3,30 +3,26 @@
     margin-top: 5pt
     }
 @font-face {
-    font-family: sans-serif;
+    font-family: serif,sans-serif;
     font-weight: normal;
     font-style: normal;
     src: url(res:///ebook/fonts/../../mnt/sdcard/fonts/bkai08mu.ttf)
     }
 @font-face {
-    font-family: sans-serif;
+    font-family: serif,sans-serif;
     font-weight: normal;
     font-style: italic;
     src: url(res:///ebook/fonts/../../mnt/sdcard/fonts/bkai08mu.ttf)
     }
 @font-face {
-    font-family: sans-serif;
+    font-family: serif,sans-serif;
     font-weight: bold;
     font-style: normal;
     src: url(res:///ebook/fonts/../../mnt/sdcard/fonts/bkai08mu.ttf)
     }
 @font-face {
-    font-family: sans-serif;
+    font-family: serif,sans-serif;
     font-weight: bold;
     font-style: italic;
     src: url(res:///ebook/fonts/../../mnt/sdcard/fonts/bkai08mu.ttf)
-    }
-@font-face {
-    font-family: "DroidSans", serif, sans-serif;
-    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
     }

@@ -71,8 +71,9 @@
     vertical-align: inherit
     }
 .calibre15 {
+    font-size:80%
     display: block;
-    font-family: georgia, times new roman, times roman, times, roman, serif;
+    font-family: sans-serif;
     margin-bottom: 1em;
     margin-left: 0;
     margin-right: 0;
@@ -196,6 +197,7 @@
     text-indent: 2em
     }
 .calibre8 {
+    font-family: sans-serif;
     font-weight: bolder
     }
 .calibre9 {
@@ -214,3 +216,12 @@
     text-align: inherit;
     vertical-align: inherit
     }
+
+pre {
+  width:550px;
+  white-space: pre-wrap;
+  font-size:85%
+  text-align: left;
+  font-family: georgia, times new roman, times roman, times, roman, serif;
+}
+
