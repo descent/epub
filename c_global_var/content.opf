@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>dotepub.com (http://dotepub.com)</dc:publisher>
+    <dc:rights>(c) coolshell.cn</dc:rights>
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="coolshell.cn" opf:role="aut">coolshell.cn</dc:creator>
+    <meta name="calibre:timestamp" content="2013-07-23T07:56:25+00:00"/>
+    <dc:title>C語言全局變量那些事兒 | 酷殼 - CoolShell.cn</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>2013-07-21T16:00:00+00:00</dc:date>
+    <meta name="calibre:title_sort" content="C語言全局變量那些事兒 | 酷殼 - CoolShell.cn"/>
+    <dc:contributor opf:role="bkp">calibre (0.9.0) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier opf:scheme="CUSTOMID">dotepub-62d0755e77d9e06f0d3e7e897da38779</dc:identifier>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">e1008e79-810a-49c5-85e0-71de678c31ff</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="OEBPS/img/dotepub.png" id="logo" media-type="image/png"/>
+    <item href="OEBPS/text/content.xhtml" id="content" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/text/copy.xhtml" id="copy" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/text/title.xhtml" id="title" media-type="application/xhtml+xml"/>
+    <item href="page_styles.css" id="page_css" media-type="text/css"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="title"/>
+    <itemref idref="content"/>
+    <itemref idref="copy"/>
+  </spine>
+  <guide>
+    <reference href="OEBPS/text/content.xhtml" type="text" title="Content"/>
+    <reference href="OEBPS/text/title.xhtml" type="title-page" title="Title Page"/>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+    <reference href="OEBPS/text/copy.xhtml" type="copyright-page" title="Copyright"/>
+  </guide>
+</package>
