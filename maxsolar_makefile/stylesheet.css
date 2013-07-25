@@ -217,7 +217,7 @@
     vertical-align: inherit
     }
 
-pre {
+.format_pre {
   width:550px;
   white-space: pre-wrap;
   font-size:85%
