@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="51fb9c14-46b1-40cf-aba2-f810ccc61c05" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.8.38)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>c execption</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="article0" playOrder="1">
+      <navLabel>
+        <text>第15集 C語言中的異常處理機制：希賽網軟件工程頻道</text>
+      </navLabel>
+      <content src="OEBPS/article0.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article1" playOrder="2">
+      <navLabel>
+        <text>第16集 C語言中一種更優雅的異常處理機制：希賽網軟件工程頻道</text>
+      </navLabel>
+      <content src="OEBPS/article1.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article2" playOrder="3">
+      <navLabel>
+        <text>第17集 全面瞭解setjmp與longjmp的使用：希賽網軟件工程頻道</text>
+      </navLabel>
+      <content src="OEBPS/article2.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article3" playOrder="4">
+      <navLabel>
+        <text>第18集 玩轉setjmp與longjmp：希賽網軟件工程頻道</text>
+      </navLabel>
+      <content src="OEBPS/article3.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article4" playOrder="5">
+      <navLabel>
+        <text>第19集 setjmp與longjmp機制，很難與C++和睦相處：希賽網軟件工程頻道</text>
+      </navLabel>
+      <content src="OEBPS/article4.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

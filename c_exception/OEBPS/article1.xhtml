@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">第16集 C語言中一種更優雅的異常處理機制：希賽網軟件工程頻道</h2>
+<p class="calibre2">上一篇文章對C語言中的goto語句進行了較深入的闡述，實際上goto語句是面向過程與面向結構化程序語言中，進行異常處理編程的最原始的支持形式。後來為了更好地、更方便地支持異常處理編程機制，使得程序員在C語言開發的程序中，能寫出更高效、更友善的帶有異常處理機制的代碼模塊來。於是，C語言中出現了一種更優雅的異常處理機制，那就是setjmp()函數與longjmp()函數。</p>
+
+<p class="calibre2">　　實際上，這種異常處理的機制不是C語言中自身的一部分，而是在C標準庫中實現的兩個非常有技巧的庫函數，也許大多數C程序員朋友們對它都很熟悉，而且，通過使用setjmp()函數與longjmp()函數組合後，而提供的對程序的異常處理機制，以被廣泛運用到許多C語言開發的庫系統中，如jpg解析庫，加密解密庫等等。</p>
+
+<p class="calibre2">　　也許C語言中的這種異常處理機制，較goto語句相比較，它才是真正意義上的、概念上比較徹底的，一種異常處理機制。作風一向比較嚴謹、喜歡刨根問底的主人公阿愚當然不會放<br class="calibre4"/>棄對這種異常處理機制進行全面而深入的研究。下面一起來看看。<br class="calibre4"/><b class="calibre3"> setjmp函數有何作用？</b> 　　前面剛說了，setjmp是C標準庫中提供的一個函數，它的作用是保存程序當前運行的一些狀態。它的函數原型如下：</p>
+
+<p class="calibre2">int setjmp( jmp_buf env );</p>
+
+<p class="calibre2">　　這是MSDN中對它的評論，如下：</p>
+
+<p class="calibre2">　　setjmp函數用於保存程序的運行時的堆棧環境，接下來的其它地方，你可以通過調用longjmp函數來恢復先前被保存的程序堆棧環境。當setjmp和longjmp組合一起使用時，它們能提供一種在程序中實現「非本地局部跳轉」（"non-local goto"）的機制。並且這種機制常常被用於來實現，把程序的控制流傳遞到錯誤處理模塊之中；或者程序中不採用正常的返回（return）語句，或函數的正常調用等方法，而使程序能被恢復到先前的一個調用例程（也即函數）中。</p>
+
+<p class="calibre2">　　對setjmp函數的調用時，會保存程序當前的堆棧環境到env參數中；接下來調用longjmp時，會根據這個曾經保存的變量來恢復先前的環境，並且當前的程序控制流，會因此而返回到先前調用setjmp時的程序執行點。此時，在接下來的控制流的例程中，所能訪問的所有的變量（除寄存器類型的變量以外），包含了longjmp函數調用時，所擁有的變量。</p>
+
+<p class="calibre2">　　setjmp和longjmp並不能很好地支持C++中面向對象的語義。因此在C++程序中，請使用C++提供的異常處理機制。</p>
+
+<p class="calibre2">　　好了，現在已經對setjmp有了很感性的瞭解，暫且不做過多評論，接著往下看longjmp函數。</p>
+
+<p class="calibre2"><b class="calibre3">longjmp函數有何作用？</b> 　　同樣，longjmp也是C標準庫中提供的一個函數，它的作用是用於恢復程序執行的堆棧環境，它的函數原型如下：</p>
+
+<p class="calibre2">void longjmp( jmp_buf env, int value );</p>
+
+<p class="calibre2">　　這是MSDN中對它的評論，如下：</p>
+
+<p class="calibre2">　　longjmp函數用於恢復先前程序中調用的setjmp函數時所保存的堆棧環境。setjmp和longjmp組合一起使用時，它們能提供一種在程序中實現「非本地局部跳轉」（"non-local goto"）的機制。並且這種機制常常被用於來實現，把程序的控制流傳遞到錯誤處理模塊，或者不採用正常的返回（return）語句，或函數的正常調用等方法，使程序能被恢復到先前的一個調用例程（也即函數）中。</p>
+
+<p class="calibre2">　　對setjmp函數的調用時，會保存程序當前的堆棧環境到env參數中；接下來調用longjmp時，會根據這個曾經保存的變量來恢復先前的環境，並且因此當前的程序控制流，會返回到先前調用setjmp時的執行點。此時，value參數值會被setjmp函數所返回，程序繼續得以執行。並且，在接下來的控制流的例程中，它所能夠訪問到的所有的變量（除寄存器類型的變量以外），包含了longjmp函數調用時，所擁有的變量；而寄存器類型的變量將不可預料。setjmp函數返回的值必須是非零值，如果longjmp傳送的value參數值為0，那麼實際上被setjmp返回的值是1。</p>
+
+<p class="calibre2">　　在調用setjmp的函數返回之前，調用longjmp，否則結果不可預料。</p>
+
+<p class="calibre2">　　在使用longjmp時，請遵守以下規則或限制：<br class="calibre4"/>　　· 不要假象寄存器類型的變量將總會保持不變。在調用longjmp之後，通過setjmp所返回的控制流中，例程中寄存器類型的變量將不會被恢復。<br class="calibre4"/>　　· 不要使用longjmp函數，來實現把控制流，從一個中斷處理例程中傳出，除非被捕獲的異常是一個浮點數異常。在後一種情況下，如果程序通過調用_fpreset函數，來首先初始化浮點數包後，它是可以通過longjmp來實現從中斷處理例程中返回。<br class="calibre4"/>　　· 在C++程序中，小心對setjmp和longjmp的使用，應為setjmp和longjmp並不能很好地支持C++中面向對象的語義。因此在C++程序中，使用C++提供的異常處理機制將會更加安全。<br class="calibre4"/>把setjmp和longjmp組合起來，原來它這麼厲害！<br class="calibre4"/>　　現在已經對setjmp和longjmp都有了很感性的瞭解，接下來，看一個示例，並從這個示例展開分析，示例代碼如下（來源於MSDN）：</p>
+
+<p class="calibre2">/* FPRESET.C: This program uses signal to set up a<br class="calibre4"/>* routine for handling floating-point errors.<br class="calibre4"/>*/</p>
+
+<p class="calibre2">#include &lt;stdio.h&gt;<br class="calibre4"/>#include &lt;signal.h&gt;<br class="calibre4"/>#include &lt;setjmp.h&gt;<br class="calibre4"/>#include &lt;stdlib.h&gt;<br class="calibre4"/>#include &lt;float.h&gt;<br class="calibre4"/>#include &lt;math.h&gt;<br class="calibre4"/>#include &lt;string.h&gt;</p>
+
+<p class="calibre2">jmp_buf mark; /* Address for long jump to jump to */<br class="calibre4"/>int fperr; /* Global error number */</p>
+
+<p class="calibre2">void __cdecl fphandler( int sig, int num ); /* Prototypes */<br class="calibre4"/>void fpcheck( void );</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>double n1, n2, r;<br class="calibre4"/>int jmpret;<br class="calibre4"/>/* Unmask all floating-point exceptions. */<br class="calibre4"/>_control87( 0, _MCW_EM );<br class="calibre4"/>/* Set up floating-point error handler. The compiler<br class="calibre4"/>* will generate a warning because it expects<br class="calibre4"/>* signal-handling functions to take only one argument.<br class="calibre4"/>*/<br class="calibre4"/>if( signal( SIGFPE, fphandler ) == SIG_ERR )</p>
+
+<p class="calibre2">{<br class="calibre4"/>fprintf( stderr, "Couldn't set SIGFPE\n" );<br class="calibre4"/>abort(); }</p>
+
+<p class="calibre2">/* Save stack environment for return in case of error. First <br class="calibre4"/>* time through, jmpret is 0, so true conditional is executed. <br class="calibre4"/>* If an error occurs, jmpret will be set to -1 and false <br class="calibre4"/>* conditional will be executed.<br class="calibre4"/>*/ </p>
+
+<p class="calibre2">// 注意，下面這條語句的作用是，保存程序當前運行的狀態<br class="calibre4"/>jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>printf( "Test for invalid operation - " );<br class="calibre4"/>printf( "enter two numbers: " );<br class="calibre4"/>scanf( "%lf %lf", &amp;n1, &amp;n2 );</p>
+
+<p class="calibre2">// 注意，下面這條語句可能出現異常，<br class="calibre4"/>// 如果從終端輸入的第2個變量是0值的話<br class="calibre4"/>r = n1 / n2;<br class="calibre4"/>/* This won't be reached if error occurs. */<br class="calibre4"/>printf( "\n\n%4.3g / %4.3g = %4.3g\n", n1, n2, r );</p>
+
+<p class="calibre2">r = n1 * n2;<br class="calibre4"/>/* This won't be reached if error occurs. */<br class="calibre4"/>printf( "\n\n%4.3g * %4.3g = %4.3g\n", n1, n2, r );<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>fpcheck();<br class="calibre4"/>}<br class="calibre4"/>/* fphandler handles SIGFPE (floating-point error) interrupt. Note<br class="calibre4"/>* that this prototype accepts two arguments and that the <br class="calibre4"/>* prototype for signal in the run-time library expects a signal <br class="calibre4"/>* handler to have only one argument.<br class="calibre4"/>*<br class="calibre4"/>* The second argument in this signal handler allows processing of<br class="calibre4"/>* _FPE_INVALID, _FPE_OVERFLOW, _FPE_UNDERFLOW, and <br class="calibre4"/>* _FPE_ZERODIVIDE, all of which are Microsoft-specific symbols <br class="calibre4"/>* that augment the information provided by SIGFPE. The compiler <br class="calibre4"/>* will generate a warning, which is harmless and expected.</p>
+
+<p class="calibre2">*/<br class="calibre4"/>void fphandler( int sig, int num )<br class="calibre4"/>{<br class="calibre4"/>/* Set global for outside check since we don't want<br class="calibre4"/>* to do I/O in the handler.<br class="calibre4"/>*/<br class="calibre4"/>fperr = num;<br class="calibre4"/>/* Initialize floating-point package. */<br class="calibre4"/>_fpreset();<br class="calibre4"/>/* Restore calling environment and jump back to setjmp. Return <br class="calibre4"/>* -1 so that setjmp will return false for conditional test.<br class="calibre4"/>*/<br class="calibre4"/>// 注意，下面這條語句的作用是，恢復先前setjmp所保存的程序狀態<br class="calibre4"/>longjmp( mark, -1 );<br class="calibre4"/>}<br class="calibre4"/>void fpcheck( void )<br class="calibre4"/>{<br class="calibre4"/>char fpstr[30];<br class="calibre4"/>switch( fperr )<br class="calibre4"/>{<br class="calibre4"/>case _FPE_INVALID:<br class="calibre4"/>strcpy( fpstr, "Invalid number" );<br class="calibre4"/>break;<br class="calibre4"/>case _FPE_OVERFLOW:<br class="calibre4"/>strcpy( fpstr, "Overflow" );</p>
+
+<p class="calibre2">break;<br class="calibre4"/>case _FPE_UNDERFLOW:<br class="calibre4"/>strcpy( fpstr, "Underflow" );<br class="calibre4"/>break;<br class="calibre4"/>case _FPE_ZERODIVIDE:<br class="calibre4"/>strcpy( fpstr, "Divide by zero" );<br class="calibre4"/>break;<br class="calibre4"/>default:<br class="calibre4"/>strcpy( fpstr, "Other floating point error" );<br class="calibre4"/>break;<br class="calibre4"/>}<br class="calibre4"/>printf( "Error %d: %s\n", fperr, fpstr );<br class="calibre4"/>}</p>
+
+<p class="calibre2">程序的運行結果如下：<br class="calibre4"/>Test for invalid operation - enter two numbers: 1 2</p>
+
+<p class="calibre2">1 / 2 = 0.5</p>
+
+<p class="calibre2">1 * 2 = 2</p>
+
+<p class="calibre2">　　上面的程序運行結果正常。另外程序的運行結果還有一種情況，如下：<br class="calibre4"/>Test for invalid operation - enter two numbers: 1 0<br class="calibre4"/>Error 131: Divide by zero</p>
+
+<p class="calibre2">　　呵呵！程序運行過程中出現了異常（被0除），並且這種異常被程序預先定義的異常處理模塊所捕獲了。厲害吧！可千萬別輕視，這可以C語言編寫的程序。</p>
+
+<p class="calibre2"><b class="calibre3">分析setjmp和longjmp</b> 　　現在，來分析上面的程序的執行過程。當然，這裡主要分析在異常出現的情況下，程序運行的控制轉移流程。由於文章篇幅有限，分析時，我們簡化不相關的代碼，這樣更也易理解控制流的執行過程。如下圖所示。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img1.jpeg" alt="img1.jpeg" class="calibre5"/></span></p>
+
+<p class="calibre2">　　呵呵！現在是否對程序的執行流程一目瞭然，其中最關鍵的就是setjjmp和longjmp函數的調用處理。我們分別來分析之。</p>
+
+<p class="calibre2">　　當程序運行到第②步時，調用setjmp函數，這個函數會保存程序當前運行的一些狀態信息，主要是一些系統寄存器的值，如ss，cs，eip，eax，ebx，ecx，edx，eflags等寄存器，其中尤其重要的是eip的值，因為它相當於保存了一個程序運行的執行點。這些信息被保存到mark變量中，這是一個C標準庫中所定義的特殊結構體類型的變量。</p>
+
+<p class="calibre2">　　調用setjmp函數保存程序狀態之後，該函數返回0值，於是接下來程序執行到第③步和第④步中。在第④步中語句執行時，如果變量n2為0值，於是便引發了一個浮點數計算異常，，導致控制流轉入fphandler函數中，也即進入到第⑤步。</p>
+
+<p class="calibre2">　　然後運行到第⑥步，調用longjmp函數，這個函數內部會從先前的setjmp所保存的程序狀態，也即mark變量中，來恢復到以前的系統寄存器的值。於是便進入到了第⑦步，注意，這非常有點意思，實際上，通過longjmp函數的調用後，程序控制流（尤其是eip的值）再次戲劇性地進入到了setjmp函數的處理內部中，但是這一次setjmp返回的值是longjmp函數調用時，所傳入的第2個參數，也即-1，因此程序接下來進入到了第⑧步的執行之中。</p>
+
+<p class="calibre2"><b class="calibre3">總結</b> 　　與goto語句不同，在C語言中，setjmp()與longjmp()的組合調用，為程序員提供了一種更優雅的異常處理機制。它具有如下特點：</p>
+
+<p class="calibre2">　　 （1） goto只能實現本地跳轉，而setjmp()與longjmp()的組合運用，能有效的實現程序控制流的非本地（遠程）跳轉；</p>
+
+<p class="calibre2">　　 （2） 與goto語句不同，setjmp()與longjmp()的組合運用，提供了真正意義上的異常處理機制。例如，它能有效定義受監控保護的模塊區域（類似於C++中try關鍵字所定義的區域）；同時它也能有效地定義異常處理模塊（類似於C++中catch關鍵字所定義的區域）；還有，它能在程序執行過程中，通過longjmp函數的調用，方便地拋出異常（類似於C++中throw關鍵字）。</p>
+
+<p class="calibre2">　　現在，相信大家已經對在C語言中提供的這種異常處理機制有了很全面地瞭解。但是我們還沒有深入它研究它，下一篇文章中繼續探討吧！go！</p>
+</body>
+</html>

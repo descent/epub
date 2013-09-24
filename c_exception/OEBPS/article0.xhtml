@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">第15集 C語言中的異常處理機制：希賽網軟件工程頻道</h2>
+<p class="calibre2">在這之前的所有文章中，都是闡述關於C++的異常處理機制。的確，在C++語言中，它提供的異常處理的模型是非常完善的，主人公阿愚因此才和「異常處理」結下了不解之緣，才有了這一系列文章的基本素材，同時主人公阿愚在自己的編程開發過程中，也才更離不開她，喜歡並依賴於她。</p>
+
+<p class="calibre2">　　另外，C++語言中完善的異常處理的模型，也更激發了主人公阿愚更多其它的思考。難道異常處理機制只有在C++語言中才有嗎？不是的，絕對不是這樣的。實際上，異常處理的機制是無處不在的，它與軟件的編程思想的發展，與編程語言的發展是同步的。異常處理機制自身的發展和完善過程，也是並記錄了我們在編程思想上和編程方法上的改變、進步和發展的過程和重要的足跡。</p>
+
+<p class="calibre2">　　在前面的文章中，早就講到過，異常處理的核心思想是，把功能模塊代碼與系統中可能出現錯誤的處理代碼分離開來，以此來達到使我們的代碼組織起來更美觀、邏輯上更清晰，並且同時從根本上來提高我們軟件系統長時間穩定運行的可靠性。那麼，現在回過頭來看，實際上在計算機系統的硬件設計中，操作系統的總體設計中，早期的許多面向結構化程序設計語言中（例如C語言），都有異常處理的機制和方法的廣泛運用。只不過是到了像C++這樣面向對象的程序設計語言中，才把異常處理的模型設計到了一個相當理想和完善的程度。下面來看看主人公阿愚對在C語言中，異常處理機制的如何被運用？</p>
+
+<p class="calibre2"><b class="calibre3">goto語句，實現異常處理編程，最初也最原始的支持手段</b> 　　1、goto語句，程序員朋友們對它太熟悉了，它是C語言中使用最為靈活的一條語句，由它也充分體現出了C語言的許多特點或者說是優點。它雖然是一條高級語言中提供的語句，但是它一般卻直接對應一條「無條件直接跳轉的機器指令」，所以說它非常地特別，它引起過許多爭議，但是這條語句仍然一直被保留了下來，即便是今天的C++語言中，也有對它的支持（雖然不建議使用它）。goto語句有非常多的用途或優點，例如，它特別適合於在編寫系統程序中被使用，它能使編寫出來的代碼非常簡練。另外，goto語句另外一個最重要的作用就是，它實際上是一種對異常處理編程，最初也最原始的支持手段或方法。它能把錯誤處理模塊的代碼有效與其它代碼分離開來。例程如下（請與第一集文章中的示例代碼相比較）：</p>
+
+<p class="calibre2">void main(int argc, char* argv[])<br class="calibre4"/>{<br class="calibre4"/>if (Call_Func1(in, param out)<br class="calibre4"/>{<br class="calibre4"/>// 函數調用成功，我們正常的處理<br class="calibre4"/>if (Call_Func2(in, param out)<br class="calibre4"/>{<br class="calibre4"/>// 函數調用成功，我們正常的處理<br class="calibre4"/>while(condition)<br class="calibre4"/>{<br class="calibre4"/>//do other job</p>
+
+<p class="calibre2">// 如果錯誤直接跳轉<br class="calibre4"/>if (has error) goto Error;</p>
+
+<p class="calibre2">//do other job<br class="calibre4"/>}<br class="calibre4"/>}<br class="calibre4"/>// 如果錯誤直接跳轉<br class="calibre4"/>else goto Error;</p>
+
+<p class="calibre2">}<br class="calibre4"/>// 如果錯誤直接跳轉<br class="calibre4"/>else goto Error;</p>
+
+<p class="calibre2">// 錯誤處理模塊<br class="calibre4"/>Error:<br class="calibre4"/>process_error();<br class="calibre4"/>exit();</p>
+
+<p class="calibre2">}</p>
+
+<p class="calibre2">　　呵呵！上面經過改善後的代碼是不是更加清晰了一些，也更簡練了一些。因此說，goto語句確是是能夠很好地完成一些簡易的異常處理編程的實現。雖然它較C++語言中提供的異常處理編程模型相差甚遠。</p>
+
+<p class="calibre2"><b class="calibre3">為什麼不建議使用goto語句來實現異常處理編程</b> 　　雖然goto 語句能有效地支持異常處理編程的實現。但是沒有人卻建議使用它，即便是在C語言中。因為：</p>
+
+<p class="calibre2">　　（1） goto語句能破壞程序的結構化設計，使代碼難於測試，且包含大量goto的代碼模塊不易理解和閱讀。它一直遭結構化程序設計思想所拋棄，強烈建議程序員不易使用它；</p>
+
+<p class="calibre2">　　（2） 與C++語言中提供的異常處理編程模型相比，它的確是太弱了一些。例如，它一般只能是在某個函數的局部作用域內跳轉，也即它不能有效和方便地實現程序控制流的跨函數遠程的跳轉。</p>
+
+<p class="calibre2">　　（3） 如果在C++語言中，用goto語句來實現異常處理，那麼它將給面向對象構成極大破壞，並影響到效率。這一點，以後會繼續深入闡述。</p>
+
+<p class="calibre2"><b class="calibre3">總結</b> 　　雖然goto語句缺點多多，但不管如何，goto語句的確為程序員朋友們，在C語言中，有效運用異常處理思想來進行編程處理，提供了一種途徑或簡易的手段。當然，運用goto語句來進行異常處理編程已經成為歷史。因為，在C語言中，早就已經提供了一種更加優雅的異常處理機制。去看看吧！繼續！</p>
+</body>
+</html>

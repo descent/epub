@@ -1,0 +1,543 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">第18集 玩轉setjmp與longjmp：希賽網軟件工程頻道</h2>
+<p class="calibre2">通過上兩篇文章中，對setjmp與longjmp兩個函數的深入研究與分析，相信大家已經和主人公阿愚一樣，對C語言中提供的這種異常處理機制的使用方法瞭如指掌了。請不要驕傲和自滿，讓我們更上一層樓，徹底玩轉setjmp與longjmp這兩個函數。</p>
+
+<p class="calibre2">　　不要忘記，前面我們得出過結論，C語言中提供的這種異常處理機制，與C++中的異常處理模型很相似。例如，可以定義出類似的try block（受到監控的代碼）；catch block（異常錯誤的處理模塊）；以及可以隨時拋出的異常（throw語句）。所以說，我們可以通過一種非常有技巧的封裝，來達到對setjmp和longjmp的使用方法（或者說語法規則），基本與C++中的語法一致。很有誘惑吧！</p>
+
+<p class="calibre2">首先展示阿愚封裝的在C語言環境中異常處理框架</p>
+
+<p class="calibre2">1、首先是接口的頭文件，主要採用「宏」技術！代碼如下： </p>
+ceh.h
+<pre style="white-space: pre-wrap;font-family: serif">
+<b>  1</b> // from: http://se.csai.cn/ExpertEyes/No154.htm
+<b>  2</b> /*************************************************
+<b>  3</b> * author: 王胜祥 *
+<b>  4</b> * email: &lt;mantx@21cn.com&gt; *
+<b>  5</b> * date: 2005-03-07 *
+<b>  6</b> * version: *
+<b>  7</b> * filename: ceh.h *
+<b>  8</b> *************************************************/
+<b>  9</b> 
+<b> 10</b> 
+<b> 11</b> /********************************************************************
+<b> 12</b> 
+<b> 13</b> This file is part of CEH(Exception Handling in C Language).
+<b> 14</b> 
+<b> 15</b> CEH is free software; you can redistribute it and/or modify
+<b> 16</b> it under the terms of the GNU General Public License as published by
+<b> 17</b> the Free Software Foundation; either version 2 of the License, or
+<b> 18</b> (at your option) any later version.
+<b> 19</b> 
+<b> 20</b> CEH is distributed in the hope that it will be useful,
+<b> 21</b> but WITHOUT ANY WARRANTY; without even the implied warranty of
+<b> 22</b> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+<b> 23</b> GNU General Public License for more details.
+<b> 24</b> 
+<b> 25</b> 　　注意：这个异常处理框架不支持线程安全，不能在多线程的程序环境下使用。
+<b> 26</b> 如果您想在多线程的程序中使用它，您可以自己试着来继续完善这个
+<b> 27</b> 框架模型。
+<b> 28</b> *********************************************************************/
+<b> 29</b> 
+<b> 30</b> #include &lt;stdio.h&gt;
+<b> 31</b> #include &lt;signal.h&gt;
+<b> 32</b> #include &lt;setjmp.h&gt;
+<b> 33</b> #include &lt;stdlib.h&gt;
+<b> 34</b> #include &lt;float.h&gt;
+<b> 35</b> #include &lt;math.h&gt;
+<b> 36</b> #include &lt;string.h&gt;
+<b> 37</b> 
+<b> 38</b> #define _FPE_INVALID     0
+<b> 39</b> #define _FPE_OVERFLOW    1
+<b> 40</b> #define _FPE_UNDERFLOW   2
+<b> 41</b> #define _FPE_ZERODIVIDE  3
+<b> 42</b> 
+<b> 43</b> 
+<b> 44</b> ////////////////////////////////////////////////////
+<b> 45</b> /* 与异常有关的结构体定义 */
+<b> 46</b> typedef struct _CEH_EXCEPTION 
+<b> 47</b> {
+<b> 48</b>   int err_type; /* 异常类型 */
+<b> 49</b>   int err_code; /* 错误代码 */
+<b> 50</b>   char err_msg[80]; /* 错误信息 */
+<b> 51</b> }CEH_EXCEPTION; /* 异常对象 */
+<b> 52</b> 
+<b> 53</b> typedef struct _CEH_ELEMENT 
+<b> 54</b> {
+<b> 55</b>   jmp_buf exec_status;
+<b> 56</b>   CEH_EXCEPTION ex_info;
+<b> 57</b>   struct _CEH_ELEMENT* next;
+<b> 58</b> } CEH_ELEMENT; /* 存储异常对象的链表元素 */
+<b> 59</b> ////////////////////////////////////////////////////
+<b> 60</b> 
+<b> 61</b> 
+<b> 62</b> ////////////////////////////////////////////////////
+<b> 63</b> /* 内部接口定义，操纵维护链表数据结构 */
+<b> 64</b> extern void CEH_push(CEH_ELEMENT* ceh_element);
+<b> 65</b> extern CEH_ELEMENT* CEH_pop();
+<b> 66</b> extern CEH_ELEMENT* CEH_top();
+<b> 67</b> extern int CEH_isEmpty();
+<b> 68</b> ////////////////////////////////////////////////////
+<b> 69</b> 
+<b> 70</b> /* 以下是外部接口的定义 */
+<b> 71</b> ////////////////////////////////////////////////////
+<b> 72</b> /* 抛出异常 */
+<b> 73</b> extern void thrower(CEH_EXCEPTION* e);
+<b> 74</b> 
+<b> 75</b> /* 抛出异常 (throw)
+<b> 76</b> a表示err_type 
+<b> 77</b> b表示err_code 
+<b> 78</b> c表示err_msg 
+<b> 79</b> */
+<b> 80</b> #define throw(a, b, c) \
+<b> 81</b> { \
+<b> 82</b> CEH_EXCEPTION ex; \
+<b> 83</b> memset(&amp;ex, 0, sizeof(ex)); \
+<b> 84</b> ex.err_type = a; \
+<b> 85</b> ex.err_code = b; \
+<b> 86</b> strncpy(ex.err_msg, c, sizeof(c)); \
+<b> 87</b> thrower(&amp;ex); \
+<b> 88</b> }
+<b> 89</b> 
+<b> 90</b> /* 重新抛出原来的异常 (rethrow)*/
+<b> 91</b> #define rethrow thrower(ceh_ex_info)
+<b> 92</b> ////////////////////////////////////////////////////
+<b> 93</b> 
+<b> 94</b> 
+<b> 95</b> ////////////////////////////////////////////////////
+<b> 96</b> /* 定义try block（受到监控的代码）*/
+<b> 97</b> #define try \
+<b> 98</b> { \
+<b> 99</b>   int ___ceh_b_catch_found, ___ceh_b_occur_exception; \
+<b>100</b>   CEH_ELEMENT ___ceh_element; \
+<b>101</b>   CEH_EXCEPTION* ceh_ex_info; \
+<b>102</b>   memset(&amp;___ceh_element, 0, sizeof(___ceh_element)); \
+<b>103</b>   CEH_push(&amp;___ceh_element); \
+<b>104</b>   ceh_ex_info = &amp;___ceh_element.ex_info; \
+<b>105</b>   ___ceh_b_catch_found = 0; \
+<b>106</b>   if (!(___ceh_b_occur_exception=setjmp(___ceh_element.exec_status))) \
+<b>107</b>   {
+<b>108</b>     /* 定义catch block（异常错误的处理模块）
+<b>109</b>        catch表示捕获所有类型的异常
+<b>110</b>      */
+<b>111</b> #define catch \
+<b>112</b>   } \
+<b>113</b>   else \
+<b>114</b>   { \
+<b>115</b>     CEH_pop(); \
+<b>116</b>     ___ceh_b_catch_found = 1;
+<b>117</b> 
+<b>118</b> 
+<b>119</b> /* end_try表示前面定义的try block和catch block结束 */
+<b>120</b> #define end_try \
+<b>121</b> } \
+<b>122</b> { \
+<b>123</b>   /* 没有执行到任何的catch块中 */ \
+<b>124</b>   if(!___ceh_b_catch_found) \
+<b>125</b>   { \
+<b>126</b>     CEH_pop(); \
+<b>127</b>     /* 出现了异常，但没有捕获到任何异常 */ \
+<b>128</b>     if(___ceh_b_occur_exception) thrower(ceh_ex_info); \
+<b>129</b>   } \
+<b>130</b> } \
+<b>131</b> }
+<b>132</b> 
+<b>133</b> 
+<b>134</b> /* 定义catch block（异常错误的处理模块）
+<b>135</b> catch_part表示捕获一定范围内的异常
+<b>136</b> */
+<b>137</b> #define catch_part(i, j) \
+<b>138</b> } \
+<b>139</b> else if(ceh_ex_info-&gt;err_type&gt;=i &amp;&amp; ceh_ex_info-&gt;err_type&lt;=j) \
+<b>140</b> { \
+<b>141</b>   CEH_pop(); \
+<b>142</b>   ___ceh_b_catch_found = 1;
+<b>143</b> 
+<b>144</b> 
+<b>145</b>   /* 定义catch block（异常错误的处理模块）
+<b>146</b>      catch_one表示只捕获一种类型的异常
+<b>147</b>    */
+<b>148</b>   #define catch_one(i) \
+<b>149</b> } \
+<b>150</b> else if(ceh_ex_info-&gt;err_type==i) \
+<b>151</b> { \
+<b>152</b>   CEH_pop(); \
+<b>153</b>   ___ceh_b_catch_found = 1;
+<b>154</b> ////////////////////////////////////////////////////
+<b>155</b> 
+<b>156</b> 
+<b>157</b> ////////////////////////////////////////////////////
+<b>158</b> /* 其它可选的接口定义 */
+<b>159</b> extern void CEH_init();
+<b>160</b> ////////////////////////////////////////////////////
+</pre>
+
+<p class="calibre2">2、另外還有一個簡單的實現文件，主要實現功能封裝。代碼如下：</p>
+ceh.c
+<pre style="white-space: pre-wrap;font-family: serif">
+<b>  1</b> /*************************************************
+<b>  2</b> * author: 王胜祥 *
+<b>  3</b> * email: &lt;mantx@21cn.com&gt; *
+<b>  4</b> * date: 2005-03-07 *
+<b>  5</b> * version: *
+<b>  6</b> * filename: ceh.c * 
+<b>  7</b> *************************************************/
+<b>  8</b> 
+<b>  9</b> 
+<b> 10</b> /********************************************************************
+<b> 11</b> 
+<b> 12</b> This file is part of CEH(Exception Handling in C Language).
+<b> 13</b> 
+<b> 14</b> CEH is free software; you can redistribute it and/or modify
+<b> 15</b> it under the terms of the GNU General Public License as published by
+<b> 16</b> the Free Software Foundation; either version 2 of the License, or
+<b> 17</b> (at your option) any later version.
+<b> 18</b> 
+<b> 19</b> CEH is distributed in the hope that it will be useful,
+<b> 20</b> but WITHOUT ANY WARRANTY; without even the implied warranty of
+<b> 21</b> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+<b> 22</b> GNU General Public License for more details.
+<b> 23</b> 
+<b> 24</b> 注意：这个异常处理框架不支持线程安全，不能在多线程的程序环境下使用。
+<b> 25</b> 如果您想在多线程的程序中使用它，您可以自己试着来继续完善这个
+<b> 26</b> 框架模型。
+<b> 27</b> *********************************************************************/
+<b> 28</b> 
+<b> 29</b> #include &quot;ceh.h&quot;
+<b> 30</b> 
+<b> 31</b> ////////////////////////////////////////////////////
+<b> 32</b> static CEH_ELEMENT* head = 0;
+<b> 33</b> 
+<b> 34</b> /* 把一个异常插入到链表头中 */
+<b> 35</b> void CEH_push(CEH_ELEMENT* ceh_element)
+<b> 36</b> {
+<b> 37</b> if(head) ceh_element-&gt;next = head;
+<b> 38</b> head = ceh_element;
+<b> 39</b> }
+<b> 40</b> 
+<b> 41</b> 
+<b> 42</b> /* 从链表头中，删除并返回一个异常 */
+<b> 43</b> CEH_ELEMENT* CEH_pop()
+<b> 44</b> {
+<b> 45</b> CEH_ELEMENT* ret = 0;
+<b> 46</b> 
+<b> 47</b> ret = head;
+<b> 48</b> head = head-&gt;next;
+<b> 49</b> 
+<b> 50</b> return ret;
+<b> 51</b> }
+<b> 52</b> 
+<b> 53</b> 
+<b> 54</b> /* 从链表头中，返回一个异常 */
+<b> 55</b> CEH_ELEMENT* CEH_top()
+<b> 56</b> {
+<b> 57</b> return head;
+<b> 58</b> }
+<b> 59</b> 
+<b> 60</b> 
+<b> 61</b> /* 链表中是否有任何异常 */
+<b> 62</b> int CEH_isEmpty()
+<b> 63</b> {
+<b> 64</b> return head==0;
+<b> 65</b> }
+<b> 66</b> ////////////////////////////////////////////////////
+<b> 67</b> 
+<b> 68</b> 
+<b> 69</b> ////////////////////////////////////////////////////
+<b> 70</b> /* 缺省的异常处理模块 */
+<b> 71</b> static void CEH_uncaught_exception_handler(CEH_EXCEPTION *ceh_ex_info) 
+<b> 72</b> {
+<b> 73</b> printf(&quot;捕获到一个未处理的异常，错误原因是：%s! err_type:%d err_code:%d\n&quot;,
+<b> 74</b> ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);
+<b> 75</b> fprintf(stderr, &quot;程序终止!\n&quot;);
+<b> 76</b> fflush(stderr);
+<b> 77</b> exit(EXIT_FAILURE); 
+<b> 78</b> }
+<b> 79</b> ////////////////////////////////////////////////////
+<b> 80</b> 
+<b> 81</b> 
+<b> 82</b> ////////////////////////////////////////////////////
+<b> 83</b> /* 抛出异常 */
+<b> 84</b> void thrower(CEH_EXCEPTION* e) 
+<b> 85</b> {
+<b> 86</b> CEH_ELEMENT *se;
+<b> 87</b> 
+<b> 88</b> if (CEH_isEmpty()) CEH_uncaught_exception_handler(e);
+<b> 89</b> 
+<b> 90</b> se = CEH_top();
+<b> 91</b> se-&gt;ex_info.err_type = e-&gt;err_type;
+<b> 92</b> se-&gt;ex_info.err_code = e-&gt;err_code;
+<b> 93</b> strncpy(se-&gt;ex_info.err_msg, e-&gt;err_msg, sizeof(se-&gt;ex_info.err_msg));
+<b> 94</b> 
+<b> 95</b> longjmp(se-&gt;exec_status, 1);
+<b> 96</b> }
+<b> 97</b> ////////////////////////////////////////////////////
+<b> 98</b> 
+<b> 99</b> 
+<b>100</b> ////////////////////////////////////////////////////
+<b>101</b> static void fphandler( int sig)
+<b>102</b> {
+<b>103</b>   //_fpreset();
+<b>104</b>   int num = 0;
+<b>105</b> 
+<b>106</b>   switch( num )
+<b>107</b>   {
+<b>108</b>     case _FPE_INVALID:
+<b>109</b>       throw(-1, num, &quot;Invalid number&quot; );
+<b>110</b>     case _FPE_OVERFLOW:
+<b>111</b>       throw(-1, num, &quot;Overflow&quot; );
+<b>112</b>     case _FPE_UNDERFLOW:
+<b>113</b>       throw(-1, num, &quot;Underflow&quot; );
+<b>114</b>     case _FPE_ZERODIVIDE:
+<b>115</b>       throw(-1, num, &quot;Divide by zero&quot; );
+<b>116</b>     default:
+<b>117</b>       throw(-1, num, &quot;Other floating point error&quot; );
+<b>118</b>   }
+<b>119</b> }
+<b>120</b> 
+<b>121</b> void CEH_init()
+<b>122</b> {
+<b>123</b>   //_control87( 0, _MCW_EM );
+<b>124</b> 
+<b>125</b>   if( signal( SIGFPE, fphandler ) == SIG_ERR )
+<b>126</b>   {
+<b>127</b>     fprintf( stderr, &quot;Couldn't set SIGFPE\n&quot; );
+<b>128</b>     abort(); 
+<b>129</b>   }
+<b>130</b> }
+<b>131</b> ////////////////////////////////////////////////////
+</pre>
+
+<p>體驗上面設計出的異常處理框架, 請花點時間仔細揣摩一下上面設計出的異常處理框架。呵呵！程序員朋友們，大家是不是發現它與C++提供的異常處理模型非常相似。例如，它提供的基本接口有try、catch、以及throw等三條語句。還是先看個具體例子吧！以便驗證一下這個C語言環境中異常處理框架是否真的比較好用。代碼如下：</p>
+
+t0.c
+<pre style="white-space: pre-wrap;font-family: serif">
+<b> 1</b> #include &quot;ceh.h&quot;
+<b> 2</b> #include &lt;stdio.h&gt;
+<b> 3</b> 
+<b> 4</b> int main(void) 
+<b> 5</b> {
+<b> 6</b>   //定义try block块
+<b> 7</b>   try
+<b> 8</b>   {
+<b> 9</b>     int i,j;
+<b>10</b>     printf(&quot;异常出现前\n\n&quot;);
+<b>11</b> 
+<b>12</b>     // 抛出一个异常
+<b>13</b>     // 其中第一个参数，表示异常类型；第二个参数表示错误代码
+<b>14</b>     // 第三个参数表示错误信息
+<b>15</b>     throw(9, 15, &quot;出现某某异常&quot;);
+<b>16</b> 
+<b>17</b>     printf(&quot;异常出现后\n\n&quot;);
+<b>18</b>   }
+<b>19</b>   //定义catch block块
+<b>20</b>   catch
+<b>21</b>   {
+<b>22</b>     printf(&quot;catch块，被执行到\n&quot;);
+<b>23</b>     printf(&quot;捕获到一个异常，错误原因是：%s! err_type:%d err_code:%d\n&quot;,
+<b>24</b>     ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);
+<b>25</b>   }
+<b>26</b>   // 这里稍有不同，需要定义一个表示当前的try block结束语句
+<b>27</b>   // 它主要是清除相应的资源
+<b>28</b>   end_try
+<b>29</b> }
+</pre>
+
+<p class="calibre2">注意，上面的測試程序可是C語言環境下的程序（文件的擴展名請使用.c結尾），雖然它看上去很像C++程序。請編譯運行一下，發現它是不是運行結果如下：<br class="calibre4"/>異常出現前</p>
+
+<hr/>
+<p>
+by descent
+</p>
+t0.e
+<pre style="white-space: pre-wrap; font-family: serif">
+<b> 1</b> typedef struct _CEH_EXCEPTION
+<b> 2</b> {
+<b> 3</b>   int err_type;
+<b> 4</b>   int err_code;
+<b> 5</b>   char err_msg[80];
+<b> 6</b> }CEH_EXCEPTION;
+<b> 7</b> 
+<b> 8</b> typedef struct _CEH_ELEMENT
+<b> 9</b> {
+<b>10</b>   jmp_buf exec_status;
+<b>11</b>   CEH_EXCEPTION ex_info;
+<b>12</b>   struct _CEH_ELEMENT* next;
+<b>13</b> } CEH_ELEMENT;
+<b>14</b> 
+<b>15</b> extern void CEH_push(CEH_ELEMENT* ceh_element);
+<b>16</b> extern CEH_ELEMENT* CEH_pop();
+<b>17</b> extern CEH_ELEMENT* CEH_top();
+<b>18</b> extern int CEH_isEmpty();
+<b>19</b> 
+<b>20</b> extern void thrower(CEH_EXCEPTION* e);
+<b>21</b> extern void CEH_init();
+<b>22</b> 
+<b>23</b> int main(void)
+<b>24</b> {
+<b>25</b>   { 
+<b>26</b>     int ___ceh_b_catch_found, ___ceh_b_occur_exception; 
+<b>27</b>     CEH_ELEMENT ___ceh_element; 
+<b>28</b>     CEH_EXCEPTION* ceh_ex_info; 
+<b>29</b>     memset(&amp;___ceh_element, 0, sizeof(___ceh_element)); 
+<b>30</b>     CEH_push(&amp;___ceh_element); 
+<b>31</b>     ceh_ex_info = &amp;___ceh_element.ex_info; 
+<b>32</b>     ___ceh_b_catch_found = 0; 
+<b>33</b> 
+<b>34</b>     if (!(___ceh_b_occur_exception=_setjmp (___ceh_element.exec_status))) 
+<b>35</b>     {
+<b>36</b>       {
+<b>37</b>         int i,j;
+<b>38</b>         printf(&quot;异常出现前\n\n&quot;);
+<b>39</b> 
+<b>40</b>         { 
+<b>41</b>           CEH_EXCEPTION ex; 
+<b>42</b>           memset(&amp;ex, 0, sizeof(ex)); 
+<b>43</b>           ex.err_type = 9; 
+<b>44</b>           ex.err_code = 15; 
+<b>45</b>           strncpy(ex.err_msg, &quot;出现某某异常&quot;, sizeof(&quot;出现某某异常&quot;)); thrower(&amp;ex); 
+<b>46</b>         };
+<b>47</b>         printf(&quot;异常出现后\n\n&quot;);
+<b>48</b>       }
+<b>49</b> 
+<b>50</b>     } 
+<b>51</b>     else 
+<b>52</b>     { 
+<b>53</b>       CEH_pop(); ___ceh_b_catch_found = 1;
+<b>54</b>       {
+<b>55</b>         printf(&quot;catch块，被执行到\n&quot;);
+<b>56</b>         printf(&quot;捕获到一个异常，错误原因是：%s! err_type:%d err_code:%d\n&quot;,
+<b>57</b>         ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);
+<b>58</b>       }
+<b>59</b>     } 
+<b>60</b>     { 
+<b>61</b>       if(!___ceh_b_catch_found) 
+<b>62</b>       { 
+<b>63</b>         CEH_pop(); 
+<b>64</b>         if(___ceh_b_occur_exception) thrower(ceh_ex_info); 
+<b>65</b>       } 
+<b>66</b>     } 
+<b>67</b>   }
+<b>68</b> }
+</pre>
+<hr/>
+
+<p class="calibre2"><b class="calibre3">catch塊，被執行到</b>捕獲到一個異常，錯誤原因是：出現某某異常! err_type:9 err_code:15</p>
+
+<p class="calibre2">呵呵！程序的確是在按照我們預想的流程在執行。再次提醒，這可是C程序，但是它的異常處理卻非常類似於C++中的風格，要知道，做到這一點其實非常地不容易。當然，上面異常對象的傳遞只是在一個函數的內部，同樣，它也適用於多個嵌套函數間的異常傳遞，還是用代碼驗證一下吧！在上面的代碼基礎下，小小修改一點，代碼如下：</p>
+
+<p class="calibre2">#include "ceh.h"</p>
+
+<p class="calibre2">void test1()<br class="calibre4"/>{<br class="calibre4"/>throw(0, 20, "hahaha");<br class="calibre4"/>}</p>
+
+<p class="calibre2">void test()<br class="calibre4"/>{<br class="calibre4"/>test1();<br class="calibre4"/>}</p>
+
+<p class="calibre2">int main(void) <br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>int i,j;<br class="calibre4"/>printf("異常出現前\n\n");</p>
+
+<p class="calibre2">// 注意，這個函數的內部會拋出一個異常。<br class="calibre4"/>test();</p>
+
+<p class="calibre2">throw(9, 15, "出現某某異常");</p>
+
+<p class="calibre2">printf("異常出現後\n\n");<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("catch塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　同樣，在上面程序中，test1()函數內拋出的異常，可以被上層main()函數中的catch block中捕獲到。運行結果就不再給出了，大家可以自己編譯運行一把，看看運行結果。<br class="calibre4"/>另外這個異常處理框架，與C++中的異常處理模型類似，它也支持try catch塊的多層嵌套。很厲害吧！還是看演示代碼吧！，如下：</p>
+
+<p class="calibre2">#include "ceh.h"</p>
+
+<p class="calibre2">int main(void) <br class="calibre4"/>{<br class="calibre4"/>// 外層的try catch塊<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>// 內層的try catch塊<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>throw(1, 15, "嵌套在try塊中");<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("內層的catch塊被執行\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);</p>
+
+<p class="calibre2">printf("外層的catch塊被執行\n");<br class="calibre4"/>}<br class="calibre4"/>end_try</p>
+
+<p class="calibre2">throw(2, 30, "再拋一個異常");<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("外層的catch塊被執行\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　請編譯運行一下，程序的運行結果如下：<br class="calibre4"/>　　內層的catch塊被執行<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：嵌套在try塊中! err_type:1 err_code:15<br class="calibre4"/>　　外層的catch塊被執行<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：再拋一個異常! err_type:2 err_code:30</p>
+
+<p class="calibre2">　　還有，這個異常處理框架也支持對異常的分類處理。這一點，也完全是模仿C++中的異常處理模型。不過，由於C語言中，不支持函數名重載，所以語法上略有不同，還是看演示代碼吧！，如下：</p>
+
+<p class="calibre2">#include "ceh.h"</p>
+
+<p class="calibre2">int main(void) <br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>int i,j;<br class="calibre4"/>printf("異常出現前\n\n");</p>
+
+<p class="calibre2">throw(9, 15, "出現某某異常");</p>
+
+<p class="calibre2">printf("異常出現後\n\n");<br class="calibre4"/>}<br class="calibre4"/>// 這裡表示捕獲異常類型從4到6的異常<br class="calibre4"/>catch_part(4, 6)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(4, 6)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>// 這裡表示捕獲異常類型從9到10的異常<br class="calibre4"/>catch_part(9, 10)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(9, 10)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>// 這裡表示只捕獲異常類型為1的異常<br class="calibre4"/>catch_one(1)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_one(1)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>// 這裡表示捕獲所有類型的異常<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("catch塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　請編譯運行一下，程序的運行結果如下：<br class="calibre4"/>　　異常出現前</p>
+
+<p class="calibre2">catch_part(9, 10)塊，被執行到<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：出現某某異常! err_type:9 err_code:15</p>
+
+<p class="calibre2">　　與C++中的異常處理模型相似，它這裡的對異常的分類處理不僅支持一維線性的；同樣，它也支持分層的，也即在當前的try catch塊中找不到相應的catch block，那麼它將會到上一層的try catch塊中繼續尋找。演示代碼如下：</p>
+
+<p class="calibre2">#include "ceh.h"</p>
+
+<p class="calibre2">int main(void) <br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>throw(1, 15, "嵌套在try塊中");<br class="calibre4"/>}<br class="calibre4"/>catch_part(4, 6)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(4, 6)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try</p>
+
+<p class="calibre2">printf("這裡將不會被執行到\n");<br class="calibre4"/>}<br class="calibre4"/>catch_part(2, 3)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(2, 3)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>// 找到了對應的catch block<br class="calibre4"/>catch_one(1)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_one(1)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("catch塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try</p>
+
+<p class="calibre2">}</p>
+
+<p class="calibre2">　　到目前為止，大家是不是已經覺得，這個主人公阿愚封裝的在C語言環境中異常處理框架，已經與C++中的異常處理模型95%相似。無論是它的語法結構；還是所完成的功能；以及它使用上的靈活性等。下面我們來看一個各種情況綜合的例子吧！代碼如下：</p>
+
+<p class="calibre2">#include "ceh.h"</p>
+
+<p class="calibre2">void test1()<br class="calibre4"/>{<br class="calibre4"/>throw(0, 20, "hahaha");<br class="calibre4"/>}</p>
+
+<p class="calibre2">void test()<br class="calibre4"/>{<br class="calibre4"/>test1();<br class="calibre4"/>}</p>
+
+<p class="calibre2">int main(void) <br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>test();<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try</p>
+
+<p class="calibre2">try<br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>throw(1, 15, "嵌套在try塊中");<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try</p>
+
+<p class="calibre2">throw(2, 30, "再拋一個異常");<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);</p>
+
+<p class="calibre2">try<br class="calibre4"/>{<br class="calibre4"/>throw(0, 20, "嵌套在catch塊中");<br class="calibre4"/>}<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　請編譯運行一下，程序的運行結果如下：<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：hahaha! err_type:0 err_code:20<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：嵌套在try塊中! err_type:1 err_code:15<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：再拋一個異常! err_type:2 err_code:30<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：嵌套在catch塊中! err_type:0 err_code:20</p>
+
+<p class="calibre2">　　最後，為了體會到這個異常處理框架，更進一步與C++中的異常處理模型相似。那就是它還支持異常的重新拋出，以及系統中能捕獲並處理程序中沒有catch到的異常。看代碼吧！如下：</p>
+
+<p class="calibre2">#include "ceh.h"</p>
+
+<p class="calibre2">void test1()<br class="calibre4"/>{<br class="calibre4"/>throw(0, 20, "hahaha");<br class="calibre4"/>}</p>
+
+<p class="calibre2">void test()<br class="calibre4"/>{<br class="calibre4"/>test1();<br class="calibre4"/>}</p>
+
+<p class="calibre2">int main(void) <br class="calibre4"/>{<br class="calibre4"/>// 這裡表示程序中將捕獲浮點數計算異常<br class="calibre4"/>CEH_init();</p>
+
+<p class="calibre2">try<br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>try<br class="calibre4"/>{<br class="calibre4"/>double i,j;<br class="calibre4"/>j = 0;<br class="calibre4"/>// 這裡出現浮點數計算異常<br class="calibre4"/>i = 1/j ;</p>
+
+<p class="calibre2">test();</p>
+
+<p class="calibre2">throw(9, 15, "出現某某異常");<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}<br class="calibre4"/>catch_part(4, 6)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(4, 6)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>catch_part(2, 3)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(2, 3)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);<br class="calibre4"/>}<br class="calibre4"/>// 捕獲到上面的異常<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("內層的catch塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);</p>
+
+<p class="calibre2">// 這裡再次把上面的異常重新拋出<br class="calibre4"/>rethrow;</p>
+
+<p class="calibre2">printf("這裡將不會被執行到\n");<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}<br class="calibre4"/>catch_part(7, 9)<br class="calibre4"/>{<br class="calibre4"/>printf("catch_part(7, 9)塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);</p>
+
+<p class="calibre2">throw(2, 15, "出現某某異常");<br class="calibre4"/>}<br class="calibre4"/>// 再次捕獲到上面的異常<br class="calibre4"/>catch<br class="calibre4"/>{<br class="calibre4"/>printf("外層的catch塊，被執行到\n");<br class="calibre4"/>printf("捕獲到一個異常，錯誤原因是：%s! err_type:%d err_code:%d\n",<br class="calibre4"/>ceh_ex_info-&gt;err_msg, ceh_ex_info-&gt;err_type, ceh_ex_info-&gt;err_code);</p>
+
+<p class="calibre2">// 最後又拋出了一個異常，<br class="calibre4"/>// 但是這個異常沒有對應的catch block處理，所以系統中處理了<br class="calibre4"/>throw(2, 15, "出現某某異常");<br class="calibre4"/>}<br class="calibre4"/>end_try<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　請編譯運行一下，程序的運行結果如下：<br class="calibre4"/>　　內層的catch塊，被執行到<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：Divide by zero! err_type:-1 err_code:131<br class="calibre4"/>　　外層的catch塊，被執行到<br class="calibre4"/>　　捕獲到一個異常，錯誤原因是：Divide by zero! err_type:-1 err_code:131<br class="calibre4"/>　　捕獲到一個未處理的異常，錯誤原因是：出現某某異常! err_type:2 err_code:15<br class="calibre4"/>　　程序終止!</p>
+
+<p class="calibre2"><b class="calibre3">總結</b> 　　主人公阿愚封裝的這個在C語言環境中的異常處理框架，是完全建立在setjmp與longjmp的機制之上的。它的目的使我們對setjmp和longjmp的使用起來更方便和友善；同時，也更加深我們對setjmp和longjmp的瞭解；另外，還有一個重要的目的，就是給我們大家自己一個機會，來思考C++中異常處理模型的實現，當然後者會更複雜，但是這裡將是一個預習課，它對後面真正闡述C++中異常處理模型的實現將大有幫助。</p>
+
+<p class="calibre2">　　另外，這個異常處理框架不支持線程安全，不能在多線程的程序環境下使用。如果您想在多線程的程序中使用它，您可以自己試著來繼續完善這個框架模型。當然，您也可以給主人公阿愚發email（mantx@21cn.com），來共同探討合理的解決方案。</p>
+
+<p class="calibre2">　　下一節將繼續討論setjmp與longjmp在C++中的應用情況，這很關鍵呦！是許多程序員朋友對setjmp與longjmp認識上的盲區。不要錯過，繼續到下一篇文章中去吧！</p>
+</body>
+</html>

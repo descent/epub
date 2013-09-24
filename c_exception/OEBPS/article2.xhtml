@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">第17集 全面瞭解setjmp與longjmp的使用：希賽網軟件工程頻道</h2>
+<p class="calibre2">上一篇文章對setjmp函數與longjmp函數有了較全面的瞭解，尤其是這兩個函數的作用，函數所完成的功能，以及將setjmp函數與longjmp函數組合起來，實現異常處理機制時，程序模塊控制流的執行過程等。這裡更深入一步，將對setjmp與longjmp的具體使用方法和適用的場合，進行一個非常全面的闡述。</p>
+
+<p class="calibre2">　　另外請特別注意，setjmp函數與longjmp函數總是組合起來使用，它們是緊密相關的一對操作，只有將它們結合起來使用，才能達到程序控制流有效轉移的目的，才能按照程序員的預先設計的意圖，去實現對程序中可能出現的異常進行集中處理。</p>
+
+<p class="calibre2">　　與goto語句的作用類似，它能實現本地的跳轉</p>
+
+<p class="calibre2">　　這種情況容易理解，不過還是列舉出一個示例程序吧！如下： </p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行<br class="calibre4"/>// 判斷程序遠行中，是否出現錯誤，如果有錯誤，則跳轉！<br class="calibre4"/>if(1) longjmp(mark, 1);</p>
+
+<p class="calibre2">// 其它代碼的執行<br class="calibre4"/>// 判斷程序遠行中，是否出現錯誤，如果有錯誤，則跳轉！<br class="calibre4"/>if(2) longjmp(mark, 2);</p>
+
+<p class="calibre2">// 其它代碼的執行<br class="calibre4"/>// 判斷程序遠行中，是否出現錯誤，如果有錯誤，則跳轉！<br class="calibre4"/>if(-1) longjmp(mark, -1);</p>
+
+<p class="calibre2">// 其它代碼的執行<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>// 錯誤處理模塊<br class="calibre4"/>switch (jmpret)<br class="calibre4"/>{<br class="calibre4"/>case 1:<br class="calibre4"/>printf( "Error 1\n");<br class="calibre4"/>break;<br class="calibre4"/>case 2:<br class="calibre4"/>printf( "Error 2\n");<br class="calibre4"/>break;<br class="calibre4"/>case 3:<br class="calibre4"/>printf( "Error 3\n");<br class="calibre4"/>break;<br class="calibre4"/>default :<br class="calibre4"/>printf( "Unknown Error");<br class="calibre4"/>break;<br class="calibre4"/>}<br class="calibre4"/>exit(0);<br class="calibre4"/>}</p>
+
+<p class="calibre2">return;<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　上面的例程非常地簡單，其中程序中使用到了異常處理的機制，這使得程序的代碼非常緊湊、清晰，易於理解。在程序運行過程中，當異常情況出現後，控制流是進行了一個本地跳轉（進入到異常處理的代碼模塊，是在同一個函數的內部），這種情況其實也可以用goto語句來予以很好的實現，但是，顯然setjmp與longjmp的方式，更為嚴謹一些，也更為友善。程序的執行流如圖17-1所示。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre5"/></span></p>
+
+<p class="calibre2"><b class="calibre3">setjmp與longjmp相結合，實現程序的非本地的跳轉</b> 　　呵呵！這就是goto語句所不能實現的。也正因為如此，所以才說在C語言中，setjmp與longjmp相結合的方式，它提供了真正意義上的異常處理機制。其實上一篇文章中的那個例程，已經演示了longjmp函數的非本地跳轉的場景。這裡為了更清晰演示本地跳轉與非本地跳轉，這兩者之間的區別，我們在上面剛才的那個例程基礎上，進行很小的一點改動，代碼如下：</p>
+
+<p class="calibre2">void Func1()<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行<br class="calibre4"/>// 判斷程序遠行中，是否出現錯誤，如果有錯誤，則跳轉！<br class="calibre4"/>if(1) longjmp(mark, 1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">void Func2()<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行<br class="calibre4"/>// 判斷程序遠行中，是否出現錯誤，如果有錯誤，則跳轉！<br class="calibre4"/>if(2) longjmp(mark, 2);<br class="calibre4"/>}</p>
+
+<p class="calibre2">void Func3()<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行<br class="calibre4"/>// 判斷程序遠行中，是否出現錯誤，如果有錯誤，則跳轉！<br class="calibre4"/>if(-1) longjmp(mark, -1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行</p>
+
+<p class="calibre2">// 下面的這些函數執行過程中，有可能出現異常<br class="calibre4"/>Func1();</p>
+
+<p class="calibre2">Func2();</p>
+
+<p class="calibre2">Func3();</p>
+
+<p class="calibre2">// 其它代碼的執行<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>// 錯誤處理模塊<br class="calibre4"/>switch (jmpret)<br class="calibre4"/>{<br class="calibre4"/>case 1:<br class="calibre4"/>printf( "Error 1\n");<br class="calibre4"/>break;<br class="calibre4"/>case 2:<br class="calibre4"/>printf( "Error 2\n");<br class="calibre4"/>break;<br class="calibre4"/>case 3:<br class="calibre4"/>printf( "Error 3\n");<br class="calibre4"/>break;<br class="calibre4"/>default :<br class="calibre4"/>printf( "Unknown Error");<br class="calibre4"/>break;<br class="calibre4"/>}<br class="calibre4"/>exit(0);<br class="calibre4"/>}</p>
+
+<p class="calibre2">return;<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　回顧一下，這與C++中提供的異常處理模型是不是很相近。異常的傳遞是可以跨越一個或多個函數。這的確為C程序員提供了一種較完善的異常處理編程的機制或手段。</p>
+
+<p class="calibre2"><b class="calibre3">setjmp和longjmp使用時，需要特別注意的事情</b> 　　1、setjmp與longjmp結合使用時，它們必須有嚴格的先後執行順序，也即先調用setjmp函數，之後再調用longjmp函數，以恢復到先前被保存的「程序執行點」。否則，如果在setjmp調用之前，執行longjmp函數，將導致程序的執行流變的不可預測，很容易導致程序崩潰而退出。請看示例程序，代碼如下：</p>
+
+<p class="calibre2">class Test<br class="calibre4"/>{<br class="calibre4"/>public:<br class="calibre4"/>Test() {printf("構造對象\n");}<br class="calibre4"/>~Test() {printf("析構對象\n");}<br class="calibre4"/>}obj; </p>
+
+<p class="calibre2">//注意，上面聲明了一個全局變量obj</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">// 注意，這裡將會導致程序崩潰，無條件退出<br class="calibre4"/>Func1();<br class="calibre4"/>while(1);</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行</p>
+
+<p class="calibre2">// 下面的這些函數執行過程中，有可能出現異常<br class="calibre4"/>Func1();</p>
+
+<p class="calibre2">Func2();</p>
+
+<p class="calibre2">Func3();</p>
+
+<p class="calibre2">// 其它代碼的執行<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>// 錯誤處理模塊<br class="calibre4"/>switch (jmpret)<br class="calibre4"/>{<br class="calibre4"/>case 1:<br class="calibre4"/>printf( "Error 1\n");<br class="calibre4"/>break;<br class="calibre4"/>case 2:<br class="calibre4"/>printf( "Error 2\n");<br class="calibre4"/>break;<br class="calibre4"/>case 3:<br class="calibre4"/>printf( "Error 3\n");<br class="calibre4"/>break;<br class="calibre4"/>default :<br class="calibre4"/>printf( "Unknown Error");<br class="calibre4"/>break;<br class="calibre4"/>}<br class="calibre4"/>exit(0);<br class="calibre4"/>}</p>
+
+<p class="calibre2">return;<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　上面的程序運行結果，如下：<br class="calibre4"/>　　構造對象<br class="calibre4"/>　　Press any key to continue</p>
+
+<p class="calibre2">　　的確，上面程序崩潰了，由於在Func1()函數內，調用了longjmp，但此時程序還沒有調用setjmp來保存一個程序執行點。因此，程序的執行流變的不可預測。這樣導致的程序後果是非常嚴重的，例如說，上面的程序中，有一個對象被構造了，但程序崩潰退出時，它的析構函數並沒有被系統來調用，得以清除一些必要的資源。所以這樣的程序是非常危險的。（另外請注意，上面的程序是一個C++程序，所以大家演示並測試這個例程時，把源文件的擴展名改為xxx.cpp）。</p>
+
+<p class="calibre2">　　2、除了要求先調用setjmp函數，之後再調用longjmp函數（也即longjmp必須有對應的setjmp函數）之外。另外，還有一個很重要的規則，那就是longjmp的調用是有一定域範圍要求的。這未免太抽象了，還是先看一個示例，如下：</p>
+
+<p class="calibre2">int Sub_Func()<br class="calibre4"/>{<br class="calibre4"/>int jmpret, be_modify;</p>
+
+<p class="calibre2">be_modify = 0;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>// 錯誤處理模塊<br class="calibre4"/>switch (jmpret)<br class="calibre4"/>{<br class="calibre4"/>case 1:<br class="calibre4"/>printf( "Error 1\n");<br class="calibre4"/>break;<br class="calibre4"/>case 2:<br class="calibre4"/>printf( "Error 2\n");<br class="calibre4"/>break;<br class="calibre4"/>case 3:<br class="calibre4"/>printf( "Error 3\n");<br class="calibre4"/>break;<br class="calibre4"/>default :<br class="calibre4"/>printf( "Unknown Error");<br class="calibre4"/>break;<br class="calibre4"/>}</p>
+
+<p class="calibre2">//注意這一語句，程序有條件地退出<br class="calibre4"/>if (be_modify==0) exit(0);<br class="calibre4"/>}</p>
+
+<p class="calibre2">return jmpret;<br class="calibre4"/>}</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>Sub_Func();</p>
+
+<p class="calibre2">// 注意，雖然longjmp的調用是在setjmp之後，但是它超出了setjmp的作用範圍。<br class="calibre4"/>longjmp(mark, 1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　如果你運行或調試（單步跟蹤）一下上面程序，發現它真是挺神奇的，居然longjmp執行時，程序還能夠返回到setjmp的執行點，程序正常退出。但是這就說明了上面的這個例程的沒有問題嗎？我們對這個程序小改一下，如下：</p>
+
+<p class="calibre2">int Sub_Func()<br class="calibre4"/>{<br class="calibre4"/>// 注意，這裡改動了一點<br class="calibre4"/>int be_modify, jmpret;</p>
+
+<p class="calibre2">be_modify = 0;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>// 其它代碼的執行<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>// 錯誤處理模塊<br class="calibre4"/>switch (jmpret)<br class="calibre4"/>{<br class="calibre4"/>case 1:<br class="calibre4"/>printf( "Error 1\n");<br class="calibre4"/>break;<br class="calibre4"/>case 2:<br class="calibre4"/>printf( "Error 2\n");<br class="calibre4"/>break;<br class="calibre4"/>case 3:<br class="calibre4"/>printf( "Error 3\n");<br class="calibre4"/>break;<br class="calibre4"/>default :<br class="calibre4"/>printf( "Unknown Error");<br class="calibre4"/>break;<br class="calibre4"/>}</p>
+
+<p class="calibre2">//注意這一語句，程序有條件地退出<br class="calibre4"/>if (be_modify==0) exit(0);<br class="calibre4"/>}</p>
+
+<p class="calibre2">return jmpret;<br class="calibre4"/>}</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>Sub_Func();</p>
+
+<p class="calibre2">// 注意，雖然longjmp的調用是在setjmp之後，但是它超出了setjmp的作用範圍。<br class="calibre4"/>longjmp(mark, 1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　運行或調試（單步跟蹤）上面的程序，發現它崩潰了，為什麼？這就是因為，「在調用setjmp的函數返回之前，調用longjmp，否則結果不可預料」（這在上一篇文章中已經提到過，MSDN中做了特別的說明）。為什麼這樣做會導致不可預料？其實仔細想想，原因也很簡單，那就是因為，當setjmp函數調用時，它保存的程序執行點環境，只應該在當前的函數作用域以內（或以後）才會有效。如果函數返回到了上層（或更上層）的函數環境中，那麼setjmp保存的程序的環境也將會無效，因為堆棧中的數據此時將可能發生覆蓋，所以當然會導致不可預料的執行後果。</p>
+
+<p class="calibre2">　　3、不要假象寄存器類型的變量將總會保持不變。在調用longjmp之後，通過setjmp所返回的控制流中，例程中寄存器類型的變量將不會被恢復。（MSDN中做了特別的說明，上一篇文章中，這也已經提到過）。寄存器類型的變量，是指為了提高程序的運行效率，變量不被保存在內存中，而是直接被保存在寄存器中。寄存器類型的變量一般都是臨時變量，在C語言中，通過register定義，或直接嵌入彙編代碼的程序。這種類型的變量一般很少採用，所以在使用setjmp和longjmp時，基本上不用考慮到這一點。</p>
+
+<p class="calibre2">　　4、MSDN中還做了特別的說明，「在C++程序中，小心對setjmp和longjmp的使用，因為setjmp和longjmp並不能很好地支持C++中面向對象的語義。因此在C++程序中，使用C++提供的異常處理機制將會更加安全。」雖然說C++能非常好的兼容C，但是這並非是100%的完全兼容。例如，這裡就是一個很好的例子，在C++程序中，它不能很好地與setjmp和longjmp和平共處。在後面的一些文章中，有關專門討論C++如何兼容支持C語言中的異常處理機制時，會做詳細深入的研究，這裡暫且跳過。</p>
+
+<p class="calibre2"><b class="calibre3">總結</b> 　　主人公阿愚現在對setjmp與longjmp已經是非常欽佩了，雖然它沒有C++中提供的異常處理模型那麼好用，但是畢竟在C語言中，有這麼好用的東東，已經是非常不錯了。為了更上一層樓，使setjmp與longjmp更接近C++中提供的異常處理模型（也即try()catch()語法）。阿愚找到了不少非常有價值的資料。不要錯過，繼續到下一篇文章中去吧！讓程序員朋友們「玩轉setjmp與longjmp」，Let's go！</p>
+</body>
+</html>
