@@ -1,0 +1,123 @@
+@namespace h "http://www.w3.org/1999/xhtml";
+.calibre {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0
+    }
+.calibre1 {
+    display: block;
+    font-size: 1.66667em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0.83em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0.83em;
+    padding-top: 0;
+    text-align: left
+    }
+.calibre10 {
+    display: inline-block;
+    height: auto;
+    max-width: 100%;
+    width: auto
+    }
+.calibre11 {
+    font-size: 0.75em
+    }
+.calibre12 {
+    height: auto;
+    margin-bottom: 5px;
+    max-width: 100%;
+    width: auto
+    }
+.calibre13 {
+    font-size: 1em
+    }
+.calibre14 {
+    font-size: 0.75em;
+    line-height: normal;
+    vertical-align: super
+    }
+.calibre15 {
+    font-style: italic
+    }
+.calibre16 {
+    font-size: 0.75em;
+    line-height: normal;
+    vertical-align: sub
+    }
+.calibre17 {
+    text-decoration: underline
+    }
+.calibre2 {
+    display: block;
+    margin-bottom: 0.3em;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0.3em;
+    text-align: justify;
+    text-indent: 1em
+    }
+.calibre3 {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline
+    }
+.calibre4 {
+    border-collapse: separate;
+    border-spacing: 2px;
+    display: table;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 100%;
+    text-indent: 0
+    }
+.calibre5 {
+    display: table-cell;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    text-align: left;
+    vertical-align: top
+    }
+.calibre6 {
+    font-weight: bolder
+    }
+.calibre7 {
+    display: table-cell;
+    font-size: 0.625em;
+    padding-bottom: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 1px;
+    text-align: left;
+    vertical-align: top
+    }
+.calibre8 {
+    display: block
+    }
+.calibre9 {
+    height: auto;
+    max-height: 100px;
+    max-width: 100px;
+    width: auto
+    }
+.imgBig {
+    display: block;
+    text-align: center;
+    text-indent: 0;
+    width: 100%
+    }
+.row {
+    display: table-row;
+    vertical-align: middle
+    }

@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">美麗的電腦新世界－多媒體</h2>
+<p class="calibre2">一張圖勝過千言萬語，<br class="calibre3"/>一段影片尤勝過千百張圖，<br class="calibre3"/>這一次我們來看看九十年代的大熱門 : 多媒體。</p>
+
+<p class="calibre2">多媒體拉近罹患電腦恐懼症的人與電腦之間的距離。 </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img21.jpeg" alt="img21.jpeg" class="calibre4"/></span> 我的聲音如黃鶯出谷，<br class="calibre3"/>錄一段回家剪接伴唱帶 </p>
+
+<p class="calibre2">我常常拜讀大作的知名電腦作家中，可以分為兩大型態。型態之一正經八百夫子岸然 (我是指其主題不是指其文筆)，從電腦語言、作業系統、電算工業...，每一篇都像要振聾啟聵。型態之二則像電腦頑童，靈思不斷，創意源源，常有一些非常令你感到趣味盎然的「小品」(我是指其主題不是指其長度)。</p>
+
+<p class="calibre2">Addison Wesley 出版社的當紅作家 Andrew Schulman 可視為電腦頑童代表人物之一，他的點子像 :</p>
+
+<p class="calibre2">⊙ Call Standard C I/O Functions from Your Windows Code Using the WINIO Library MSJ/1991.07</p>
+
+<p class="calibre2">⊙ Porting DOS Programs to Protected-Mode Windows with the WINDOS Library MSJ/1991.09</p>
+
+<p class="calibre2">這兩篇文章我在三月份曾經概略介紹過。利用 WINIO 和 WINDOS 兩個模組可以使 DOS 程式直接編譯為 Windows 程式。當然拐彎抹角的它絕對有其束縛，但是如果你只是想寫個小程式取些資料來看，不很在意漂亮的輸出畫面，你會發現呼叫 printf() 比起處理 WM_PAINT 可真得心應手的多。</p>
+
+<p class="calibre2">⊙ Call VxD Functions and VMM Services Easily Using Our Generic VxD MSJ/1993.02</p>
+
+<p class="calibre2">Windows 的虛擬機器管理器 WIN386.EXE 內有許多寶貝。想要從 Windows 程式中送鍵盤訊息到一個 MS-DOS Box 嗎 ? 利用 PostMessage() 送 WM_CHAR 或 WM_KEYDOWN 到MS-DOS Box 的視窗中似乎言之成理，但如果 MS-DOS Box 是全螢幕而非視窗型式，問題就來了，而且同步問題也非常惱人。VKD (虛擬鍵盤裝置驅動程式) 的 VKD_Force_Keys 函式可以解決這問題；想真正享受並控制 Windows 的強制性多工嗎 ? WIN386.EXE 中有一整箱函式，如 Schedule_VM_Event，Begin_Nest_Exec，Exec_Int，Simulate_Far_Call，這些都是你在與其他 VMs 溝通時所需要的 (雖然他們看起來不怎麼像!)。這些函式從不曾在 SDK 手冊中看過，它們是另一組 API，由 WIN386.EXE 提供。這些函式原是給其他 VxD 呼叫的，但Schulman 卻硬是寫這麼一個 Generic VxD，使應用程式藉它直接呼叫所有的WIN386.EXE 函式。注意，是所有的 !</p>
+
+<p class="calibre2">⊙ Accessing the Windows API from the DOS Box，Part 1,2,3。 PC-Mag/1992.08.09</p>
+
+<p class="calibre2">想讓 DOS 程式呼叫 Windows API 嗎 ? 想在 DOS Box 中執行 Windows 程式嗎 ? 只看到 "This Program Required Microsoft Windows" 可不能算是成功 ! 這三篇文章介紹 INT2Fh AX=17xx 介面，使 DOS 程式能夠處理 Windows 的 Clipboard，再進一步藉著 Clipboard 傳遞命令，由另一個正牌 Windows 程式將命令句轉為 Windows API。也許你問在 DOS Box 中啟動 Windows 應用程式又如何 ? 在 DOS 程式呼叫 Windows API 又如何 ? 老實說我真的也答不上來，但是一堆的奇妙幻想中總是能夠篩選出閃爍迷人的金砂 : 你可以從中學到動態呼叫的程式技巧。如何能夠在程式中不硬梆梆地寫上 1000 個 if...else if... 而能夠呼叫 1000 個 API (甚至是目前還未出現的 API) ? 許多著名的 Windows 軟體都有這種動態的 API 呼叫能力，如果你好奇 ToolBook 利用什麼技術讓使用者外掛 DLL，或是 Microsoft Word 如何設計出 Declare Sub 這樣的巨集語言，這三篇文章會有很好的啟示。自認為 C 語言高手者也可以觀摩一下如何使用函式指標，如何欺騙編譯器而自行處理堆疊參數。</p>
+
+<p class="calibre2">小品文有什麼大用途呢 ? 天馬行空式的奇想真能為商業應用軟體帶來什麼爆炸性的威力嗎 ? 不知道 ! 重要的不在解決了什麼問題，重要的是過程中運用的許多技巧。世有伯樂而後千里馬出，這些技巧是千里馬，你是伯樂候選人，Andrew Schulman 則是專門養千里馬的弼馬溫 (哈哈)。他的奇想好似萬斛泉源，不擇地皆可出。</p>
+
+<p class="calibre2">看文章和吃菸一樣會上癮，不由分說也無可理喻，像我，就對 Andrew Schulman 上癮了。想看他的文章可別只是死守 Microsoft Systems Journal，PC-Mag 以及 Dr. Dobb's Journal 都可見到這位美國弼馬溫的蹤影，產量驚人。</p>
+
+<p class="calibre2">這一期我們來看看九十年代的大熱門 : 多媒體。俗話說一張圖勝過千言萬語，一段影片尤勝過千百張圖 (當然我是指有聲音的那種，默片之不行於世久矣)。但是多媒體絕不只是想像中東加一張圖片，西湊一段聲音就是，多媒體關係的技術層面很深很廣。以最吸引人的動畫或視訊影像為例，巨量資料的取樣與貯存是一回事，解決了貯存空間的問題 (目前最適當的媒介是 CD)，還有資料傳輸問題。當光碟機的傳輸速度停留在 150KB/秒，在不借助特殊硬體的前提下我們的視聽享受就只能停留在 160x120 解析度、256 色、每秒 15 張影像、8 位元取樣值 (sample size) 和 11025 Hz 取樣率 (sample rate) 的水準 (CD 唱片的品質是 16 位元/44100 Hz)。</p>
+
+<p class="calibre2">多媒體的特色之一就是縮寫字 (所謂的 acronyms) 特別多，我舉一些例子給你瞧瞧 :</p>
+
+<p class="calibre2">AVI : Audio Video Interleaved，音訊視訊交錯格式，這是 Microsofot 的多媒體資料貯存格式。</p>
+
+<p class="calibre2">DVI : Digital Video Interactived，互動式數位視訊，這是 Intel 的視訊壓縮技術。</p>
+
+<p class="calibre2">NTSC : National Television Standards Committee，美國國家電視標準委員會。</p>
+
+<p class="calibre2">PCM : Pulse Code Modulation，脈衝碼調變，以固定取樣率對聲波取樣的方法。</p>
+
+<p class="calibre2">MIDI : Musical Instrument Digital Interface，數位樂器介面。</p>
+
+<p class="calibre2">MPEG : Moving Pictures Experts Group，動態視訊影像壓縮標準。</p>
+
+<p class="calibre2">JPEG : Joint Photographic Experts Group，靜態視訊影像壓縮標準。</p>
+
+<p class="calibre2">朋友告訴我，如果懂得網路中多如牛毛的術語意義，侃侃而談之下可能就被視為一個網路專家。我自己對多媒體也有相同結論。你知道，專家分為很多種，一種是做的專家，一種是說的專家。</p>
+
+<p class="calibre2">這一次的介紹並不逐章進行。我把多媒體的一些基礎常識整理下來，本文的保留價值大概可以因此提高一些。你在文字中看到什麼，大抵就是你可以從該書中獲得的。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Discover Windows 3.1 Multimedia <br class="calibre3"/>作者 Roger Jennings<br class="calibre3"/>出版 Que<br class="calibre3"/>頁數 25 章，925 頁<br class="calibre3"/>售價 NT$ 840.0<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">Part I : The Multimedia Functions of Windows 3.1<br class="calibre3"/>1. What is Windows Multimedia<br class="calibre3"/>2. Understanding Audio Adapter Cards<br class="calibre3"/>3. Understanding CD-ROM Drives and Adapters<br class="calibre3"/>4. Preparing Your System for Multimedia<br class="calibre3"/>5. Preparing Windows for Multimedia</p>
+
+<p class="calibre2">Part II : Using Sound in Windows<br class="calibre3"/>6. Playing and Recording Waveform Audio Files<br class="calibre3"/>7. Playing MIDI Files<br class="calibre3"/>8. Incorporating Sound in Windows Applications</p>
+
+<p class="calibre2">Part III : Musical Synthesis and MIDI<br class="calibre3"/>9. Music Synthesizers<br class="calibre3"/>10. The MIDI Standard and Windows 3.1<br class="calibre3"/>11. Accessories for MIDI Systems<br class="calibre3"/>12. MIDI Applications for Windows</p>
+
+<p class="calibre2">Part IV : Digital Audio Techniques<br class="calibre3"/>13. Digital Audio Sampling, Reproduction, and Compression<br class="calibre3"/>14. Editing and Converting Waveform Audio Files<br class="calibre3"/>15. Waveform Audio Recording Techniques</p>
+
+<p class="calibre2">Part V : Adding Multimedia Graphics<br class="calibre3"/>16. Graphic Displays and Adapter Cards for Windows<br class="calibre3"/>17. Image Acquisitions, Editing, Interchange, and Compression<br class="calibre3"/>18. Presentation Graphics and Animation Techniques<br class="calibre3"/>19. Incorporating Digital Video</p>
+
+<p class="calibre2">Part VI : Authoring Multimedia Productions<br class="calibre3"/>20. The Multimedia Production Process<br class="calibre3"/>21. Advanced MIDI and Waveform Audio Techniques<br class="calibre3"/>22. Desktop Video Production</p>
+
+<p class="calibre2">Part VII : Multimedia Programming Techniques<br class="calibre3"/>23. The High-Level MCI Commands of Windows 3.1<br class="calibre3"/>24. Programming with MCI Commands<br class="calibre3"/>25. Multimedia in the Future </p>
+
+<p class="calibre2">請注意書名有 Windows 3.1 字樣。書內許多題材例子都和 Windows 這個環境有關。Mac 機器也是多媒體的好溫床，不過此刻 Windows 當道。DOS 呢 ? 先天不良，在上面發展多媒體會事倍功半。</p>
+
+<p class="calibre2">一般而言 Que 這家出版社的書是比較照顧 end user 的，這本書秉持一貫傳統，期望帶給多媒體新鮮人廣泛的「常識」。別小看這些常識，琅琅上口後你也是半個專家。這些常識包括什麼是多媒體，什麼是 Windows 環境下的多媒體，MPC (多媒體 PC) 的硬體規格，各種硬體配備的建議值 (RAM 的大小，硬碟的大小) ...。另外也介紹顯示卡、顯示器、音效卡，光碟機，混音器等多媒體配件。這個領域日新月異，產品消息放到書上讓你看到時大概已經落伍 (另外有個玩笑話說買電腦的第一天就是後悔的開始) ! 最好最具時效性的選購指南當然是 PC-Mag 上的各類產品評估。</p>
+
+<p class="calibre2">這本書一共分為七大部份。第一部份 (前五章) 介紹的是多媒體的重要基礎知識。第二章介紹的音效卡在 MPC 中是很重要的一環，因為第一代 MPC 就是把重點擺在聲音上頭。除非你已經是聲音工程師，否則對於「數位取樣聲音」「FM 合成聲音」「MIDI 聲音」都應該在此獲得一點點先期知識。對於關係到聲音品質的所謂取樣率 (sample rate) 和取樣值 (sample size) 要特別注意，才不會在選購音效卡時面對產品規格茫然不知所措。一般讀者了解其物理意義大概就心滿意足，如果你屬於打破沙鍋那一型，那麼佐以大學物理再加上傅立葉級數一旁伺候，應該饒有助益。</p>
+
+<p class="calibre2">第三章介紹 CD-ROM 光碟機與介面卡。CD-ROM 是多媒體電腦的必要配備，基礎性與音效卡等量齊觀。了解 CD 發展史上的四種規格，大概就能夠分清楚什麼是CD 唱片，什麼是 CD-ROM，什麼是 Photo CD :</p>
+
+<p class="calibre2">1) 紅皮書 (CD-DA) : 這是消費性光碟的標準規格 (DA 是 Digital Audio 縮寫)。MPC 規格中要求 CD-ROM 光碟機必須具備 CD-DA 的輸出能力。因此在 Windows 中你不需要任何音效卡就可以享受 CD 品質的音樂。</p>
+
+<p class="calibre2">2) 黃皮書 (CD-ROM) : 這一規格要求資料的貯存格式必須能夠被轉換為數個普及性高的作業系統 (如 DOS、Mac、Amiga) 的檔案格式。轉換工作由驅動程式 (如 Microsoft 的 MSCDEX.EXE) 完成。符合黃皮書規格的光碟機都有播放 CD-DA 碟片的能力。</p>
+
+<p class="calibre2">3) 綠皮書 (CD-I) : 互動式 (Interactive) 光碟，用的是 CD-ROM XA 規格的延伸版本。CD-ROM XA 並沒有自己的規格書 (XA 是 eXtended Architecture 的意思) 。CD-I 是 Philips 公司準備打入家庭電子消費市場的主力產品，符合綠皮書規格的光碟機可以讀取 CD-DA、CD-ROM、CD-ROM XA、CD-I，以及 Kodak 公司的 Photo CD 碟片。</p>
+
+<p class="calibre2">4) 橘皮書 : 這份規格與可覆寫光碟有關 (CD-MO、CD-WO、WORM)。Kodak 公司的 Photo CD 就是橘皮書規格的變異品，它可以多次寫入，但不能覆寫已經存在的資料。</p>
+
+<p class="calibre2">基本上 MPC 中的 CD 光碟機規格可以讀取黃皮書的檔案以及播放紅皮書的CD-DA 聲音。</p>
+
+<p class="calibre2">光碟機 (我指的是 CD-DA) 已經走入家庭，讀者讀起比較技術性的文字可能不至於興趣索然。CD-ROM 光碟機有四個重要規格也是一定要知道的，選購時才不會當呆頭鵝。一是 access (seek) time，二是 data transfer rate，三是 data block size、四是 data buffer size。其中第二項關係尤鉅，一般是 150KB/秒，多媒體的許多關鍵就是卡在這上頭。(編按 : 現在已出產二倍速、三倍速光碟機了)</p>
+
+<p class="calibre2">聲音資料量已經解決，畢竟還在 CD-ROM 的貯存能力與傳輸能力之內，視訊就遠超乎 CD-ROM 的能力範圍了。所以視訊一定得壓縮。第三章也介紹了數種普及的壓縮/解壓縮方法 :</p>
+
+<p class="calibre2">DVI : 可以提供全動式影像和高音質聲音的壓縮格式。DVI 碟片在錄製或播放時需要特殊的 Intel 晶片。IBM 的 Ultimedia 多媒體電腦已經接受 DVI 為其視訊影像的播放標準，因此 Ultimedia 的成功與否就關係到 DVI 成為業界標準的可能性。</p>
+
+<p class="calibre2">AVI : 這是 Microsoft 發展的檔案結構，使視訊影像與同步音訊能交錯貯存在CD-ROM 的同一磁軌中，有點類似 CD-ROM XA 格式。注意這是檔案結構，所以可以放在一般磁碟上。</p>
+
+<p class="calibre2">MPEG : 這是一種在不增加標準 CD-ROM 光碟機 150KB/秒傳輸速率的前提下，設計出來的一種全螢幕全動式影像壓縮/解壓縮方法。它和 DVI 一樣，需要特殊的硬體支援以求高速。MPEG 是個開放標準，任何廠商可以依此規格自由製造產品。</p>
+
+<p class="calibre2">JPEG : 這也是一個開放標準，壓縮對象是靜態影像。JPEG 可單獨以軟體完成。</p>
+
+<p class="calibre2">QuickTime : 這是使用在 Mac 機器上的 Apple「官方標準」，即將也能夠被 Windows 容納。它與 Microsoft 的 AVI 是相同技術水平的東西。</p>
+
+<p class="calibre2">CD-TV Format : Commodore 的 Amiga 電腦上的 CDTV player 就是使用此一格式，它是 CD+Graphics 以及 CD+MIDI。(Amiga 電腦對國內比較陌生，它其實是多媒體界的老大哥，在歐洲賣的不錯)。</p>
+
+<p class="calibre2">什麼是對稱式 (Symmetric) 壓縮解壓縮 ? 什麼是非對稱式 (Asymmetric) 壓縮解壓縮 ? 本章對這些術語都有足夠的解釋。二、三章提供給讀者足以分析並判斷硬體規格的能力，對於規格上的數字能夠產生有意義的聯想。不管將來你向零售商或郵購商購買多媒體配件，這些都是很好的常識。</p>
+
+<p class="calibre2">第四章介紹如何安裝音效卡和光碟機，第五章介紹安裝音效卡和 CD-ROM 光碟機之必要軟體 (驅動程式)，使它們在 Windows 環境下能夠正常運作。我們可以從中了解什麼是 simple device (播放時不需檔案，如光碟機) 什麼是compound device (播放時需檔案，如 MIDI 設備)。</p>
+
+<p class="calibre2">Windows 多媒體架構分為高階與低階兩部份，各又有許多驅動程式，你如果能夠了解各驅動程式的合作流程，譬如說 Media Player 發出 Waveform 命令後，透過 MMSYSTEM.DLL 到高階的 MCI 驅動程式 MCIWAVE.DRV，轉換為能被硬體接受的指令之後再到最底層的裝置驅動程式 SNDBLST2.DRV；或者 Media Player 發出 MIDI 命令後，透過 MMSYSTEM.DLL 到高階的 MCI 驅動程式 MCISEQ.DRV，轉換為 MIDI 指令之後再送到 MIDIMAP.DRV 選擇適當之硬體設備驅動程式 (如 ADLIB.DRV)，這些來龍去脈將十分有助於進一步研究 Windows 多媒體軟體設計。觀察並了解 Windows 的 system.ini 中的相關設定 (尤其是 [boot] 和[386Enh] 中的敘述) 也是重要的。</p>
+
+<p class="calibre2">第六章開始進入本書第二部份。這部份一共有三章，是對 Windows 提供之關於waveform、MIDI、OLE 公用程式或系統功能實用介紹。如果你的機器是 MPC，跟著書內的介紹玩一玩蠻有趣。沒有音效卡的人不必洩氣，書附磁片中有一個 SPEAKER.DRV 可以讓你播放 .WAV 檔案。能夠播放 waveform 會使日常的 Windows 工作比較有趣一些 : 一進入 Windows 會有聲音歡迎你，有各種特殊音效隨時伺候你的各種錯誤動作，有嬰兒的笑聲、馬桶抽水聲...。Windows 內附的 Media Player 這裡也有一些介紹，這個播放機器可以播 waveform、CDAudio、MIDI、AVI。書中雖然談的是搭配 "Video for Windows" 推出的 Media Player 2.0 版，但圖片卻還是 1.0 版的畫面。</p>
+
+<p class="calibre2">MIDI Mapper 是第七章中值得多注意的部份。MIDI 並沒有規定哪一種program message (MIDI 訊息) 對應到哪一種樂器，你總不希望預期中的間關鶯語幽咽泉流卻變成嘔啞朝哳的山歌絲竹，如果沒有 MIDI Mapper 就做不到與設備無關。不過文中沒有先介紹 MIDI 的 16 個channel 殊為可惜，讀者沒有這一方面基礎的話恐怕不知道 MIDI Mapper 在 Map 些什麼東西。這一部份 Charles Petzold 在 PC-Mag 的多媒體專欄就有很好的表現 (後面我會介紹)。本章並介紹五種 MIDI Sequencer 應用軟體 : Trax、MusicTime、Midisoft、WinJammer、Power Chords。</p>
+
+<p class="calibre2">多媒體應用上很重要的一環是把不同型態的資料混合在一起，造出一份生動的簡報或節目。OLE (物件聯結與嵌入) 在這裡扮演重要角色，也是第八章的重點。不論是 object 的聯結 (link) 或內嵌 (embed)，都有詳細的步驟說明。對於 OLE 心儀已久而遲遲不知如何動手的程式員，其實你應該先從 OLE 的操作開始。同時我也要為 Windows 程式員進一言，OLE 是一個你最好把它學會的軟體技術。</p>
+
+<p class="calibre2">第九章的聲音合成器內容稍嫌冷澀，離我們日常生活遠了些。十至十二章都與MIDI 有關。MIDI 是近年來大家耳熟能詳的名詞了，我們在電視上看到的電子吉它、電子鍵盤其實就是所謂的 MIDI 控制器，它們發出 MIDI 訊息給合成器而發出聲音。MIDI 檔的優點是貯存空間小，大約僅及 WAV 聲音檔的 1/1000；缺點是各種合成器的聲音不一致，因此會受到硬體的影響。CD 唱片錄製之所以選用 WAV 聲音就是因為以數位取樣方式獲得的聲音資料還原時的差異度遠比以合成器還原的差異度要小。你千萬不要懷疑一個具備絕對音感的人聽得出446 (標準音 La) 和 448 (數秒後的消褪) 之間的差異，一樣米養的是百樣人! 十一章有許多 MIDI 實物照片。十二章介紹 MIDI 應用軟體市場上四個領導產品，每一個都是 Windows 3.x 環境上專業水準的全功能 MIDI 軟體，它們都擁有編輯能力以便利作曲。上次一位音樂界朋友問我要 MIDI 工具，想要作曲時方便些，我應該給他這一章。</p>
+
+<p class="calibre2">本書第四部份是對聲音的更高級處理，恐怕不是入門者感興趣或看得懂的。第五部份終於進入圖形視訊影像的領域。十六章介紹適用在 Windows 的顯示卡與顯示器。十七章很廣泛，告訴我們圖形影像分為 bitmap 的 vector 兩種貯存格式，然後告訴我們從哪些來源可以獲得用來製作簡報內容的圖形影像 : 可以從掃描器讀靜態圖片，可以從影像捕捉卡擷取電視錄影帶畫面，或是購買專門作此用途的圖畫庫商業產品 (CD)。這其實隱含一個頗為可觀的多媒體市場 : 好聽的聲音和好看的畫面都可以錄製下來放到 CD 去賣。當然你會反問好聽的聲音好看的畫面都是有版權的，但江上清風與山間明月，耳得之而為聲目遇之而成色，大自然是不會向你要權利金的。</p>
+
+<p class="calibre2">第十八章就不是從技術看多媒體了，而是很實際地介紹你三個簡報軟體，它們都可以產生聲光十足的簡報效果。第一個是 Asymetrix 的 Multimedia Make Your Point，這是個事件驅動系統，是以多媒體軟體界相當知名的Multimedia ToolBook 發展而成 (後者也是 Asymetrix 公司的產品)；第二個是 CorelShow!，是隨著 CorelDRAW! 3.0 附贈的軟體。由於它是 OLE client，許多知名軟體無形中就成為它的後援部隊 (所以我再強調一次，要設計宏觀性前瞻性的 Windows 軟體，一定要加入 OLE 功能)。第三個是高貴不貴的 Action! 2.0，具動畫能力，採 timeline 設計方式，能讓聲音與畫面同步的控制更精準，這一套軟體是工研院電通所發展多媒體編製系統時的重要參考。</p>
+
+<p class="calibre2">十九章介紹的是 MPC 1.0 規格中並未涵蓋的視訊影像。最早 Microsoft 對此的支援僅是 Pioneer LD-V4200 工業用雷射影碟的驅動程式，這是一種可以遠端控制的機型，其實就是多了一條 RS-232 ! (這條 RS-232 價值不斐，值 NT 25000.0 --- 把工業用機型減掉家庭用機型得到的就是這個數。初時國內沒得買，現在不知有沒有)。這一章介紹電視訊號的基本技術觀念，也描述三種基本的視訊卡 : 靜態畫面攫取卡、動態視訊捕捉卡，以及 VGA 轉 NTSC 訊號卡。內容對軟體人員而言也是稍嫌冷澀，常接觸硬體的人可能會喜歡。</p>
+
+<p class="calibre2">有一種卡目前很紅 : View in a Windows (VIW) 卡，這種卡可以讓電視訊號經過類比數位轉換器後貯存到 VRAM 中，然後送到電腦螢幕上的一個可變化大小的視窗內播出。想想看多麼有趣的事 ! 老姊問我為什麼要虐待自己在小小視窗中看電視 ? 這問題我答不上來，但我還是打算買一塊來享受一下走在時代尖端的滋味。關於 VIW 你還可以參考 Charles Petzold 的 Video for Windows Brings Interleaved Audio and Full-Motion Ditital Video to the PC (MSJ/1993.02)。</p>
+
+<p class="calibre2">第六部份包含二十至二十二章。前面我們獲得的都是多媒體的生菜和佐料，應該是做一道大餐的時候了。可是二十章有點兒形而上，告訴我們多媒體適用在廣告、促銷、訓練教育，告訴我們製作 CD 需要一個製片人、一個藝術監製、一個文字作者...。形而上者謂之道，形而下者謂之器，我想普羅大眾會喜歡從「器」開始。二十一章講如何把 MIDI 聲音同步化加在原先錄好的資料上 (聲音或視訊都行)，對非專業人員似乎深了點，對非專業人員好像又不夠深。二十二章是作者對於所謂桌上視訊產品 (DTV) 的期待，他根據</p>
+
+<p class="calibre2">o. 美國擁有 VCR (錄放影機) 的人口數</p>
+
+<p class="calibre2">o. 觀察家對「VCR 用戶遠超過一般讀物之讀者」之肯定判斷 (這一點我頗懷疑)</p>
+
+<p class="calibre2">o. 近年內大螢幕投射電視普及的預測</p>
+
+<p class="calibre2">斷言 DTV 的興旺指日可待。而正如雷射印表機的普及使桌上排版 (DTP) 事業得以實現，DTV 的催化劑正是那些 VGA-to-NTSC 卡、手提攝影機、遙控 VCR。雷射印表機的價格已經到人人可以買又不會痛的地步，如果這些視訊週邊設備的價格也這樣 down 下來，下班後大家最愉快的事可能是自己剪輯家庭 KTV 伴唱帶。</p>
+
+<p class="calibre2">第七部份包括本書的最後三章，講的是多媒體程式技術。像這種定位的書，我們不能預期它在程式設計方面有什麼深入表現，而它也的確符合我們這種預期。書附磁片中有 PC-Speaker 驅動程式，以及 Cakewalk、WinJammer、Power Chords 三套軟體的 DEMO 版。</p>
+
+<p class="calibre2">縱觀全書，我認為是令人滿意的，內涵不錯，製作也佳。每一章最後都有一個摘要，同一主題而比較深入的後續章節會在摘要中先提出來，對讀者是一個方便。連貫性不錯，如果有相關資料，會在文字旁邊空白處加上一個 "Related Topics"。這種對讀者的貼心動作，是好書的條件之一。硬體卡的安裝與訊號線的連接也有很夠水準的示意圖。本書非常豐富。國內如果有譯本或相同水準的多媒體書籍，我相信不僅造福讀者，對整個多媒體產業都有間接貢獻。(你知道人家怎麼說 Peter Norton 嗎 ? 說他的一支筆足以影響 PC 業界)。不過出版社一定要找有「內行氣」的人翻譯，否則譯者共讀者成長，鈔票與惡評齊飛，那就難看了。</p>
+
+<p class="calibre2">我個人在進入多媒體領域之初，被一大堆術語名詞搞的七昏八豎，很一陣子自己的思維才能夠跟得上同事的講話速度。金觀濤說人類的文字和語言笨拙地拖住思想的翅膀，我的思想卻笨拙地拖住了別人的嘴巴 --- 人家花半秒鐘說出來的話我得花三秒鐘搜尋腦袋資料庫。技術人員搞多媒體，把各種不同型態的媒體裝置、驅動程式、規格意義、數據由來等等來龍去脈搞清楚，是頭等重要之事。這本書對我最大的幫助就在充實我的common sense，使我不至於脫離世界的脈動太遠。一個人在自己專業範圍之外的，最重要的就是這些 common sense，使我們在與其他專業人士對談的時候，能夠「使用同一種語言」，能夠多一點點「內行氣」。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Multimedia Madness! <br class="calibre3"/>作者 Ron Wodaski<br class="calibre3"/>出版 SAMS<br class="calibre3"/>頁數 13 章，616 頁<br class="calibre3"/>售價 US$ 44.95<br class="calibre3"/>磁片 : 一片軟碟與一片光碟</p>
+
+<p class="calibre2">Part I Getting Started in Multimedia<br class="calibre3"/>1. This Book Is Multimedia<br class="calibre3"/>2. Sound Advice<br class="calibre3"/>3. Sights to Behold<br class="calibre3"/>4. Putting It All Together<br class="calibre3"/>5. Windows Multimedia</p>
+
+<p class="calibre2">Part II Pumping Up the Volume<br class="calibre3"/>6. Pumping Iron : Hardware<br class="calibre3"/>7. Priming the Pump : Software<br class="calibre3"/>8. Manning the Pump : Multimedia Programming</p>
+
+<p class="calibre2">Part III 3. Full-Blast Multimedia<br class="calibre3"/>9. Animation<br class="calibre3"/>10. Eenie-Meenie-MIDI : Keyboards<br class="calibre3"/>11. Lights, Camera, Action : NTSC Video</p>
+
+<p class="calibre2">Part VI 4. Shopper's Guide<br class="calibre3"/>12. Hardware Shopper's Guide<br class="calibre3"/>13. Software Shopper's Guide</p>
+
+<p class="calibre2">Appendixes<br class="calibre3"/>A. A Guide to the Floppy Disk<br class="calibre3"/>B. A Guide to the CD-ROM </p>
+
+<p class="calibre2">這本書不注意看封面, 會以為書名是 Multimedia Adness!，你不妨仔細瞧瞧封面。查電子字典，它告訴你「adness 可能是ad 的名詞」(這就是電子字典，唉)，而 AD 是廣告的意思。Madness 表示狂熱。</p>
+
+<p class="calibre2">許多人買書會先看看有沒有附磁片 (有的話好像比較划算)，那麼這本書會給你一個驚訝，它竟然大手筆地附了一張 CD 片，內容很豐富。想聽聽 Bill Gates 的聲音嗎 ? CD 裡頭有一段他演講時錄下來的 AVI。不要愁沒有 Media Player 2.0 播放 AVI 檔，這片 CD 也給了一份。想看看舉世聞名的貝多芬第九交響曲多媒體title 而又不想花 NT$ 1700.0 (我買的價格) 嗎 ? 這片 CD 內有一個 DEMO。裡面還有不少圖片、動畫 (3D Studio 做出來的)，音樂 (莫札特奏鳴曲、佛瑞孔雀舞，棒得很)。</p>
+
+<p class="calibre2">這麼多資料必須要有組織 (BBS 上拿下來的 Shareware、PD 不加整理通常就變成廢物)，這片 CD 被編輯成 Nautilus 型式。Nautilus (鸚鵡螺) 是一份多媒體月刊，有趣的是它以 CD 型式存在。如果你有興趣也可以在這片 CD 中得到鸚鵡螺的訂購資訊。讀者拿到這本書先別急著看，我倒建議先按附錄 B 的介紹安裝好 CD，好好進入多媒體世界享受一下，更會加強你接觸多媒體的動機。</p>
+
+<p class="calibre2">這本書分為四大部份，多媒體的知識部份可以說全涵蓋在上一本書 Discover Windows 3.1 Multimedia 範圍內，不過它在介紹多媒體軟體時較擅勝場。所準備的資訊對於一個只是不想哪一天被世界淘汰的多媒體新鮮人來說是足夠而適度。不曾使用過這些軟體的人光憑書內說明大概也能夠知道它們的操作特色以及性能。軟體操作過程的圖片很多也很精良。(圖片的製作國內書籍明顯比國外差一截，不是解析度，而是灰階對比不佳，我真希望知道問題在哪裡)。這本書談的軟體不只是應用軟體或多媒體title (第七章)，也有發展環境 (第八章)。尤其第八章介紹以 Visul Basic 寫多媒體應用程式，扼要明白，讓向來奉 C/C++ 為圭臬的我也躍躍欲試。</p>
+
+<p class="calibre2">我想在此順帶說明一點，多媒體發展環境是指像 Visual Basic、Microsoft MDK、Borland ObjectVision 這種可以輔助你設計出具備多媒體能力之程式的發展環境；多媒體編製系統 (Authoring System) 指的是如 Action!、Icon Author、AuthorWare、ToolBook 這類提供各種友善人機介面(通常是 Icon、timeline、輔以 Script) 以製作多媒體節目的軟體，它們因功能不同還分為簡報型、全功能型 (反應在價格上)；多媒體title 則是指像 "Muitimedia Beethoven : The Ninth Symphony" 或是 "Microsoft Bookshelf for Windows" 這樣的 CD 節目成品。至於像 PhotoStyler、Video for Windows、Sound Editor 則是用來準備各種生鮮材料的所謂 "Domain Editor"，這也分「普羅」級和一般級。普羅級售價七、八百美金，一般級則往往淪為 Shareware 或為PD (Publish Domain)，常隨書附贈。</p>
+
+<p class="calibre2">本書第四部份是多媒體軟硬體購買指南。好像不少人對廣告反感，其實當你秣足馬驃準備要踏出第一步，就用的著廣告了。一份整理過的廣告分類目錄是有價值的。讀者中如果有負責軟體採購工作者，The Windows Shopper's Guide (松崗售) 可能對你有點幫助；R&amp;D 計劃主持人或許也可以從中得到何去何從的一些靈感。</p>
+
+<p class="calibre2">同樣是以一般電腦人員的角度來談多媒體，這一本書並不見得因為資訊較上一本少而不夠看。這本書親和力高些，何況它還擁有一張內容琳琅滿目的 CD。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">前面兩本書都是給多媒體入門者看的，如果你想開始在 Windows 環境上發展多媒體程式，市面上有三本書 :</p>
+
+<p class="calibre2">⊙ Microsoft Windows Multimedia Programmer's Workbook <br class="calibre3"/>⊙ Microsoft Windows Multimedia Programmer's Reference <br class="calibre3"/>⊙ Microsoft Windows Multimedia Authoring and Tools Guide</p>
+
+<p class="calibre2">它們都是 Microsoft Press 出版。這三本書是當初隨 Windows Multimedia Extension 推出的 MDK 手冊；就像 Windows 3.x 另外發行的手冊一樣，它們也可以在軟體之外單獨購買。擁有 MDK 的人當然擁有它，我也就不提了。但是技術方面另有一些好東西不能不提。(註 : MSC 7.0 也含 MDK，多媒體手冊變成兩本)。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 PC-Mag 多媒體專欄連載 (10/29/1991-11/10/1992) <br class="calibre3"/>作者 Charles Petzold</p>
+
+<p class="calibre2">01. Beyond the Beep : The Comming of Multimedia Windows<br class="calibre3"/>02. Putting Sound on PCs : An Introduction to Waveform Audio<br class="calibre3"/>03. Exploring Waveform Audio : Generating Sine Waves in Software<br class="calibre3"/>04. Waveform Audio Application Program Interface : An Overview.<br class="calibre3"/>05. Exploring Waveform Audio : Building a Digital Tape Recorder<br class="calibre3"/>06. An Introduction To The Media Control Interface<br class="calibre3"/>07. MCI Command Strings : The Easy Multimedia Interface<br class="calibre3"/>08 Storing Sound : A Look at Waveform Audio Sound Files<br class="calibre3"/>09. Experimenting with Additive Synthesis in Multimedia Windows.<br class="calibre3"/>10. An Introduction to the Musical Instrument Digital Interface<br class="calibre3"/>11. Device-Independent Access to MIDI Under Multimedia Windows<br class="calibre3"/>12. Making Music : An Introduction to MIDI Sequencing<br class="calibre3"/>13. Playing a MIDI synthesizer from Your PC Keyboard<br class="calibre3"/>14. Creating a Computer Drum Machine Part1.<br class="calibre3"/>15. Creating a Computer Drum Machine Part2.<br class="calibre3"/>16. Exploring the Resource Interchange File Format<br class="calibre3"/>17. Creating a Computer Drum Machine Part3.<br class="calibre3"/>18. Exploring the Low-Level MIDI Input Functions<br class="calibre3"/>19. Buffered Input and Output of MIDI Short Messages<br class="calibre3"/>20. Recording and Playing Back MIDI Sequences<br class="calibre3"/>21. MCI, MIDI, and the Nature of Time<br class="calibre3"/>22. Playing MIDI Files Using The Midea Control Interface<br class="calibre3"/>23. Exploring the Structure of MIDI Files<br class="calibre3"/>24. Saving Your Music in a MIDI File </p>
+
+<p class="calibre2">Programming Windows 的作者 Charles Petzold 於 PC-Mag 上的二十四篇連載 (1991/10-1992/11) 是很棒的技術資料。他從聲音的物理意義講起，許多生活化的名詞都解釋得很好，像人耳的極限，分貝的意義與計算，鋼琴的音域。接下來講 Waveform、MCI、MIDI、RIFF 檔，而後又回到 MIDI，講更低階的 MIDI 檔案格式、MIDI 錄音。整個系列對 MPC 的音效部份作了十分透析而且廣泛的介紹。Petzold 設計程式範例向來是有名的，他設計了一個小號、雙簧管和單簧管的純軟體樂音合成器，雖然只是短短一秒的樂音，彌足珍貴；他設計一個非常有趣的打擊樂器，可以發出 47 種打擊樂器聲音；他把巴哈 (J.S. Bach) 著名的管風琴觸技曲「D 小調觸技曲與賦格」(Toccata and Fugue in D Minor) 的第一小節轉換為 MIDI 訊息貯存起來再播出，讓你真實體會 MIDI 訊息；還有一個以電腦鍵盤彈奏音階的程式。</p>
+
+<p class="calibre2">除了少數幾篇是講 MCI 高階介面，剩餘的都是 Waveform 和 MIDI 的低階 API 介面。也許你會對於捨高階的 MCI 而就低階的 API 發展多媒體軟體感覺疑惑，這是一種trade-off，以程式發展的容易性換取程式的彈性與精準度。利用 MCI 設計一個媒體播放控制面板，再簡單不過，但多媒體編輯系統對時間的控制很要求，難免需要低階 API 的輔助。</p>
+
+<p class="calibre2">都沒有視訊 ! 我們不免抱怨。前面提過 1993/02 的 MSJ 上頭有 Petzold 一篇關於 Video for Windows 的文章，加起來恰能統統涵蓋 Windows 3.1 的多媒體部份。這二十五篇文章不論就質或量都抵得上一本書，事實上我聽說這一本書也在籌劃之中。好書總是令人期待，也值得期待。</p>
+
+<p class="calibre2">多媒體令人興奮，也拉近罹患電腦恐懼症的人與電腦之間的距離。幾位音樂界朋友平日看到電腦就手軟，看到貝多芬第九交響曲 title 卻高興的拍手叫好。你不知道他們有多歡喜，每個人搶著回答 Ninth-Game 的問題，搶那隻可憐的滑鼠。我自己也常常在工作時打開 CD 邊聽音樂 (希望邊看新聞的日子亦不太遠。如果太座把飯菜送到書房來就更理想)。九十年代的確是多媒體擅場的年代。</p>
+
+<p class="calibre2">許多專家評估桌上型電腦帶給人類的貢獻，遠不及它目前已具備的硬體能力。真的要讓桌上型電腦更接近人類甚至走入家庭成為家電用品，電腦多媒體將是一個契機。</p>
+
+<p class="calibre2">後記 </p>
+
+<p class="calibre2">上個月開了天窗，要向讀者說抱歉。心理疲乏導致生理也虛弱不堪，一個小小的感冒就躺了兩禮拜，自己覺得有點兒像白肉雞。心理疲乏的原因是... ? 本欄文字風格鮮明，讀者反應兩極化，愛之欲其生而惡之欲其死，雖然一切都在侯捷理解範圍之內仍不免心緒澎湃。古今多少人有金聖嘆的豁達，殺頭前還告訴你花生米配饅頭有火腿味 ?! 金聖嘆因話多貪言而賈禍，我看侯捷這小子也差不多了吧。沒關係，喜歡的人還有二期可以看，不喜歡的人再看二期，就不會礙你的眼了。 </p>
+
+<p class="calibre2"><span><img src="img/img22.jpeg" alt="img22.jpeg" class="calibre8"/></span> <span><img src="img/img23.jpeg" alt="img23.jpeg" class="calibre8"/></span></p>
+</body>
+</html>

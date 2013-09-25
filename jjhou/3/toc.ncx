@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="4e5443a6-f337-4ca0-930c-3559f03e6e14" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.8.38)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>無責任書評3</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="article0" playOrder="1">
+      <navLabel>
+        <text>千人諾諾 不如一士諤諤  鍾子期 序</text>
+      </navLabel>
+      <content src="OEBPS/article0.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article1" playOrder="2">
+      <navLabel>
+        <text>不能忘情 侯捷自序</text>
+      </navLabel>
+      <content src="OEBPS/article1.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article2" playOrder="3">
+      <navLabel>
+        <text>IQ 誠可貴，EQ 價更高</text>
+      </navLabel>
+      <content src="OEBPS/article2.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article3" playOrder="4">
+      <navLabel>
+        <text>涼風起天末</text>
+      </navLabel>
+      <content src="OEBPS/article3.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article4" playOrder="5">
+      <navLabel>
+        <text>MFC 四大天王</text>
+      </navLabel>
+      <content src="OEBPS/article4.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article5" playOrder="6">
+      <navLabel>
+        <text>到此躊躇不能去</text>
+      </navLabel>
+      <content src="OEBPS/article5.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article6" playOrder="7">
+      <navLabel>
+        <text>苦澀後的甘甜 - Windows 系統深耕</text>
+      </navLabel>
+      <content src="OEBPS/article6.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article7" playOrder="8">
+      <navLabel>
+        <text>Programming 不必是自我虐待</text>
+      </navLabel>
+      <content src="OEBPS/article7.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article8" playOrder="9">
+      <navLabel>
+        <text>吾所到之處，君亦可至</text>
+      </navLabel>
+      <content src="OEBPS/article8.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article9" playOrder="10">
+      <navLabel>
+        <text>選義按部，考辭就班</text>
+      </navLabel>
+      <content src="OEBPS/article9.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article10" playOrder="11">
+      <navLabel>
+        <text>天堂之門與棋王</text>
+      </navLabel>
+      <content src="OEBPS/article10.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article11" playOrder="12">
+      <navLabel>
+        <text>David 死亡記事</text>
+      </navLabel>
+      <content src="OEBPS/article11.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article12" playOrder="13">
+      <navLabel>
+        <text>歐遊雜記</text>
+      </navLabel>
+      <content src="OEBPS/article12.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article13" playOrder="14">
+      <navLabel>
+        <text>教之木鐸 -- 電腦辭典</text>
+      </navLabel>
+      <content src="OEBPS/article13.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article14" playOrder="15">
+      <navLabel>
+        <text>榮者日安安，辱者定碌碌</text>
+      </navLabel>
+      <content src="OEBPS/article14.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article15" playOrder="16">
+      <navLabel>
+        <text>讀者來函 無責任書評 3</text>
+      </navLabel>
+      <content src="OEBPS/article15.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

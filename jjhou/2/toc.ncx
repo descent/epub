@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="ea83316f-f2d7-4328-b2f0-fc853f1f8315" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.8.38)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>無責任書評2</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="article0" playOrder="1">
+      <navLabel>
+        <text>陽春白雪 鍾子期序</text>
+      </navLabel>
+      <content src="OEBPS/article0.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article1" playOrder="2">
+      <navLabel>
+        <text>開心之果不獨證 侯捷自序</text>
+      </navLabel>
+      <content src="OEBPS/article1.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article2" playOrder="3">
+      <navLabel>
+        <text>最淺與最深的組合</text>
+      </navLabel>
+      <content src="OEBPS/article2.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article3" playOrder="4">
+      <navLabel>
+        <text>錦囊招數齊出 奧密漫天飛舞</text>
+      </navLabel>
+      <content src="OEBPS/article3.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article4" playOrder="5">
+      <navLabel>
+        <text>探訪侯捷的天空</text>
+      </navLabel>
+      <content src="OEBPS/article4.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article5" playOrder="6">
+      <navLabel>
+        <text>叫書評 太沉重</text>
+      </navLabel>
+      <content src="OEBPS/article5.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article6" playOrder="7">
+      <navLabel>
+        <text>回顧十六 展望三二</text>
+      </navLabel>
+      <content src="OEBPS/article6.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article7" playOrder="8">
+      <navLabel>
+        <text>你正站在十字路口 (1)</text>
+      </navLabel>
+      <content src="OEBPS/article7.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article8" playOrder="9">
+      <navLabel>
+        <text>你正站在十字路口 (2)</text>
+      </navLabel>
+      <content src="OEBPS/article8.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article9" playOrder="10">
+      <navLabel>
+        <text>OLE2 打破軟體國界</text>
+      </navLabel>
+      <content src="OEBPS/article9.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article10" playOrder="11">
+      <navLabel>
+        <text>我的電腦探索</text>
+      </navLabel>
+      <content src="OEBPS/article10.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article11" playOrder="12">
+      <navLabel>
+        <text>原理之旅</text>
+      </navLabel>
+      <content src="OEBPS/article11.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article12" playOrder="13">
+      <navLabel>
+        <text>二十年目睹之怪現象</text>
+      </navLabel>
+      <content src="OEBPS/article12.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article13" playOrder="14">
+      <navLabel>
+        <text>以 Un 之名 談 Windows 95</text>
+      </navLabel>
+      <content src="OEBPS/article13.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article14" playOrder="15">
+      <navLabel>
+        <text>噢 1995</text>
+      </navLabel>
+      <content src="OEBPS/article14.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article15" playOrder="16">
+      <navLabel>
+        <text>侯捷訪談錄</text>
+      </navLabel>
+      <content src="OEBPS/article15.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article16" playOrder="17">
+      <navLabel>
+        <text>讀者來函 無責任書評 2</text>
+      </navLabel>
+      <content src="OEBPS/article16.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

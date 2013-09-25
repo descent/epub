@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">眩麗迷人的電腦藝術－圖形</h2>
+<p class="calibre2">對於螢幕上五光絢爛的圖形不感興趣者幾稀。<br class="calibre3"/>國內進口的電腦圖學或電腦繪圖程式設計書籍不算多，<br class="calibre3"/>我列出八本，相形之下<br class="calibre3"/>對每本書的內容介紹就少，<br class="calibre3"/>目錄之外頂多加點讀後感。 </p>
+
+<p class="calibre2">不僅立法院很熱鬧，咱們的 Forum (論壇) 以及讀者迴響也熱鬧非凡。我聽說六月份的論壇「國產書籍怪現象」在出版界漣漪陣陣，不知這金毛獅王是誰。</p>
+
+<p class="calibre2">這一個月我想為大家介紹幾本電腦繪圖方面的書。這個領域很廣，也有專為大學研究所設計的課程教材，不過這不是我要介紹的目標，我的目標放在 PC 軟體人員。他們可能沒有修過電腦圖學，但對於螢幕上五光絢爛的繪圖感到興趣 (不感興趣者幾稀)，也想自己動動手。換句話說我介紹的大半是那種書中有程式碼，書後附磁片，看起來頗「實用」的工具書 (實在說我不知道工具書這三個字恰不恰當)。國內這樣的書不算多 (比起滿坑滿谷的 User Guide、C/C++、Windows Programming)，大約只十數本而已，其中許多由 M&amp;T 出版。這次我列出的數量相當多，相形之下對每本書的內容介紹就少，原因是目錄已經為我說了許多話，所以我頂多加點讀後感。讀者請注意我在不同情況下使用電腦繪圖和電腦圖學兩個字眼的區別。低階的繪圖動作 (如點線圓) 我稱之為電腦繪圖，高階而需要數學模型的動作 (如自由曲線曲面、隱線隱面消除、光影模擬、光跡追蹤) 我稱之為電腦圖學。</p>
+
+<p class="calibre2">說到這方面的工具書，洗鏡光先生在本刊 1991/02、1992/01、1993/03「漫談 Micro」專欄中介紹過 Graphics Gems (繪圖寶石) 一二三冊，當然是相當好的。國內好像沒有書商代理 ?!</p>
+
+<p class="calibre2">依我的構想，理想上學習 PC 電腦繪圖進而至電腦圖學的階段大約如下 (但不一定是這樣的順序) :</p>
+
+<p class="calibre2">1) PC video 卡。包括文字模式以及各種繪圖模式的差別、video BIOS 的服務、各種模式下螢幕座標點 (x,y) 對應的位址、Herculus/EGA/VGA 卡片使用的位址空間、以及最重要的如何繪出一個點 (圖素，pixel)。對於 Surper VGA 的 banking switch 切換最好也知道一些 (這就得有點記憶體定址觀念了)。另外一些更接近硬體的主題，像是直接控制暫存器以求最快最快的繪點速度等，端看個人興趣與否。這些都與所謂的電腦圖學無關，但在實作時影響軟體效率甚巨。</p>
+
+<p class="calibre2">2) 基礎的電腦繪圖功夫 : 點、線、圓、弧的繪圖方法。我們在國中就學過直線與圓方程式，到高中又加上二次曲線，但真以實數求解就太慢了，電腦繪圖講究的是速度、速度、速度。早有一些很好的演算法針對「螢幕由圖素 (pixel) 構成的特性」而設計，全部以整數運算。利用這些整數演算法，再加上直接控制繪圖卡暫存器以顯示圖素顏色，速度上沒得更挑剔了。</p>
+
+<p class="calibre2">3) 高階一點的主題，如多邊形截割、多邊形填充、直線與幾何物體的交點、點是否落在幾何物體上 (或內或外)...等等。從學理上來說它們都不難，人眼一眼就可看出哪些部份在多邊形內部要填顏色，哪些部份在多邊形外部不需填入顏色。但是電腦沒有所謂的大局觀，貫穿任意多邊形的一條直線上的某一點是在多邊形的內或外，像這樣的問題要電腦辨識是相當困難的。交點問題也不能真以代數方式求解，太慢了，這個領域裡大家追求的就是速度。這些基礎技術最後應用在處理三維空間立體圖 (加上塗色) 時可能需要成千上萬的相同計算。為了速度，在「以圖素構成的螢幕」上各種解決問題的演算法就相繼被開發出來，這其中排序的效率明顯帶有決定性影響。</p>
+
+<p class="calibre2">4) 3D 網框架構 (透視、投影)。利用齊次 (homogenius) 座標以及各種特殊矩陣運算，將真實世界中的透視表現到畫面上來，甚至包括特殊效果的扭曲、剪變。再困難些的就是隱藏線、隱藏面的計算，這一部份會大量運用上述 (3) 的技術。</p>
+
+<p class="calibre2">5) 塗色 (Rendering)。欲進入這個領域，你必須對光線有些基本了解，包括光線的入射、反射、折射、散射，這些現象受到物體表面材質的影響，所以對於欲塗上顏色的物體材質也要有所認識。Ray Tracing (光跡追蹤法) 是目前對光線處理的主流方法。</p>
+
+<p class="calibre2">6) Animation 動畫。動畫當然是電腦圖學的一支，可以利用調色盤的變化完成某些動畫效果，但這只是簡單的色彩流動 (例如水波) 而已。也可以使用多張圖片交替顯示的方法完成動畫 (類似卡通)。由於速度的限制，PC 上的動畫無法做到全彩全動的水準 (多媒體 Windows 上的 AVI 也不過是 160x120，每秒 15 張圖像，小而不很連續)。</p>
+
+<p class="calibre2">7) Fractal (碎形幾何)。這部份我想就比較遠離一般自修性質的電腦圖學愛好者了。其實任何人都能感受 Fractal 帶來的那種驚撼人心的效果，程式設計也毫無困難，但理論與背後隱藏的意義十分深奧。Fractal 屬於混沌學 (Chaos) 的一支，可以用來描述自然界的幾何 (稱為碎形幾何，不同於人工的方、圓、錐等歐幾里德幾何)，於是電腦可以利用 Fractal 短短數條方程式模擬真實世界的景緻，像是雲、海浪、山貌、地形。除了實景，Fractal 也可以製作出色彩斑爛、詭譎變幻，看似不規則中帶著規則的圖形。</p>
+
+<p class="calibre2">這一次書籍介紹大致就分為三類，一是繪圖卡的低階處理和基本繪圖函式設計；一是三維立體圖學 (透視、投影、塗色、陰影 ...)；另一是令人驚心動魄的 Fractal。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Programmer's Guide to PC and PS/2 Video System <br class="calibre3"/>作者 Richard Wilton<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 544 章</p>
+
+<p class="calibre2">0. 簡介<br class="calibre3"/>1. IBM display hardware and firmware<br class="calibre3"/>2. 硬體的程式設計<br class="calibre3"/>3. 文數字模式<br class="calibre3"/>4. 繪圖模式<br class="calibre3"/>5. pixel 程式設計<br class="calibre3"/>6. 直線<br class="calibre3"/>7. 圓和橢圓<br class="calibre3"/>8. 區域填充<br class="calibre3"/>9. 繪圖文字<br class="calibre3"/>10. 文數字字元組<br class="calibre3"/>11. 位元區塊與動畫<br class="calibre3"/>12. 高等繪圖程式技巧<br class="calibre3"/>13. 高階語言中的繪圖函式庫 </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img24.jpeg" alt="img24.jpeg" class="calibre4"/></span> note: this is book fact of 2nd edition .</p>
+
+<p class="calibre2">這本書對於 EGA/VGA 硬體的解釋，非常清楚。書中發展出許多組合語言繪圖函式，應用到 C 程式上速度十分令人滿意。這些基礎的繪圖函式包括畫點、直線、圓弧，以及區域填充，都是儘量利用低階技術直接控制顯示卡暫存器而完成。往低階走固然速度愈來愈快，唯一惱人的是移植性降低。不過如果在設計低階函式時能多放點心思在 API 的設計上，再把低階模組獨立出來，應該可以將此困擾降至最低。本書相當有實用性，第三波有中譯本，譯筆不錯。我手頭上只有中譯本，所以列給各位的是中文目錄。原文書是朋友帶回來的，只剩書名與作者還記得。記得稍早 (也不過就是三年前) 還有同事抱著本書雅不願與別人技術交流，不知現在資訊傳播發達時代，是否還有這等胸襟狹隘之人。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Graphics Programming in C <br class="calibre3"/>作者 Roger T. Stevens<br class="calibre3"/>出版 M&amp;T Books<br class="calibre3"/>頁數 23 章</p>
+
+<p class="calibre2">1. 簡介<br class="calibre3"/>2. 繪圖及 C 語言<br class="calibre3"/>3. CGA 和 Herculus<br class="calibre3"/>4. EGA 和 VGA<br class="calibre3"/>5. ROM BIOS 影像服務<br class="calibre3"/>6. 在 C 語言中使用 ROM BIOS 影像服務<br class="calibre3"/>7. 用於 Herculus 卡的繪圖函式<br class="calibre3"/>8. 在螢幕上顯示像點<br class="calibre3"/>9. 座標系統與邊界修剪<br class="calibre3"/>10. 畫線與矩形<br class="calibre3"/>11. 橢圓、圓和弧<br class="calibre3"/>12. 圓角矩形和多邊形<br class="calibre3"/>13. Bezier 和 B-Spline 曲線<br class="calibre3"/>14. 轉換和旋轉<br class="calibre3"/>15. 產生繪圖游標<br class="calibre3"/>16. 在繪圖畫面上使用文字<br class="calibre3"/>17. 立現式視窗和功能表<br class="calibre3"/>18. 三度空間繪圖法<br class="calibre3"/>19. 三度空間上的陰影<br class="calibre3"/>20. 建立繪圖函式庫<br class="calibre3"/>21. 範例程式<br class="calibre3"/>22. 印出繪圖畫面<br class="calibre3"/>23. 部份維度圖形 : 未來的展望 </p>
+
+<p class="calibre2">這本書一開始介紹了一點顯示卡硬體架構，這一部份不如上一本書資料那麼豐富，敘述那麼詳細，不過對於只想到此一遊而不欲深入名山的人，應該是夠了。第八章開始進入繪圖程式設計。上一本書的繪圖函式都以組合語言完成，這一本書使用 C 語言 (看看書名)，不過也給了選擇，它也有使用 inline assembly 的版本 (只在最基礎的函式如繪點上)。後續數章開始討論諸如直線、圓弧、截割、座標系統、區域填充、三度空間繪圖等技巧，這些都是電腦圖學的入門必修。講這種主題的書不算少，但本書作者相當有名，而且他出了一系列有關電腦繪圖的書 (等一下你就可以看到)，考慮這一點的話，這本書有其優勢。尤其第二十三章對碎形幾何的概略描述，有助於閱讀他的下兩本關於 Fractal 的書籍。這本書我手上也是中譯本 (儒林)，譯筆也不錯。</p>
+
+<p class="calibre2">追註 : 重新整理這篇稿子時，我想，既然我說上一頁和這一頁的兩本書譯筆都不錯，也許您會想去書店找找看。於是我把兩本書取出，卻看不到在書的封面、封底、書背、內頁或任何其他地方有原文書名以及原作者的記錄(只有第一本書的譯者序提到了原作者)。所以，如果不把它們的中文書名公佈，顯然您將大海撈針。</p>
+
+<p class="calibre2">雖不忍心您大海撈針，但是我也不打算讓不尊重別人者愈揚其名。我的看法是，早年國內還沒有立法保護外文書之翻譯權，所以無主翻譯是「合法」的，版權問題實不必在今日再挖來討論；但連把原書名原作者放在顯著地位表示起碼的尊敬以及對讀者的負責，都不願坦然為之，我感到十分難過。</p>
+
+<p class="calibre2">不要找了，反正它們也活不過今年的「612 無版權外文中譯圖書大限」。... 1994.04.18</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Programming in 3 Dimentions <br class="calibre3"/>作者 Christopher D.Watkins<br class="calibre3"/>Larry Sharp<br class="calibre3"/>出版 M&amp;T Books<br class="calibre3"/>頁數 16 章，466 頁<br class="calibre3"/>售價 NT$ 750.0<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">Part I : Universal Routines<br class="calibre3"/>1. Introduction to the Modules<br class="calibre3"/>2. The Mathematics Module<br class="calibre3"/>3. The Graphics Interface Module<br class="calibre3"/>4. Using The Modules</p>
+
+<p class="calibre2">Part II : Three Dimention Modeling<br class="calibre3"/>5. Modeling Theory and Database Structure<br class="calibre3"/>6. Adding Objects to a Scene<br class="calibre3"/>7. Sorting and Displaying Objects<br class="calibre3"/>8. The Modeling Program and Creating Animation<br class="calibre3"/>9. Creating Object Databases<br class="calibre3"/>10. Editing Scene Files</p>
+
+<p class="calibre2">Part III : Ray Tracing<br class="calibre3"/>11. Ray-Tracing Theory<br class="calibre3"/>12. Ray Tracing Program<br class="calibre3"/>13. Image And Animation Creation with The Ray Tracer</p>
+
+<p class="calibre2">Part IV : Animation<br class="calibre3"/>14. Animation<br class="calibre3"/>15. The Animation Program</p>
+
+<p class="calibre2">Part V : Color Processing<br class="calibre3"/>16. Reducing Colors with the Color Histogram Processor </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img25.jpeg" alt="img25.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">這一本書的所有程式以 Borland C++ 2.0 完成，顯示卡設定在 VGA 和 SuperVGA 階層。到底是比較新的書，不再去提Herculus 卡了。本書共分五部份。第一部份介紹書內的函式庫，主要是向量數學和矩陣代數 (第二章)，這是做三維圖形計算時不可或缺的數學工具；另一個函式庫是圖形介面 (第三章)，提供關於進入圖形模式、設定圖形模式、調色盤、點線圓等基礎繪圖函式，以及高階的三維空間投影、透視、座標轉換等函式，它們大量運用第二章的數學函式。這些章節並沒有從電腦圖學的基礎觀念說起，事實上本書型式比較像是列舉一套 C 語言函式庫並加簡略說明。第四章光看章名不知道是做什麼，原來它是呼叫前兩章的函式庫做個示範。範例程式中牽扯到利用 IFS (Iterated Function System) 製作 Fractal 圖形，沒有什麼文字說明，所以沒有這方面基礎的讀者不要想光靠程式內容來學習或思考。這一部份我認為應該到下兩本書再來看 --- 如果你有興趣的話。</p>
+
+<p class="calibre2">我以前常會買一些附原始碼的函式庫，小小的、不貴的 (總在 US$ 100.0 以下)，仔細研究以增進不同技術領域的程式功力，譬如說記憶體啦、使用者介面啦、繪圖啦。這些函式庫通常就是薄薄的一兩片、頂多附個模組架構 (檔案架構) 說明。有的說明文件還是放在檔案中需得你自己印出來看。這本書給我的感覺有點兒像那樣，不一樣的是它的說明文件印成書。雖然我們不能怪它 (它並不比較貴)，不過就我想像中的傳道授業的書的身份，似乎不該是這樣。從另一角度來說，市售的函式庫是有維護的，這類書的函式庫可以冠冕堂皇的說只是為了 "illustration purpose"。真的，它的 readme 檔案上就是這麼說的，所以這個軟體可能在開一個不存在的檔案時當掉，也可能在不正常結束下沒有回復你的文字模式，至使你必須使用 "mode co80" 這個 DOS 命令。</p>
+
+<p class="calibre2">壞消息，我書中的磁片竟然是壞的，沒有辦法試試重新編譯、聯結的情況，也沒有辦法執行看看給讀者更多說明。碰到這樣的事情除了想「為什麼會是我」之外，也懶得採取什麼行動。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Photorealism and Ray Tracing in C <br class="calibre3"/>作者 Christopher D. Watkins<br class="calibre3"/>Stephen B. Coy<br class="calibre3"/>Mark Finlay<br class="calibre3"/>出版 M&amp;T Books<br class="calibre3"/>頁數 22 章，583 頁<br class="calibre3"/>售價 NT$ 750.0<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">Part I : Standards and Universal Modules<br class="calibre3"/>1. Standards and The C Language<br class="calibre3"/>2. The Mathematics Module<br class="calibre3"/>3. The Graphics Interface Module<br class="calibre3"/>4. Using The Modules</p>
+
+<p class="calibre2">Part II : Ray Tracing<br class="calibre3"/>5. Ray Tracer Math Modules<br class="calibre3"/>6. Ray Tracing Theory<br class="calibre3"/>7. The Ray Tracing Program<br class="calibre3"/>8. Ray-Object Intersection Tests<br class="calibre3"/>9. Seeing The Light<br class="calibre3"/>10. The Ray Tracer Code<br class="calibre3"/>11. How To Use The Ray Tracer</p>
+
+<p class="calibre2">Part III : Production of Object Databases For The Ray Tracer<br class="calibre3"/>12. Procedural Object Databases<br class="calibre3"/>13. Z-Buffer Data</p>
+
+<p class="calibre2">Part IV : CAD Production of Object Databases<br class="calibre3"/>14. The Three Dimensional Database Modeler</p>
+
+<p class="calibre2">Part V : Image Processing Techniques in Computer Graphics<br class="calibre3"/>15. Image Processing</p>
+
+<p class="calibre2">Part VI : Graphics Hardware<br class="calibre3"/>16. Graphics Hardware Drivers<br class="calibre3"/>16. Beyond Bob </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img26.jpeg" alt="img26.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">雖然本書主要作者之一 Watkins 同上一本書，以軟體為主的內容方式也同上一本書，但我的觀感好些了。有一些精緻的圖片表示三維空間、光跡追蹤的觀念，詳細程度不能與教科書相比 (畢竟它有一半的篇幅放程式碼呢)，但至少沒有基礎的人可以稍稍有個倚賴。</p>
+
+<p class="calibre2">但，還是太以軟體為主! 以一個大型程式牽著書本鼻子走，並不是我個人認為好的書籍進行方式。三維影像加塗色的程式不可能小，但我並不企盼一個具備商業性的模組化的重覆使用性高的 (卻大到不知道 main() 在哪裡的) 圖形函式庫；我認為讀者想學習的並不是語言技巧，也不是模組分割技術，花的書錢也不是為了買一套商用函式庫，而是為了學習電腦圖學觀念技術及其實作示範。所以如果我是作者，我會選定一個目標 --- 好，就說是 Utah Teapot (電腦圖學界頂頂有名的模型)，告訴讀者最終會得到一個茶壺三維光影圖，然後書籍從點線弧開始，經過各種必須的過程 (這過程中就讓讀者經歷了種種基礎圖學技術)，一步一步最後完成我們的目標。</p>
+
+<p class="calibre2">利用本書軟體 (書附磁片上有) 實際製作一張三維空間圖形非常非常耗時，我最後說服自己看看書上十六頁全彩影像就好 (不得不承認自己的性子是急了些)。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Fractal Programming in C <br class="calibre3"/>作者 Roger T. Stevens<br class="calibre3"/>出版 M&amp;T Books<br class="calibre3"/>頁數 22 章，583 頁<br class="calibre3"/>售價 NT$ 750.0<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">1. Introduction<br class="calibre3"/>2. What Are Fractals<br class="calibre3"/>3. Hardware Requirements<br class="calibre3"/>4. Saving and Compressing Display Data<br class="calibre3"/>5. Tools for Graphics Display Generation<br class="calibre3"/>6. The Lorenz and Other Strange Attractors<br class="calibre3"/>7. The Population Equation and Bifurcation Diagrams<br class="calibre3"/>8. The Snowflake and Other von Koch Curves<br class="calibre3"/>9. Peano Curves<br class="calibre3"/>10 The Hilbert Curve<br class="calibre3"/>11 The Sierpinski Curve<br class="calibre3"/>12 Trees<br class="calibre3"/>13 Working with Circles<br class="calibre3"/>14 The Mandelbrot Set<br class="calibre3"/>15 Julia Sets<br class="calibre3"/>16 Dragon Curves<br class="calibre3"/>17 Phoenix Curves<br class="calibre3"/>18 Three-Dimensional Dragons<br class="calibre3"/>19 Newton's Method<br class="calibre3"/>20 Brownian Motion<br class="calibre3"/>21 Fractal Landscapes<br class="calibre3"/>22 Iterated Function Systems </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img27.jpeg" alt="img27.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">本書年代算是稍微久遠一點了，1989 年出版的。前五章中除了第二章稍微簡介 Fractal 之外，餘皆與 Fractal 無關。第四、五章說明原始碼中使用的一些工具函式，這是作者在其另一本著作Graphics Programming in C 中發展的。許多繪圖函式雖然Borland C 或 Microsoft C 函式庫都已提供，作者還是自行發展，其理由是如此一來程式可在各種 C 編譯器下編譯，因為只用到共同擁有的函式。不過這樣發展軟體忒也辛苦了些。解決這種非標準繪圖函式的困擾，一部份可以利用 #define 巨集來解決。但如果編譯器之間的繪圖函式沒有一對一的話，這種作法也行不通。</p>
+
+<p class="calibre2">一般人對於 Fractal 的第一個問題是 : 什麼是 Fractal ? 第二個問題是 : Fractal 作什麼用 ? 關於這兩點，作者 Stevens 的解釋令人覺得溫暖(我意思是讓人有看下去的勇氣和興趣)。如果給一條直線，任何人都知道其維度為 1；如果把這條直線延伸、扭曲、盤繞但絕不交叉，它的維度從傳統幾何的定義來說也是 1 (線上一隻小螞蟻必如是想)；可是直覺告訴我們應該不是 1 (你看它不是佔據著一個平面嗎)，好像是 2，可又不盡然。這種「維度不為整數」的幾何就是 Fractal (碎形) 幾何。這個答案輕描淡寫，但我想對於初初接觸到 Fractal 的讀者是十分受用的。Fractal 有什麼用 ? 最早發現它的 Dr. Benoit Mandelbrot 認為 :</p>
+
+<p class="calibre2">傳統幾何用以描述人為物件 (方、圓、錐...) 十分理想，碎形幾何用來描述自然界的物件則相當合適。</p>
+
+<p class="calibre2">電腦在進行迭代 (iteration) 時，參數的變化如果以圖形描述，會產生十分有趣的特徵 : (1) 它們絕不重覆，(2) 它們自我類似 (把局部放大來看，會出現與原形十分近似的形狀)。它們都很美麗 (這倒是見仁見智，有人覺得毛骨悚然)。這種曲線所具備的特性，符合碎形幾何的定義，這就是碎形曲線。</p>
+
+<p class="calibre2">閱讀 Fractal 相關書籍時，字典得翻勤一些，你常會看到奇怪字眼諸如帆索、泡沫、海綿、凝乳，這都是 Mandelbrot 檢視這些前所未見前所未聞的圖案時給的名稱。Fractal 這一詞是 Mandelbrot 於 1975 年在其作品 (也就是那些奇異詭譎的曲線) 即將出版前，在其兒子的拉丁字典獲得的靈感。拉丁文中有一個形容詞是 fractus，英文中的同語根字語有破碎 (fracture) 和破片 (fraction)，於是他自創出 fractal 這一新字眼。</p>
+
+<p class="calibre2">一條碎形曲線內含嚇死人的複雜，但又隱隱然有著亂中有序的結構，簡簡單單的電腦程式就可以讓個人電腦玩家在自己的個人電腦上繪出吸引人的碎形曲線(但如果你土法鍊鋼，得一張圖得花大半天)。</p>
+
+<p class="calibre2">為何 Fractal 重要 ? 原因是自然界中看似複雜的東西竟可以 Fractal 來描述，更令人驚訝的是描述的方程式非常簡短。以 DNA (去氧核醣核酸) 為例，記錄著生命的奧祕，可能只是寥寥數語就傳遞了分歧發展的重複過程。Fractal 可以應用在人體的肺部支氣管網路、心臟的傳導纖維。一張極為複雜的影像，可以藉著找出其碎形維度，然後找出其碎形方程式，然後以三言兩語描述它，這應用在哪裡 ? 對了，影像壓縮。本刊上一期的「壓縮技術」一文最後有一篇以碎形壓縮為題目的文章可供參考。(編按 : 指的是微電腦傳真雜誌)</p>
+
+<p class="calibre2">本書從第六章以後，都是針對 Fractal 中的某一種主題成立一章，並列出程式。程式都非常簡短，第一次接觸 Fractal 的人可能大吃一驚，這麼短的程式能產生那麼複雜、絢爛的圖形。第八章到第十三章都以相同手法製作一些自我模仿的圖形 : 先以一個 Initiator (通常只是簡單的直線或三角形、四方形)，再在其邊線上取代以所謂的 Generator，不斷進行下去。這種方法以遞迴程式技巧最容易實作出來。程式很短，但仔細想它卻很叫人頭痛--- 遞迴程式向來如此。</p>
+
+<p class="calibre2">第十四章的 Mandelbrot Set 是 Fractal 領域中頂頂有名的圖騰，相信看過 Fractal 圖形的人一定都看過這張圖。Mandelbrot 原是IBM 工程師，涉獵領域甚廣，現已因開創一門學門 (當然不只是他一人功勞) 而名列大師人物。我舉混沌-不測風雲的背後一書 (註) 對 Mandelbrot Set 的精彩描述以饗讀者 :</p>
+
+<p class="calibre2">『Mandelbrot Set 是數學中最複雜的對象，地老天荒也無法將它看盡。它的光環邊緣滿佈棘刺，螺紋絲路四處糾纏旋繞，垂掛著球莖狀精密結構，像上帝耕耘的葡萄，大大小小閃爍著豐盈幻化的輝彩。沒有辦法將各種形狀分門別類或編號』。 </p>
+
+<p class="calibre2">放大百萬倍後的一個角落可能發現一個與原大小相似的外形，想來真是有點令人恐怖。</p>
+
+<p class="calibre2">(註:混沌這本書原作者是 James Gleick，紐約時報科技專欄作家；林和譯， 天下文化出版。對混沌和碎形幾何有興趣的人，不妨先看看這中譯本。 十一章，403 頁，NT$ 220)。</p>
+
+<p class="calibre2">第十五章的 Julia Set 是與 Mandelbrot Set 同享盛名的圖形，這其實是 50 年前的法國數學家作品，竟然可以在 Mandelbrot Set 中找到。第二十、二十一章是 Fractal 的實際應用。Mandelbrot 曾經提出英國海岸線有多長的問題，答案永遠視測量的單位而定，因為一個類似兩腳器的設備不可能觀察其兩腳之間的碎形變化。那麼，以 Fractal 來製作地圖上的海岸線是最生動最自然的了。另外，Fractal 可以模擬自然景觀，創造電腦圖學的另一支。</p>
+
+<p class="calibre2">書後長達 24 頁的附錄 A 是工具函式庫的原始碼。長達 138 頁的附錄 B 是針對 Herculus 卡寫的程式原始碼，其實用價值不高，因為一來單色卡已日漸淘汰，二來觀看 Fractal (尤其是 Mandelbrot Set) 而沒有彩色那是入寶山而空手返。</p>
+
+<p class="calibre2">磁片中含所有原始碼，以及兩個分別為 Borland C (tools.lib) 和 Microsoft C (mtools.lib) 的函式庫。這些原始碼我分別以 Microsoft C 7.0 和 Borland C 3.1 均可順利編譯聯結。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Advanced Fractal Programming in C <br class="calibre3"/>作者 Roger T. Stevens<br class="calibre3"/>出版 M&amp;T Books<br class="calibre3"/>頁數 13 章，305 頁<br class="calibre3"/>售價 NT$ 450.0<br class="calibre3"/>磁片 No. (另購)</p>
+
+<p class="calibre2">1. Introduction.<br class="calibre3"/>2. Painlessly Moving To C++<br class="calibre3"/>3. Useful Functions For Fractal<br class="calibre3"/>4. The Mandelbrot Set Revisited<br class="calibre3"/>5. The Core Program<br class="calibre3"/>6. Using The Distance Method With The Mandelbrot Set<br class="calibre3"/>7. Transcendental Functions<br class="calibre3"/>8. Orthogonal Polynomials<br class="calibre3"/>9 Some Barnsley Fractals<br class="calibre3"/>10 Plasmas<br class="calibre3"/>11 Three Dimensional Techniques<br class="calibre3"/>12 L-Systems<br class="calibre3"/>13 Iterated Function Systems </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img28.jpeg" alt="img28.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">這本書是上一本的延續，同一作者同一主題，不過是將 Fractal 這一領域的新發展再寫續集。程式設計使用 C++ 語言，主要是為了可以使用 C++ 的 overload operator，方便複數運算。書上的軟體增加了檔案能力 (使用 ZSoft 的 PCX 檔格式)。模組設計比上一本好一些，獨立出一個 Core 程式，搭配特定的"Fractal Engine" 和繪圖函式即可產生特定的 Fractal 圖形。新書的風格與前一本差不多，但是書後沒有附磁片，莫怪本書便宜的多。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Fractal Creations <br class="calibre3"/>作者 Timothy Wegner<br class="calibre3"/>Mark Peterson<br class="calibre3"/>出版 Waite Group Press<br class="calibre3"/>頁數 3 章，315 頁<br class="calibre3"/>售價 US$ 34.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">1. Fractals : A Primer<br class="calibre3"/>2. Using Fractint<br class="calibre3"/>3. Fractal Types </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img29.jpeg" alt="img29.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">較之前兩本書著重在程式設計教導，本書就完全不同了。它的方式是以軟體 (即書附的 Fractint) 為主，所以書中有一整章 (第二章) 介紹 Fractint 這個軟體的使用；102 頁，乖乖，一本書去了大半。程式員唯一可看的技術部份是附錄 C。</p>
+
+<p class="calibre2">Fractint 這套軟體運用各種軟體技巧，並考慮到 Fixed Point 的運算，所以產生並繪製 Fractal 圖形的速度很快。它並支援各式各樣的繪圖模式。原始碼並不附在磁片上，可以從 CompuServe 上抓。國內 WAN (廣域網路) 並不十分普及，因此這對讀者可說十分不便。書上說四位作者互不相識，書後四張像片正是他們四個人第一次彼此見面 (紙上見面)，平時溝通全在 CompuServe 上。這倒新鮮，根據我對書籍製作的了解，這種新潮作法會使我對書籍的一致性與連貫性毛毛的。</p>
+
+<p class="calibre2">第一章是對 Fractal 的概論介紹。比起 Fractal Programming in C，本書看起來硬梆梆一些。第二章介紹如何使用 Fractint 軟體，內建 68 種不同的方程式產生不同的 Fractal，檔案格式是 GIF (Graphics Interchange Format)。第三章針對此軟體內建的 68 種 Fractal 型態做一個列舉說明，包括其分類、名稱、方程式、一些些描述，以及圖片 (黑白的)。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Fractals for Windows <br class="calibre3"/>作者 Timothy Wegner<br class="calibre3"/>Mark Peterson<br class="calibre3"/>Bert Tyler<br class="calibre3"/>Pieter Branderhorst<br class="calibre3"/>出版 Waite Group Press<br class="calibre3"/>頁數 6 章，358 頁<br class="calibre3"/>售價 US$ 34.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">1. Fractals : A Primer<br class="calibre3"/>2. Winfract Tutorial<br class="calibre3"/>3. Fractal Recipes<br class="calibre3"/>4. Winfract Reference<br class="calibre3"/>5. Fractal Types<br class="calibre3"/>6. Winfract's Source Code<br class="calibre3"/>Appendix A. Winfract and Windows Video Drivers<br class="calibre3"/>Appendix B. The Graphics Interchange Fromat<br class="calibre3"/>Appendix C. The Stone Soup Group And The Winfract Authors </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img30.jpeg" alt="img30.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">有些人已經成為 Windows 程式設計的狂熱份子，看到此書心跳加速，瞳孔又要放大了，以為即使不懂電腦圖學，不懂Fractal，至少學點 Windows 圖形方面的程式技巧吧。那麼，這一本不是這樣的人想要的。</p>
+
+<p class="calibre2">Winfract 是上一本書中 Fractint 軟體的 Windows 版本，這一次原始碼附在磁片上。第六章專門介紹其原始碼的檔案與目的，總共有 32 頁，但完全沒有講設計理念。雖然它給了我們原始碼，我們還是沒辦法把這本書視為如何在 Windows 環境下發展 Fractal 的程式技巧書籍，它的重點放在 Fractal 的觀念與整理，以及賣你一套 Winfract 軟體。我發現 Waite Group 出版社的書籍許多都是這種方式 : 以軟體為主，書反倒成了配角。</p>
+
+<p class="calibre2">磁片雖然附有程式碼，但從其中學習如何撰寫程式不是件容易的事，因為 : (1) 整套軟體太巨大；(2) 多人合作，風格迥異；(3) 從 DOS 程式的 Fractint 移植而來，恐怕有包袱。</p>
+
+<p class="calibre2">附錄 A 有關於調色盤的技術問答，雖是短短的 4 頁，滿好的，相關資料並不常見。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">尾聲 </p>
+
+<p class="calibre2">主持無責任書評九個月 (中間空白一個月)，字字推敲十分疲倦。老人似乎已在夢中把我的一支五彩筆取走了，那麼該是說斯卡也達的時候 ! 九個月下來我已經得了人格分裂症，略帶狂妄略帶臭屁的侯捷並不是真實人生的我。這其實有趣，我說侯捷不是我，而正在下筆的人署名是侯捷，好似莊周夢蝶，分不清是蝶夢周還是周夢蝶。</p>
+
+<p class="calibre2">讀者兩極化的反應，曾經帶給我許多安慰許多懊惱。為什麼要評外文書 ? 第一篇開門的時候早已說明。有好幾次讀者迴響提到「廢話」這兩個字，老實說我不以為然。期望以一種比較有看頭的 (或許是我自以為的) 方式來進行，並把個人技術心得夾雜在裡頭。然而，好吧，我承認這樣的迴響確實影響了我，影響我的寫作意願。</p>
+
+<p class="calibre2">最近以來在雜誌上看到不少熱烈討論國內電腦書籍的文章，誠可喜也。我們的電腦中文書數量不可謂不多，但是在某個層面以上有深度的貧血，在某個層面以下又營養過剩。偏偏這「某」層面老實說稍低了些。朋友們聊起來，站在讀者的立場，多數人有悲觀的看法，站在作者的立場，許多人也有悲觀的看法。前者因為他們找不到想看的書，後者因為他們不相信用心盡力寫出一本好書能夠在書海中脫穎而出。我個人卻是審慎的樂觀。雖然目前電腦書市就像唱片市場一樣的戰國，一出書可能就淹沒在滾滾洪流之中，然而桃李不言下自成蹊，讀者的評斷力將是最後的審判。我們也不要吝於給予掌聲，作者們獲得了鼓勵與榮耀，後續作品必然更嚴謹，沒有人不愛惜羽毛。作者戰戰兢兢，好書就相續出籠。國內不是沒有好的電腦著作，執著的工作者，如果我們能夠有一個固定欄位公開討論書籍，並且大家熱烈支持，自然能夠形成輿論。這一點，微電腦傳真開風氣之先，我首先表達敬意。</p>
+
+<p class="calibre2">許多人批評書籍時流於自我意識，不是自己想看的內容，一律不屑一顧。於是技術者批評入門書寫的膚淺，入門者批評技術艱深的書寫給誰看。不同層次的書有不同層面的貢獻，這是大家平心靜氣之下必須承認的。</p>
+
+<p class="calibre2">讀者迴響中表示希望看到這個專欄延伸到中文書來的人很多，我也期盼它的出現。這個專欄不是我的，我只是主持人。侯捷不適合主持中文書評，請原諒。</p>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">再談 Windows 程式設計好書</h2>
+<p class="calibre2">Windows 3.0 推出近兩年後，Microsoft 推出了 3.1 版，<br class="calibre3"/>一下子就衝上軟體排行榜的 top 10。<br class="calibre3"/>這一次我介紹一本特別標榜 Windows 3.1 的書、<br class="calibre3"/>一本 Windows 3.1 OLE 的專書、<br class="calibre3"/>以及「偉大」的 Gates 先生傳記。 </p>
+
+<p class="calibre2">上個月空中相會，我為大家介紹了三本超重量級的 Windows 程式設計書籍。這一次，延續同樣的主題，再介紹兩本好書給讀者，包括一本特別標榜Windows 3.1 的書、一本特殊領域 （Windows 3.1 OLE）的書、以及「偉大」的Gates 先生傳記（乖乖，我真是飛象過河了）。別急別急，下個月再來換口味。</p>
+
+<p class="calibre2">你說奇怪，侯捷月啖三本，面不改色，看書像喝白開水一樣 ?! 可是你怎麼知道我面不改色 ? 第一期刊出後，許多朋友關心，對於我每月介紹這麼多的篇幅，抱著審慎而不樂觀的態度。的確，像第一期那樣三本書加起來厚達 2554 頁，除以 30，平均一天得消化 85 頁，侯捷沒有這樣的本事。我現在消耗的是戰備存糧。又有好事者替我規劃了一天的生活，最後鐵口直斷我將因為週期性的讀書壓力而產生職業倦怠終至棄筆。這讓侯捷想起惠施與莊子的對話: 子非魚，焉知魚之樂 ?</p>
+
+<p class="calibre2">然而，以後的無責任書評終究不能夠每一期都長篇大論，「高論無窮如鋸屑，小詩有味似連珠 」。</p>
+
+<p class="calibre2">不管是第一次瀏覽或是當作工具書來查，看原文書其實有些技巧。英文書的好處是書後面都有索引（index），哪一個名詞出現在第幾頁都列出來，這是因為其拼音文字的特性，並且英文文書處理軟體很發達，可以輕易做到這一點。我們要好好利用這個索引，幫助快速翻到要找的主題，不然一本厚達千頁的書，如果不是對章節很熟的話，如何找起呢 ? </p>
+
+<p class="calibre2">第二個技巧是現在許多書籍都附有磁片，佐以大量篇幅的程式講解，我們在追蹤（trace）程式時，常常在看到某個函式呼叫後，上窮碧落下黃泉，不知道該函式是在哪個檔案中的哪個地方，這時候你就需要一個上手的搜尋程式。Borland C 附的一個 GREP.COM 就很實用，它的用法如下 :</p>
+
+<p class="calibre2"><small class="calibre9">grep -d "abcdefg" *.c &lt;ENTER&gt; </small> 這麼一來 grep 就會把目前目錄及其子目錄（因為 -d 參數之故）中所有 .c 檔案中有 abcdefg 這個字串的每一行列出來。用來搜尋中文也是可以的，校稿時我常有機會用到它。</p>
+
+<p class="calibre2">Windows 3.0 推出近兩年後（1990/05-1992/04），Microsoft 推出了 3.1 版，一下子就衝上軟體排行榜的 top 10 而且久居不下。所以我說 Microsoft 做的是萬無一失的生意一點沒錯，如果他們推出新版作業系統而你不想更新，那才是怪事一樁。（如果你的小組成員遲遲不想上新版，一定是計劃中出了什麼問題，釘緊點 !）電腦書籍市場這邊也是熱鬧非凡，封面上有 3.0 字樣的一律被判死刑，於是大家紛紛換裝。有的作者比較聰明，乾脆就打 Windows 3.x 的旗號，以不變應萬變。嚴格來講也不算錯，軟體總是往前相容嘛，不然誰敢在上面發展軟體 ? 誰又敢用這樣的軟體 ?</p>
+
+<p class="calibre2">給終端客戶看的書換裝很容易，國內很快也有了各種輕鬆易用、快樂活學的書；程式設計方面要推出新書可就困難一點，這裡為各位介紹一本 Windows 3.1 程式設計書籍 : Programming in Windows 3.1。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Programming in Windows 3.1（2nd edition） <br class="calibre3"/>作者 Farrell &amp; Connally<br class="calibre3"/>出版 Que<br class="calibre3"/>頁數 24 章，704 頁<br class="calibre3"/>售價 US$ 39.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">Part I Developer's Tools and Concepts<br class="calibre3"/>1. Setting Up for Windows Programming<br class="calibre3"/>2. Using the Development Tools<br class="calibre3"/>3. The Windows Programming Model<br class="calibre3"/>4. Windows Style Guide : Windows and Menus<br class="calibre3"/>5. Windows Style Guide : Dialog Boxes</p>
+
+<p class="calibre2">Part II Building Windows Applications<br class="calibre3"/>6. Creating a Program Editor : The Basics<br class="calibre3"/>7. Creating Menus<br class="calibre3"/>8. Creating Dialog Boxes<br class="calibre3"/>9. Windows 3.1 Common Dialog Boxes : Filename Selection<br class="calibre3"/>10. Using the Edit Class Window<br class="calibre3"/>11. File Funtions Under Windows<br class="calibre3"/>12. Using Global Memory and the Clipboard<br class="calibre3"/>13. Printing with Windows<br class="calibre3"/>14. Multiple Document Interface</p>
+
+<p class="calibre2">Part III Advanced Topics<br class="calibre3"/>15. Displaying Text with the Graphics Device Interface（GDI）<br class="calibre3"/>16. Display Graphics<br class="calibre3"/>17. Scrolling Screen Contents and Controlling Mouse Events<br class="calibre3"/>18. Dynamic Data Exchange（DDE）<br class="calibre3"/>19. User Interface Guidelines for Object Linking and Embedding<br class="calibre3"/>20. Dynamic Link Libraries<br class="calibre3"/>21. Debugging Windows Applications<br class="calibre3"/>22. True Type Fonts and other New Features<br class="calibre3"/>23. Windows NT<br class="calibre3"/>24. Third-Party Tools and Utilities </p>
+
+<p class="calibre2">這本書最大的特色當然在於它包括了一些 Windows 3.1 才有的特徵（例如 Common Dialog、DDEML、OLE、Truetype Font），以及第二十三章的 Windows NT。 基礎的東西集中在 part I 和 part II（幾乎每一本 Windows 程式設計書籍都有這些主題）。本書的特徵全集中在 part III。</p>
+
+<p class="calibre2">Part I 介紹軟體發展過程中的重要工具（如編譯器、聯結器、檔案維護器...），以及重要的觀念，對於初學者而言相當實用。有的書一開始就劈哩啪啦講程式設計，卻忽略了讀者認識開發環境的重要性。第二章有一個小節介紹如何使用 MASM 寫 Windows 的組合語言程式；還有一個小節介紹如何在 Windows 程式中拿取環境變數和命令列上的參數。這在傳統的 C 程式中透過 main() 的引數就可以取得，但在 Windows 程式中程式員必須自己分析 WinMain() 的 lpCmdLine 參數。其實也不必這麼麻煩，因為 Windows 內部也有 argc 和 argv 變數，只是 Windows 手冊上說的不夠清楚（本書也不夠清楚），有心的讀者可參考 Microsoft Systems Jouranl（MSJ）1991/05 那一期的 Q&amp;A；如果你是在 Borland C 上發展，還得再參考 MSJ 1991/09 那一期的 Porting DOS Programs to Protected-Mode Windows with the WINDOS Library（作者 Andrew Schulman）。</p>
+
+<p class="calibre2">第三章介紹許多術語，像 object、handle、event、instance、DC...。親愛的讀者，闔上書本你能流利地定義出這些名詞的意義嗎 ?</p>
+
+<p class="calibre2">object : a group of items that when associated together compose a whole.<br class="calibre3"/>like a car, when you drive it, all these parts enable it to run<br class="calibre3"/>and serve as essential components.</p>
+
+<p class="calibre2">handle : a unique name given to an object.</p>
+
+<p class="calibre2">event : something that happen, an occurrence that affects something else.</p>
+
+<p class="calibre2">instance : Windows' handle to your application.</p>
+
+<p class="calibre2">Device Context : a combination of a device and ites driver.</p>
+
+<p class="calibre2">DDB : bitmap that has a close correlation between the bits in memory and<br class="calibre3"/>the pixels on the monitor.</p>
+
+<p class="calibre2">DIB : describes the appearance of an image without specifying a one-to-one<br class="calibre3"/>correspondence between bits and pixels.</p>
+
+<p class="calibre2">bitmap : an image formed by a pattern of bits. On a video screen , these<br class="calibre3"/>bits are known as pixels.</p>
+
+<p class="calibre2">對於一個初次接觸 Windows 的人，我懷疑他是否體會這樣的解釋。不過「體會」這件事本來就很微妙的，多看幾次多聽幾次，再旁徵博引一下，沒有感覺也變得有感覺了。</p>
+
+<p class="calibre2">第四、五兩章很有意思。這兩章介紹 Windows 程式應該有的風貌。什麼叫作「應該有」呢 ? 所有 Windows 程式第一個功能表都是 File，第二個功能表都是 Edit，你偏要把 File 放在最後一個，Edit 放在倒數第二個。當然可以，沒問題，這是你的自由，但 Windows 揭櫫的一個大目標是讓使用者能夠「熟悉一套軟體的操作方式後就等於熟悉了所有 Windows 軟體的操作方式」。如果你放棄與別人相同，偏要標新立異，市場上吃虧的是自己。第四章以 Microsoft Word 為例，舉出許多設計風格，像 message line、status bar、control bar。第五章對於各式各樣的對話盒及其使用時機有十分詳盡的敘述。看完這兩章你會對要怎麼發展 Windows 程式的外貌有一個譜兒，因為視窗、功能表、對話盒就是終端用戶要面對的第一線。看這兩章有點兒像在看 Common User Access（CUA，IBM 主導的圖形人機介面設計規格。Windows 3.0 SDK 附有這本手冊，但 Windows 3.1 SDK 已經取消）。</p>
+
+<p class="calibre2">第六章開始（也就是 Part II）才是程式設計（我注意了一下，這是第 192 頁），以一個應用程式的發展為經緯，每一章加入一部份功能，很理想的教育方式，讓讀者循序漸進不知不覺完成一個大型軟體。Windows 3.0 剛推出時，MSJ 曾在 1990/July 至 1991/May 有六期相關連載，也是這種方式（MSJ 當時是雙月刊，現已改為單月刊），該例題相當好，並沒有因為時間而褪色。這種方式的缺點就是讀者很容易搞不清楚哪一部份程式碼是新增的，因此在抓重點時容易浪費時間。本書相當體貼，每一章的新增程式內容都以粗體字呈現，一目了然。本書所舉的程式例是一個檔案編輯器，所以你可以學習到 menu、dialog、EDIT control、file accessing、printing、MDI 等技巧。</p>
+
+<p class="calibre2">第九章一整章介紹了 Windows 3.1 的 Common Dialog 程式寫法。可惜的是只介紹Common Dialog 四種型式中的一種 : Filename Specification，其他三種（color specification、finding and replaceing text、printing）並未提及。想更進一步了解 Common Dialog 的讀者可以參考 PC Magazine 的四篇連載（Ray Duncan 主持的 [Power Programming] 專欄）:</p>
+
+<p class="calibre2">1992/05/26 p379 The Windows File-Oriented Common Dialog Functions</p>
+
+<p class="calibre2">1992/06/16 p393 The Windows Common Dialogs for Font and Color Selection.</p>
+
+<p class="calibre2">1992/06/30 p377 The Windows Common Dialog Search-and-Replace Functions.</p>
+
+<p class="calibre2">1992/07 p481 The Windows Common Dialog Functions for Printing.</p>
+
+<p class="calibre2">這四篇文章的內容遠比本書的第九章豐富得多。</p>
+
+<p class="calibre2">我在文章中多次提到各種期刊、雜誌，猜想許多讀者自己並未擁有這些刊物，你可向公司建議訂購，再不然自己訂一份也是值得，因為內容非常好。或者你不嫌麻煩的話到和平東路二段的科技大樓（內有資策會、工研院、國科會的那棟），第十三樓的中央圖書館資訊分館有各式各樣的期刊，包括我常列出的這幾種。我把我常看的一些刊物的價目列給讀者參考（以下均含空運費，單位美元）:</p>
+
+<p class="calibre2"><a href="http://jjhou.boolan.com/review1-10.htm" target="_blank" class="calibre5">Microsoft Systems Journal</a> （MSJ）（月刊）: 70.0 <br class="calibre3"/><a href="http://jjhou.boolan.com/review1-10.htm" target="_blank" class="calibre5">Dr. Dobb's Journal</a> （DDJ）（月刊） : 70.0 <br class="calibre3"/>C User Journal（CUJ）（月刊） : 65.0 <br class="calibre3"/>Computer Langauage（月刊） : 69.95 <br class="calibre3"/>Windows Tech. Journal（月刊） : 69.95 <br class="calibre3"/><a href="http://jjhou.boolan.com/review1-10.htm" target="_blank" class="calibre5">PC-Magazine</a> （半月刊） : 62.0<br class="calibre3"/>（循常例，我得說 : 本價目表僅供參考）</p>
+
+<p class="calibre2">如果你想直接訂購，到上述圖書館影印訂閱單自行郵寄即可。最好以信用卡付費，否則要到銀行填買外匯，要到郵局寄海外掛號，麻煩得不得了。我會利用無責任書評的一期專門介紹這些很好的刊物。</p>
+
+<p class="calibre2">第三部份（15 章至 24 章）比較突出的有 OLE、Truetype 和 Windows NT。OLE （Object Linking and Embedded，物件聯結與內嵌）是 Windows 3.1 在作業環境上的一項大進步，不僅影響程式設計，也影響終端用戶，對於未來的操作習慣會有重大影響。十九章就是專講 OLE 在使用介面上的新名詞新觀念。如何演練這些介面呢 ? Windows 3.1 附有四個支援 OLE 的小軟體，都是我們耳熟能詳的，兩個OLE Server 是 Paintbrush 和 Sound Recorder（可以錄音），兩個 OLE Client 是Write 和 Cardfile。本章雖然沒有告訴我們怎麼寫 OLE 程式，但是對程式員仍有價值，因為寫程式之前你首先得熟悉一大堆新名詞與其定義。人說要成為好的Windows 程式員必先成為好的 Windows 使用者，這話應證在 OLE 上更是如此。至於OLE 使用介面之外，我已為你準備了一本專講 OLE 程式設計的書，別急，就在下兩頁。</p>
+
+<p class="calibre2">二十一章隔靴搔癢，全然搔不到癢處，對於 Codeview、Heapwalker、SPY 這三個工具只用 8 頁的篇幅介紹。不過希望這能喚醒你對除錯工具的重視。侯捷要很嚴肅地告訴你（我的臉上一點笑容也無），沒有除錯工具的協助，你別想寫一個漂亮的大型 Windows 軟體。如果你手上已有成品準備反駁我，我也只好讚你一聲天縱英明。但請注意我說的是「漂亮」的軟體。3.0 的時代，跑 Codeview 需要另一個單色顯示器，現在可以與 Windows 3.1 共用一個顯示器。不過我還是建議用兩個顯示器，才不會眼花撩亂。一個單色顯示器加一片單色顯示卡，不超過NT$ 3000.0。</p>
+
+<p class="calibre2">二十二章是大雜燴。在這一章中我們看到作者對Font 的描述，也看到了 TureType 的意義（這是一個規格，一種字形產生方法），看到了自班傑明.富蘭克林以來對字形的種種規範。你絕對意想不到小小的字形原來花樣這麼多。此外作者也討論了 Windows 3.1 的 drag and drop、Compression、ToolHelp、Stress Testing、Version Control。但如果你想在這一章中學到一絲絲程式技巧，那是作夢，因為全是文字述敘，而且都很簡短。本章作為常識的補充倒是不錯的。</p>
+
+<p class="calibre2">坊間沒有一本書專講 Windows 3.1 的新功能。其實這個主題非常好，一定有大賣點。絕大部份標示 Windows 3.1 的書都是只講其中的幾個特徵。我把 3.1 的新功能大致整理給讀者參考 :</p>
+
+<table border="1" class="calibre10"><tr class="row"><td class="calibre11">Windows 3.1 新功能 </td> <td class="calibre11">所屬 DLL </td> <td class="calibre11">好處 </td> </tr><tr class="row"><td class="calibre11">Common Dialog </td> <td class="calibre11">COMMDLG.DLL </td> <td class="calibre11">減輕程式員負擔；使用介面（ UI）標準化 </td> </tr><tr class="row"><td class="calibre11">DDE 管理函式庫 </td> <td class="calibre11">DDEML.DLL </td> <td class="calibre11">減輕程式員撰寫 DDE 程式的負擔。 </td> </tr><tr class="row"><td class="calibre11">檔案壓縮與解壓 </td> <td class="calibre11">LZEXPAND.DLL </td> <td class="calibre11">適用於軟體包裝與安裝。 </td> </tr><tr class="row"><td class="calibre11">多媒體 </td> <td class="calibre11">MMSYSTEM.DLL </td> <td class="calibre11">滿足人類聲色官能欲望，好處說不盡，可以專文探討。 </td> </tr><tr class="row"><td class="calibre11">物件聯結與內嵌 </td> <td class="calibre11">OLESVR.DLL <br class="calibre3"/>OLECLI.DLL </td> <td class="calibre11">多工環境下的 OLE 性質將大放異采，實現 Document Center 的觀念。 </td> </tr><tr class="row"><td class="calibre11">刺探 Windows 內部 </td> <td class="calibre11">TOOLHELP.DLL </td> <td class="calibre11">滿足有系統窺視狂的人（像侯捷）；可使用它寫 debugger。 </td> </tr><tr class="row"><td class="calibre11">版本控制 </td> <td class="calibre11">VER.DLL </td> <td class="calibre11">避免軟體版本與 Windows 版本不符，例如你的客戶在 Windows 3.0 之下執行你的 OLE 程式。 </td> </tr><tr class="row"><td class="calibre11">檔案拉曳<br class="calibre3"/>（ drag &amp; drop） </td> <td class="calibre11">SHELL.DLL </td> <td class="calibre11">使你程式的使用介面（ UI）更靈活。 </td> </tr></table><p class="calibre2">以上或有掛一漏萬，請原諒我。</p>
+
+<p class="calibre2">二十三章是引發我看這本書的最初動機，介紹的內容是眾所矚目卻至今琵琶半掩的Windows NT。除了 Win32 API Volume1 和 Volume2 兩本書（與其說書，倒不如說是手冊），以及 Microsoft Press 於去年年尾才出版的 Inside Windows NT 外，這應該是最豐富的 NT 內容了。46 頁的篇幅介紹 NT，本章自有其可觀之處。要了解 NT，你實在必須很博學才行，你得了解 Intel 處理器的保護模式定址，才能夠了解 NT 的 flat model；你得了解 paging 的觀念，才能夠了解 NT 的分頁式虛擬記憶體；你得熟悉網路，才能夠體會 NT 號稱網路作業系統的技術關鍵；你最好還有UNIX 或其他多人多工作業系統的使用經驗，才能夠體會 NT 強調的 security 以及 protection 的重要性。對於程式員而言，他最想知道 API 改變了多少，增加了多少。這裡有好消息 : API 改變的不多，但你最好從現在開始就以新的格式來寫 Windows 程式，以便過渡到 Windows NT。壞消息是，NT 的 API 函式總數已經超過了一千個（使用者的快樂總是建築在設計者的痛苦上）。</p>
+
+<p class="calibre2">這一章的最後，將一個原在第十五章的 GDI 範例程式改編為 NT 可接受的 WIN32 程式。這個小程式使用的各種函式都在 WIN16 和 WIN32 中出現，而且沒有變化；重點是在某些型態定義的改變，例如 APIENTRY、UINT、MAINAPI...，這些都是新的型態。沿續第一、二部份的風格，作者在這一個小例子中把 WIN32 程式與一般 WIN16 程式的差異處以粗黑字體示出，非常清楚。本書製作水準高，紙張以及圖片都很精良，示意圖也不少。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Windows Programmer's Guide To OLE/DDE <br class="calibre3"/>作者 Jeffrey D. Clark<br class="calibre3"/>出版 SAMS<br class="calibre3"/>頁數 8 章，556 頁<br class="calibre3"/>售價 NT$ 34.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">Part I Dynamic Data Exchange<br class="calibre3"/>1. Dynamic Data Exchange Concept<br class="calibre3"/>2. DDEML Conversation Management<br class="calibre3"/>3. DDEML Transaction Management<br class="calibre3"/>4. DDEML Monitor Application</p>
+
+<p class="calibre2">Part II Object Linking and Embedding<br class="calibre3"/>5. Object Linking and Embedding Concept<br class="calibre3"/>6. OLE Server Application<br class="calibre3"/>7. OLE Client Application<br class="calibre3"/>8. Object Handlers </p>
+
+<p class="calibre2">看倌，當您在書店發現這本黃皮書時，是否如侯捷一樣手腳發抖，瞳孔放大 ? 這是極度興奮的生理反應。是的，眾裡尋它千百度，好不容易有人寫了這麼一本專講 DDE 與 OLE 的書籍。</p>
+
+<p class="calibre2">大家都知道 Windows 程式設計中最不容易實作的就屬 IPC（InterProcess Communication）中的動態資料交換 DDE 了。IPC 也可以藉著 DLL 或是Clipboard 完成，但 DDE 是功能最好最強大的解決之道。要搞懂 DDE，常令人三月不知肉味。重量級的 Windows 技術作家Charles Petzold（他的招牌書是 Programming Windows）曾經說過，DDE 不僅由於其繁複的手續以至於難以實作，更因為不知通訊對手的品質導至除錯困難（到底是我的錯還是你的錯 ? 沒有人會認為是自己的錯）。</p>
+
+<p class="calibre2">DDE 這個主題的複雜度，以及實際程式的龐大性，絕對是可以專書探討的。所以你沒有在任何一本 Windows 程式設計書籍中滿足過對 DDE 的饑渴也是可以了解的，並且這也是必然的現象。上期介紹 Charles Petzold 的 Programming Windows 有一章專講 DDE，算是很不錯的表現了。</p>
+
+<p class="calibre2">Windows 3.1 提供的物件聯結與內嵌（OLE）技術雖對終端用戶而言是錦上添花，對程式員而言卻是雪上加霜。光是新的使用介面（UI）以及新的術語就夠你搞半天，（我一直背不起來 Paste Link 和 Owner Link 的差別），何況還有 66 個新的OLE API 函式等著您的幸臨。</p>
+
+<p class="calibre2">作者 Jeffrey D. Clark 雖然還未達另幾位大師人物（Ray Duncan、Charles Petzold、Andrew Schulman...）那麼令人仰之彌高望之彌堅，巍巍然不可侵的尊崇，但本書足以令他擠身這個領域的知名人士之林是無庸置疑的，因為這是「獨走」的一本書，找不到競爭對手，是讀者的唯一選擇。Clark 在前言中提到這是他的第一本書，軟體界不是有個笑話說千萬不要買 1.0 版的軟體嗎 ?（所以我們一定要記取前人的智慧 : 軟體從 2.0 起步走）。本書雖是作者的 1.0，表現不錯。巨型程式如 DDE 或 OLE 之流雖然追蹤起來十分繁瑣，我卻不忍多加苛責，難道你有更好的表達方式嗎 ?</p>
+
+<p class="calibre2">順帶一提，我對出現在許多書籍自序中的一句話一直很感冒 :「筆者才疏學淺，誤謬在所難免 」。這當然是句自謙詞，而我也不希望看到狂妄自大的傢伙，可是什麼叫作誤謬「在所」難免 ? 似乎誤謬是可以接受與原諒的。沒有任何人的著作可能萬無一失，但讀者的諒解與作者的自認為可以被原諒是完全不同的兩碼子事。誤謬「在所」難免，唔，這樣的措詞我頂不欣賞。</p>
+
+<p class="calibre2">本書分為兩大部份，第一部份是 DDE（其實是以函式為基礎的 DDEML），第二部份是 OLE。至於「以訊息為基礎的 DDE」並未在書中提及，只約略帶過一些觀念。所以你最好看過 Petzold 的 Programming Windows 第十七章壓壓肚底，不然對更上層的 DDEML 和 OLE 難以心領神會 --- 沒吃飯就喝酒可是會醉人的。兩大部份的第一章（也就是第一章和第五章）有通盤性的觀念介紹，但你不可能靠觀念解釋就懂得這麼複雜的實作手法，接下來的章節就是以範例程式來解釋實作上的技巧。OLE 比 DDE 又複雜的多多，新的觀念以及新的操作介面不少，我敢打賭在你似懂非懂之前，書頁已經被又急又怒的手汗漬黑了不少。</p>
+
+<p class="calibre2">DDEML 的觀念其實和 raw DDE 差不了太多，只是不像 raw DDE 那麼生冷。client、server 的溝通對象不再是赤裸裸的彼此，而是 DDEML 這個中介調節者（電信局）。所以在 DDEML 程式設計中有所謂「註冊」的動作。另外，DDE 中每一次通訊在 DDEML 中被稱為一筆交易（transaction）。WM_DDE_ADVISE、WM_DDE_UNADVISE、WM_DDE_DATA、WM_DDE_EXECUTE... 全都轉變為一筆一筆的交易。</p>
+
+<p class="calibre2">本書第二章舉了個十分簡單的，以 DDEML 撰寫的 client 與 server 程式 : client 程式可以與 server 程式通信，server 每接上一條通信線就在視窗中顯示累計個數。此例完全沒有資料的傳輸，只是練習如何與 DDEML 做溝通（所謂的conversation management）。第三章的例子比較有趣一些，是一個報價程式和一個股市行情程式（股友不必睜大眼睛，模擬的而已）。前者（server）提供股市行情（以亂數模擬，定時修改），後者顯示股價於視窗中。這個程式才做到所謂的 transaction management。第四章示範了一個 DDEML 監視程式，就像是 Windows 3.0 SDK 提供的 SPY，以及Windows 3.1 SDK 提供的 DDESPY。這一章在程式碼以及文字說明的比例上有點兒離譜，文字才 7 頁半，程式碼達 55 頁。</p>
+
+<p class="calibre2">使用 DDEML 到底有什麼好處呢（比起 Raw DDE）? 對終端用戶而言沒有好處，他才不管你的程式是怎麼寫成的，只要會捉老鼠的就是好貓；對程式員而言最大的好處是程式比較好寫，因為 DDEML（這是個 DLL）擔起了內務府總管的工作。但是死硬派人士堅持 26 個新的 API 函式以及新的 DDEML 資料結構也不好學；不過有一個好處你一定得承認，由於通訊協定（protocol）已經隱藏在 API 函式中，所以程式出錯的機率大幅下降。這句話的意義可能你不太容易了解，我解釋更詳細一點。譬如說如果你利用 DDEML 的 DdeCreateDataHandle() 準備資料，就不需要先配置記憶體、再鎖定、處理、解鎖；利用 DDEML 的 DdeClientTransaction() 和 DdeGetData() 就可以在 timeout 時間控制下獲得資料，不需自己去做 hand shaking 的低階動作。</p>
+
+<p class="calibre2">第五章的 OLE 觀念相信會耗掉你很多時間。讀者可以從中了解什麼是 OLE 的 virtual table、verb、class、object、blocking...。第六章到第八章作者一共舉了三個程式實例，一是 OLE server，可以產生一些多邊形（視為 object）；一是 OLE client（用以接受 object）；以及一個 object handler（第八章）。程式實例可以讓讀者真正體會什麼是 document，什麼是 object，以及它們的資料結構。我認為認識這些資料結構是了解 OLE 的最重要關鍵，否則看過那麼多敘述你的腦中根本構建不出實體。</p>
+
+<p class="calibre2">這本書從書籍製作品質來看相當不錯，但示意圖太少。很少有書籍在示意圖方面能夠讓侯捷覺得滿意。封面裡頁有 DDEML 以及 OLE 的 API 函式列表，是作者（或是編輯群）的細心處，相當實用。你知不知道日本汽車可能因為多設計了一個可樂罐的安置盤而拿下市場 ? 這並不是傳聞。</p>
+
+<p class="calibre2">想把 DDE 弄到網路上 ? 市售某些相關產品（都是一些動態聯結函式庫）如 NetDDE，可以暫解燃眉之急，但因為不是作業系統的層級，所以並不提供 security 功能。網路上最佳 DDE 解決方案是換一套作業系統 : Windows for Workgroups（WFW）或是 Windows NT。</p>
+
+<p class="calibre2">有時候一直看同一本書腦袋會秀斗。如果你想多看一些 IPC 方面的資料，可以參考MSJ 的四篇文章 :</p>
+
+<p class="calibre2">1992/03 Taking the Bull by the Horns : Inversigating OLE, Part I.（Paul Klemond）</p>
+
+<p class="calibre2">1992/05 Inversigating OLE, Part II : Adding Server Support.（Paul Klemond）</p>
+
+<p class="calibre2">1992/12 Simplify Client-Server Applications Using the DDEML.（Gordon S. Smith）</p>
+
+<p class="calibre2">1993/01 Network DDE in Windows For Workgroups 3.1 Bridges Programs Between PCs.（Kraig Brockschmidt）</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 彈指乾坤 --- 蓋茲微軟傳奇 <br class="calibre3"/>作者 Daniel Ichbiah、Susan Knepper<br class="calibre3"/>譯者 陳正平<br class="calibre3"/>出版 麥田出版社<br class="calibre3"/>頁數 414 頁<br class="calibre3"/>售價 NT$ 300.0 </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img7.jpeg" alt="img7.jpeg" class="calibre4"/></span> 既然連續兩期談到 Windows，我想你或有興趣知道創造 Windows 的公司的老板，Bill Gates 的生平吧。我並不是越界寫起傳記書評來了，我並不想評它，這本書帶給我一個愉快的下午，使我時而莞爾時而沉緬在回憶之中。我相信軟體界沒有人不對Bill Gates 感到興趣與好奇。本書拿來作為勵志文粹，或是給小寶當作床邊故事來講， 都相當具有啟發性。</p>
+
+<p class="calibre2">全世界所有學習電腦的人，或說是和電腦發生過關係的人，不管是大型電腦或是個人電腦，沒有人沒聽過 Bill Gates 這個人。如果你硬是說你沒聽過，那你總用過 Microsoft 的產品吧。在臺灣，哪一套 PC 開機後不是跑 MS-DOS （如果有 DR-DOS 的，也不必打電話來抗議，你可歸為稀有動物類）。Bill Gates 不是別人，正是全球電腦軟體王國的國王，他今年 37 歲! 全球首富!! 未婚!!! （編按 : Gates 現已婚）</p>
+
+<p class="calibre2">Bill Gates 的大學知識背景是法律（但沒有畢業），他是律師世家的小孩。由於其法律背景，使 Microsoft 的合約條文都相當完備，打官司也無往不利（編按）。當就讀的湖邊高中引進了當時還是十分稀有的電腦設備，Gates 與他的好友Paul 就沉迷在這個充滿想像與樂興的世界裡（就像這本書的每一位讀者一樣）。Gates 由於對軟體的熱衷與天份，獲得為 PDP 10 機器系統除錯的機會，也因此奠下很好的技術基礎。</p>
+
+<p class="calibre2">（編按 : Microsoft 終於打官司踢到鐵板，02/03/1994 敗給 Stac 公司的 LZS 資料壓縮專縮專利，賠償一億二千萬美元；不過它也在preloading feature 方面回撈了 Stac 公司一千三百七十萬美元）</p>
+
+<p class="calibre2">軟體人員如果沒有熱忱是不可能出人頭地的。我的辦公室有過一位傳奇性人物，為了趕資訊展，一星期足不出戶，外面刮風下雨一概不知（我沒有追問洗澡等俗不可耐之事）。另有位朋友已經結了婚，每天卻在辦公室待到半夜 12 點，在辦公室吃喝拉撒（更多的時間是盯著電腦螢幕），夏天泡冬瓜茶冬天煮紅豆湯，鍋碗瓢盆一應俱全，老婆小孩全不顧，被封為部門兩大門神之一。其實，他們的努力付出，豈是為了什麼報酬。區區加班費，如果有的話，又算得了什麼 ? 完全是一股對軟體的熱忱。</p>
+
+<p class="calibre2">Gates 的第一個事業起點是在他的 Basic 語言編譯器。這是準備在 Altair 微電腦上跑的語言編譯器。由於 Altair 微電腦配置的記憶體十分小，僅有 4K，所以 Gates 的 Basic 一定要限制在 2K 之內（總要留一點給應用程式跑吧!）。這一點可以看出 Gates 的天才，2K 寫一個語言編譯器，媽媽咪呀! 據說還十分穩定。更傳奇的是，他的編譯器是在其朋友 Paul 於 PDP-10 機器上自行開發的 8080 模擬器上完成的，而那個模擬器則是根據一本 8080 手冊按圖索驥撰寫出來的。正式上戰場之前他倆完全沒有看過一部真實的 Altair 微電腦。Gates 的好朋友兼合夥人 Paul 也是天才，當他拿這成品飛往目的地途中，發現沒有可用以輸入的軟體，竟在那種環境那種心情之下當場寫了一個。（Paul 已自組 Asymetrix 公司，著名產品有ToolBook。Microsoft 最知名的多媒體節目「貝多芬第九交響曲」就是使用Toolbook 編輯而成）。</p>
+
+<p class="calibre2">Gates 的第二個事業起點，可能是連他自己作夢也想不到的，IBM 找他合作一起開發IBM PC（當時代號是西洋棋專案）。IBM，一個令對手聽了肅然起敬的企業，一個因為高階主管都穿藍色西裝而被尊為藍色巨人的偉大企業。如果你不能夠體會它的偉大，我簡單地說，IBM 的營業額曾經超過一個開發中國家的國民生產毛額。即使不羈如Gates 也要為了 IBM 大員來訪而穿起西裝打上領帶。</p>
+
+<p class="calibre2">很難想像，世界因這些機緣而改變。</p>
+
+<p class="calibre2">接下來的故事就是大家比較熟悉的啦。Microsoft 推出 MS-DOS，打下 16 位元作業系統的天下；推出 Windows，打下 PC 圖形人機介面的天下，並且因為 Windows 而與IBM 分道揚鑣；推出 Excel，成為最賺錢的軟體。</p>
+
+<p class="calibre2">說到作業系統與應用軟體，各位知不知道為什麼 Microsoft 跨足這兩個領域並且大賺錢之後，美國的反壟斷法要調查它 ? 在侯捷的觀念裡，他有本事活該他賺錢，即使酸葡萄旁人也沒什麼話好講。原來，這是為了公平交易，避免技術私相授受（作業系統部門留一手未公開資料，私相授與自己的應用軟體部門），造成利益輸送黨庫通國庫的情形。</p>
+
+<p class="calibre2">看這本書對於全球軟體的發展史會有一個清楚的了解，大家耳熟能詳的應用軟體如VisiCalc、Multiplan、dBase、Lotus123、Excel 都曾經領過一代風騷；對微電腦影響至深的當代人物也會有一些了解，像是創辦 Apple 的 Steve Jobs，發展 HyperCard 的Bill Atkinson，開發 PageMaker 的 Paul Brainerd，創下美國企業發展記錄的Compaq 公司；還有一些小小的事情，但你知道後可能會備感溫馨，像是 PARC 中心的西蒙，Windows 程式設計的習慣命名規則稱為 Hungarian Notaion，就是為了紀念他（他是匈牙利人，Hungarian 是匈牙利人的意思）。</p>
+
+<p class="calibre2">本書讓我憶起許多過往。年輕朋友怕是只有在博物館才見的到的打卡機，曾經陪伴多少交大人的黃昏到清晨；電算系館排隊打卡（程式卡片）的長龍迤邐數百公尺，唯餐圖大道等進晚餐的隊伍差可比擬；手抱二三十公分厚卡片疊的友系同學是我羨慕的對象與自卑的來源；耶誕節時打有 HAPPY X'mas 的電腦卡片滿天飛；軟碟剛問世時全電腦室共用一片，既不知道怎麼用也怕麻煩，結果每次上機重打數百行程式。往事令人莞爾也令人噴飯，更多的是傷感...。</p>
+
+<p class="calibre2">Gates 是當今首富（他的排名隨股票的漲跌而有變化）。不少小姐把他視為夢中情人。我的朋友小徐就非常崇拜他，據說去年底 Gates 來華她為他講解電通所自行研發的軟體時差點暈了過去。我已答允贈她一本彈指乾坤。</p>
+
+<p class="calibre2">我在 22 歲要離開大學校園的時候，感嘆馬齒徒長，曾經以愛因斯坦 26 歲發明相對論而安慰自己；及長，又以「蘇洵 28 始奮發」自我惕勵；如今髮已有點蒼蒼視也早已茫茫，才體會到天才之為天才，不是凡夫俗子靠勤奮二字訣可以追得上的。</p>
+
+<p class="calibre2">但我還保持一點點的不死心，畢竟李登輝 43 歲拿博士 ! </p>
+</body></html>

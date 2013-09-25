@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">深入探究視窗及保護模式</h2>
+<p class="calibre2">在老大哥已經佔穩位子的情況下，<br class="calibre3"/>Windows Internals 這本書如何和 Undocumented Windows 區隔 ? <br class="calibre3"/>DOS and Windows Protected Mode 比起 Extending DOS 又如何 ? </p>
+
+<p class="calibre2">另外，為免雜誌期刊方面有遺珠之憾，<br class="calibre3"/>我補介紹了 WDDJ。 </p>
+
+<p class="calibre2">嗨老朋友，我回來了 。正如去年一樣，我們在開春見面討個好采頭。年關將屆，趁阮囊不那麼羞澀之際買兩本書讀讀，最能保值。來年人家曬棉被，我們也可以大剌剌地挺著個肚皮說 : 我曬書。</p>
+
+<p class="calibre2">向來出現於此專欄的書總是褒多於貶。書評而不言人之短，可不是失了風骨嗎 ? 非也非也，事實上爛書上不了這個版面，篇幅寶貝的緊。我總是希望選擇一些重量級好書甚至經典之作，推薦給讀者。</p>
+
+<p class="calibre2">這個園地非常歡迎朋友們一起來發表對書籍的看法。一般我們總認為比人家好才敢評人家，可是部會首長天天有人被民意代表罵的滿頭滿臉，也未見有曾質疑罵人者能力是否比被罵者好。我想批評與德高望重牽扯不上關係，大家借本園地分享讀書心得罷了，心裡不必有壓力，放輕鬆向前行。對書籍的欣賞範圍可以從初學入門到專家等級，從應用軟體到系統程式，從網路到多媒體到電腦語言到繪圖模擬...。有讀書心得的人快來。</p>
+
+<p class="calibre2">今天介紹給各位的是兩本書和一本雜誌。書籍方面是偏系統層面的Windows Internals 和 DOS and Windows Protected Mode，雜誌則是補去年五月份的遺珠之憾 : Windows/DOS Developer's Journal。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Windows Internals <br class="calibre3"/>作者 Matt Pietrek<br class="calibre3"/>出版 Addison Wesley<br class="calibre3"/>頁數 8 章，525 頁<br class="calibre3"/>售價 US$ 29.95 (無磁片)</p>
+
+<p class="calibre2">1. The Big Bang : Starting Up and Shutting Down Windows<br class="calibre3"/>2. Windows Memory Management<br class="calibre3"/>3. Starting a Process : Modules and Tasks<br class="calibre3"/>4. The Windowing System<br class="calibre3"/>5. The Graphics Device Driver Interface (GDI)<br class="calibre3"/>6. The Windows Scheduler<br class="calibre3"/>7. The Windows Messaging System<br class="calibre3"/>8. Dynamic Linking </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img31.jpeg" alt="img31.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">任何人看到這本書，再看到作者名字，恐怕都和我一樣產生疑惑 : 此書和 Undocumented Windows 有何區別又有何關係 ? 作者以及編者 (Andrew Schulman) 都面對這疑惑提出了本書的目標設定 : Undocumented Windows 一書探討的是沒有出現在正式說明文件上的資料，本書探討的則是 Windows 內部詳細的工作情況。</p>
+
+<p class="calibre2">誠然，Windows 是如此巨大的產品與複雜的工程，Microsoft 不可能在其文件中交待清楚所有細節。一個設計良好的程式介面原本應該是一個不必讓程式員擔心的黑盒子 (只有自許為 Kernel-Guy 的人，黑盒子才不能夠滿足其求知慾)，但Windows API 設計還不夠好到成為一個讓你全然放心的黑盒子。如果程式員不知道詳細的內部構造，恐怕不容易在黑盒子上耍槍弄棒。時光漸漸過去，程式員漸漸成長，我們開始對 How 感到不足而想知道 Why 了，這就是本書要給我們的東西 : Windows 內部如何運作。它不談 Windows 手冊上已有的資訊，它談「新資訊」。如何才能獲得手冊上沒有記載的資訊 ? 當然最好的方法就是去看原始碼，流行在 hacker 之間有一句話叫做 UTSL : "Use The Source，Luke" (註)。</p>
+
+<p class="calibre2">註 : UTSL 是「星際大戰」影片流傳下來的雙關語，片中老者對主角Luke 說 : "Use the Force, Luke"。 </p>
+
+<p class="calibre2">至於什麼是 hacker，微電腦傳真 1993/03 洗鏡光先生在「漫談Micro」專欄中自 The New Hacker's Dictionary 一書節錄數種定義。洗先生譯得非常傳神 : </p>
+
+<p class="calibre2">o. 喜歡探究系統細節以加強系統能力而且樂此不疲的人<br class="calibre3"/>o. 能夠欣賞「投入精力進行似乎毫無用處之工作」的人<br class="calibre3"/>o. 寫程式速度很快的人<br class="calibre3"/>o. 某個系統的專家<br class="calibre3"/>o. 任何類型的熱心者或專家<br class="calibre3"/>o. 喜歡用創意克服挑戰的人<br class="calibre3"/>o. 帶有惡意，到處探索以發現敏感資料的人 </p>
+
+<p class="calibre2">順帶一提，如果您已看過本書的序 (您應該看過的，本書讀者如果沒有看書先看序的習慣，我會非常非常驚訝)，當然您也就看到了hacker 之外的另一個名詞 : bogus。以下我再摘錄洗先生譯自The New Hacker's Dictionary 的精采定義 : </p>
+
+<p class="calibre2">o. 沒有效用的，比如說「你對程式的修正是 bogus」。<br class="calibre3"/>o. 沒有用，比如說「ABC 是個 bogus 系統」。<br class="calibre3"/>o. 錯的，「你的論證根本是 bogus」。<br class="calibre3"/>o. 不正確的，「你的演算法是 bogus」。<br class="calibre3"/>o. 無法致信的，「你證明了 Halfing Problem ? 那根本就是 bogus。<br class="calibre3"/>o. 愚蠢的，「請不要再寫這些 bogus 的故事好不好 ?」 </p>
+
+<p class="calibre2">看原始碼當然是不錯，問題是 Windows 的原始碼刻正鎖在美國 WA, Redmond (Microsoft 總部所在地) 的保險庫裡吧 (搞不好就在Bill Gate 的桌下)。雖然大家已經在熱烈討論 Windows NT 原始碼應不應仿效UNIX 那樣開放出來，這並未波及 Windows 3.x (桌上級和工作站級的東西引起的關注畢竟還是不同)。我們唯一獲得的 Windows 原始碼大概就只是 SDK 磁片上的 defwnd.c 和 defdlg.c (這是 DefWindowProc() 和 DefDlgProc() 的原始碼)，以及 DDK 磁片中的一大堆驅動程式原始碼。</p>
+
+<p class="calibre2">那麼作者如何獲得比你我更多的資訊呢 ?</p>
+
+<p class="calibre2">電腦軟體的律法告訴我們 : 任何人有權對其購買的軟體產品進行反組譯逆向工程(但是我要聲明我不知道獲得的結果可以拿來怎麼用)，作者 Pietrek 在這一領域是個中翹楚。本書的工具是一個他自己開發的 WINDIS 反組譯器，把獲得的結果再以 C 虛擬碼 (pseudocode) 表現出來。我們在書中看到許許多多 Windows API 函數的虛擬碼都是這麼來的。Pietrek 還有一個產品叫做 Bound Checker，放在 SOFT-ICE/W 中 (功能強大的Windows Debugger，以企鵝為形象，很有名)；本書編輯 Schulman 也有一個產品Windows Sourcer，專做反組譯工作。所以這一組人馬為何有功力寫出Undocumented Windows、Windows Internals、Undocumented DOS、DOS Internals 等書也就令人恍然大悟了。</p>
+
+<p class="calibre2">本書主要探討 Windows 3.1 386 加強模式，必要時也會特別提及標準模式以及 Windows 3.0。作者對於許許多多的 Windows 版本和你我一樣深感困擾，像是 Windows 3.0/3.1，Windows For Workgroups，Win32s，標準模式/加強模式，英文版/遠東版 ...，所幸 Windows 的核心在各種版本中差不多一致。本書沒有涵蓋虛擬驅動程式、虛擬機器、網路 API、多媒體能力、DDE/OLE、dialog/control 等主題，從目錄我們可以發現，主題集中在 Windows 啟動程序、記憶體管理系統、視窗管理系統、訊息管理系統、排程管理系統、繪圖系統等最底層的系統上。</p>
+
+<p class="calibre2">本書對讀者有三大要求 :</p>
+
+<p class="calibre2">○ 對 Intel 保護模式、分段體制 (segmentation)、selector 已有基本認識。</p>
+
+<p class="calibre2">○ 擁有 Windows SDK 手冊 (Microsoft 或 Borland 的都可以)。</p>
+
+<p class="calibre2">○ 對作業系統有基礎觀念 (例如什麼是多工，什麼是虛擬記憶體 ...)。</p>
+
+<p class="calibre2">第一章就給一個大炸彈。我想 Big Bang 引喻 "WIN" 敲下之後整部 PC 靈魂 (作業系統) 的重大體質變化是很恰當的。這的確是事實，醜小鴨變天鵝，若不從本質上改頭換面何能若此 ? 從敲下 WIN 到 Program Manager 畫面出現，作者把其中每一個環節都細細的剖析了，十分精采。WIN.COM 是當你安裝 Windows 時由三個小檔案組合而成的程式，這三個小檔案是 WIN.CNF，VGALOGO.RLE，VGALOGOL.LGO (如果你的顯示卡是 VGA 的話)；早有許多玩家在 PC-Magazine 上討論如何在啟動畫面上動手腳。WIN.COM 中的火線主角 WIN.CNF 雖然擁有奇怪的副檔名，其實是 DOS 的 COM 檔，它決定 CPU 類別、記憶體管理系統是誰 (有沒有支援 XMS、是不是 386 EMM 如 QEMM386 或 386MAX 之流)、Windows 是否已經執行起來了等等。檢查完畢後 WIN.CNF 最重要的工作就是載入 DPMI host。Windows 3.0 的 WIN.CNF 並不檢查 Windows 是否已經執行，所以你可以在其 DOS Box 中再跑一個真實模式</p>
+
+<p class="calibre2">說起來，能把 DPMI host 和 DOS Extender 劃清界線的人不是很多。DPMI 是一組服務常式，提供給 DOS Extender 使用。DPMI host 照顧的是記憶體管理、中斷、exception 處理、DOS Extender 的真實模式/保護模式轉換動作；DOS Extender 則是在 CPU 真實模式/保護模式之間轉換，以便把資料交給 DOS 處理，並提供一個保護模式 INT 21h 中斷服務常式。Windows 的 DOSX.EXE 和WIN386.EXE 兩檔案就是分別提供標準模式和 386 加強模式服務的 DPMI host，書上對這兩個 hosts 有詳細比較。基本上 DOSX 除了沒有把虛擬記憶體功能含入之外，可說是 DPMI 0.9 的完整實作。這兩個 DPMI hosts 大小差了近 500K (DOSX 是 32682 位元組，WIN386 是 544789 位元組)，其中不全是因為虛擬記憶體，WIN386 還多了 VxD 和 VMM。</p>
+
+<p class="calibre2">去年一位 Intel 朋友告訴我，現今不流行 DPMI 了。但我認為只要 DOS 還有影響力的一天，DPMI 就不會式微。其實這是一體兩面，我也可以說只要 DPMI 還被接受，DOS 就具有強大的影響力。不是嗎，只要 Windows、OS/2、Windows NT、UNIX 都還留有 DOS Box，DOS 軟體滅絕的憂慮就不至於那麼火燒屁股，作業系統改朝換代也將因此比任何人想像的都慢。</p>
+
+<p class="calibre2">DPMI host 載入之後的重頭戲是 KERNEL 模組的載入。KERNEL 模組 (不論 KRNL286 或KRNL386) 在真實模式中啟動，那麼似乎山窮水盡疑無路，因為 WIN386 剛剛已經把真實模式切換為保護模式了，不可能讓 CPU 在 KRNLx86 載入之前又切回真實模式吧 ? V86 模式這時候登場 ! WIN386 中的 VMM (虛擬機器管理器) 產生一個 VM (稱為 System VM)，它當然是 (必須是) V86 模式，但和真實模式沒有兩樣，KRNLx86 就在裡頭使用一些真實模式碼和一些 DPMI 服務項目建立起 Windows 環境。所以說穿了這程序是 :</p>
+
+<p class="calibre2">WIN.COM ---&gt; WIN386 ----&gt; KRNLx86 ---&gt; System VM <br class="calibre3"/>(真實模式)  (保護模式)     (V86 模式)     (保護模式)</p>
+
+<p class="calibre2">接下來 KERNEL、USER 模組的載入與初始化我就不在這裡提了，書中詳細的很。</p>
+
+<p class="calibre2">第二章講記憶體管理，是考驗讀者基礎功力的地方。各章節中以本章最厚，高達 134 頁，其中許多是 Windows API 函式的虛擬碼。幾點關於 Windows 記憶體的迷思，書中都有解釋。如果程式配置 200K 記憶體，其實獲得的是 64+64+64+8 的組合，因為骨子裡 Windows 還是 16 位元作業環境，它以自己的一套 tiling scheme 串連這些 64K 節區。這足以解釋為什麼記憶體區塊超過128K 之後，需特別注意不讓單一資料項跨越 64K 邊界。這一章也解釋 handle 與 selector 的關係 (Windows 3.0 和 Windows 3.1 作法不同，令人氣結)，FIXED 記憶體的不可能性 (除非在 DLL 中)，以及約略點了一下 LocalInit() 函式，它使你製作 Subsegment Allocation 時方便的多。Subsegment Allocation 是作業系統把己身責任推諉給應用程式的最佳例子，然而時過境遷，8192 的限制已由 C Runtime 函式庫中的 malloc() 為我們解決掉了。</p>
+
+<p class="calibre2">過去大家都說 Large 模式不好，不外乎因為記憶體是 FIXED 而影響系統效率，以及只能跑一個 instance 的缺點。造成這種情況一部份是 Windows loader 的責任，一部份是 C 編譯器的責任。現在在 Windows 3.1 之下，使用 Microsoft C/C++ 7.0 (或 Visual C++) 以及 Borland C++ 3.x 編譯器，都可以不再有前述包袱。Pietrek 把原由解釋的非常好，是我看過最好的。這是本章最具實用性的一節討論。</p>
+
+<p class="calibre2">智力測驗 : 自由記憶體還有 4MB，FSR 還有 60%，但就是沒辦法執行新的程式，為什麼 ? 原因可能是執行中的程式用了過多的 1MB 內的記憶體 (以GlobalDosAlloc() 取得)。一個 EXE 檔案要載入成為一個行程時，KERNEL 需為它準備一個 TDB，這個 200h 位元組的結構必須是 FIXED，位在 1MB 之內 (因為 TDB 中含有 PDB，必須能夠被 DOS 處理)。所以如果 System VM 的 1MB 記憶體被用的太兇，會影響行程的多寡。</p>
+
+<p class="calibre2">第三章非常詳細地介紹了 Module 和 Task。我個人認為這非常非常非常的重要。從 MDB (Module DataBase) 和 TDB (Task DataBase) 甚至 PDB (Process DataBase) 的結構欄位，我們才能了解 Windows 對行程的管理方法。本章最後並有一點點對Win32s 的介紹，但不是很深入。如果你對 Win32s 的運作 (在 16 位元環境中執行 32 位元程式) 感覺興趣，At Last - Write Bona Fide 32-bit Programs that Run on Windows 3.1 Using Win32s (Andrew Schulman, MSJ, 1993/04) 是一篇非常好的文章。了解 DOS Extender 的人將很容易接受這種 Windows Extender 的觀念與設計。</p>
+
+<p class="calibre2">第四章介紹視窗系統。這一章最讓我們受益的是可以完全了解 parent/child 視窗關係，owner/owned 視窗關係，parent/owner 視窗的區別，以及 focus/active 視窗的定義。視窗依屬性可分為 OVERLAP、POPUP 和 CHILD 三大類 (其中的 CHILD 和parent/child 中的 child 是兩回事)，前述的 parent 視窗和 owner 視窗則是視窗之間的從屬關係。USER 視窗系統可以想像是一個樹狀管理結構，最根源是Desktop，這是 Windows 產生的第一個視窗，Desktop 視窗上的圖畫就是 wallpaper (壁紙)，你可以在 Control Panel 的 Desktop 中設定。</p>
+
+<p class="calibre2">parent/child 是雙向關係，一個視窗可以知道它的 parent 是誰，它的 child 是誰；owner/owned 是單向關係，視窗只知其 owner 是誰，卻不知它自己是誰的owner。parent/child 定義的是視窗樹中的視窗前後關係 (當然也就牽連到視窗的 Z-order)，owner 視窗則是「可以接受 "owned 視窗" 之 notification 訊息」者。所以 parent 視窗和 owner 視窗根本上是風馬牛不相及。OS/2 Presentation Manager 允許你在產生視窗時不但指定 parent 也指定 owner，但 Windows 並不維護owner/owner 的關係 (沒有這種 API)，這是很奇怪的事。如果你殺掉一個視窗，該視窗所擁有 (own) 的視窗也都要被 Windows 殺掉，Windows 的作法是巡訪整個視窗樹，將每一個視窗的 owner 與「被殺掉之視窗」的 handle 比對，以決定現在這一視窗是不是被殺視窗的 owner。</p>
+
+<p class="calibre2">以下是各式各樣視窗定義的一個整理 :</p>
+
+<table border="1" class="calibre10"> <tr class="row"> <td class="calibre11">WS_STYLE </td> <td class="calibre11">parent </td> <td class="calibre11">owner </td> </tr> <tr class="row"> <td class="calibre11">WS_OVERLAPPED<br class="calibre3"/>WS_POPUP<br class="calibre3"/>WS_CHILD<br class="calibre3"/></td> <td class="calibre11">HWndDesktop<br class="calibre3"/>HWndDesktop<br class="calibre3"/>hWndParent<br class="calibre3"/></td> <td class="calibre11">hWndParent<br class="calibre3"/>hWndParent<br class="calibre3"/>0 (notification 訊息<br class="calibre3"/>      傳給 hWndParent) </td> </tr> </table>
+
+<p class="calibre2">(hWndParent 是 CreateWindow() 時設定的一項欄位)</p>
+
+<p class="calibre2">可以看出 Microsoft 對於資料或結構欄位的命名根本是亂七八糟，要是能夠從Windows 手冊中把這些視窗的定義與關係搞清楚才真是奇怪。</p>
+
+<p class="calibre2">什麼又是 focus 視窗呢 ? 可以接受鍵盤訊息的就是。好，那什麼是 active 視窗 ? 「focus 視窗就是 active 視窗」!? 這是絕大多數人的答案。對一半 !! 事實上active 視窗必須是 top-level 視窗，所以 active 視窗若不是 focus 視窗，就是其 parent。試想想這個 : 在 [File Open] 對話盒中接受檔名的 EDIT 是 focus 視窗，但它並不是 active 視窗，active 視窗是 File Open 對話盒本身。所以，按下 Alt-PrtScn 取到的畫面是整個對話盒而不只是 EDIT control。</p>
+
+<p class="calibre2">既然提到 ownership，我們不禁要問，在 DLL 中產生的 object (例如以 CreateWindow() 獲得的視窗、以 GlobalAlloc() 獲得的記憶體) 究歸誰屬 ? DLL 的角色和一般靜態聯結函式庫其實並無二致，它是一組沒有自主生命力的碼，必須由 task 呼叫起來才擁有生命。當 task A 呼叫 DLL 時，這 DLL 可視為屬於 task A 的一部份碼。那麼前面問題的答案就昭然若揭了，顯然 DLL 產生的任何 object 都屬於當時呼叫 DLL 的那個 task 所有。不少朋友問我為什麼不同的程式透過 DLL 處理檔案或記憶體 handle 時得不到預期結果，請想想上項因素。</p>
+
+<p class="calibre2">我不曾在別的地方看過像這一章把視窗的關係說的這麼完整的，我非常喜歡這一章。</p>
+
+<p class="calibre2">第五章介紹 GDI 系統。一開始作者就把系統程式員分為兩個陣營，他說一組人馬全然享受業餘性質的深度，在 loader，schedules，memory management 等等等中鑽研。有時候他們的態度就像是『嗨，我們從磁碟中取出一個檔案並為它產生一個 process，我們給了你時程系統 (scheduler) 和記憶體管理，以及把字元放到螢幕上的能力，你還要什麼 ?』。這組程式員給我們的產品就像 UNIX 或 MS-DOS。第二組人馬在第一組的肩膀上工作，他們做出像 UNIX 的X-Windows，OS/2 的 Presentation Manager 以及像 Windows 的 USER、GDI 這樣的東西。</p>
+
+<p class="calibre2">和 OS/2 不同的是，Windows 不會讓軟體開發者有不注意圖形人機介面的機會。除了極少數例外，你在 Windows 中玩的任何把戲都將很快與作業系統之間有繪圖方面的接觸。GDI 就是個與設備無關的繪圖子系統。和 KERNEL 比起來，GDI 很大。KERNEL 是75490 位元組，GDI 是 220800 位元組。KERNEL 大部份是組合語言碼，GDI 大部份是 C 語言碼。GDI 的複雜性一大部份是因為設計者考慮到並非所有繪圖週邊驅動程式都能夠實作特殊的繪圖函式，換句話說 GDI 必須準備一些其實可能在 Didplay 和 Printer 驅動程式中已經準備好的高階繪圖功能 (如 BitBlt)，畢竟 GDI 得做最壞打算。這些高階功能在聰明的驅動程式代勞之下根本就派不上用場，倒顯得GDI 虛胖了。這一章對 GDI 與驅動程式間的關係說的不錯，如果讀者曾經看過或甚至寫過 Windows 驅動程式，讀起來當能得心應手。</p>
+
+<p class="calibre2">第六章介紹 Windows 的時程 (Scheduler) 系統，是各章中最迷你的部份，只 24 頁。Windows 其實有兩個時程系統，一個是 WIN386 中的強制性多工時程系統，一個是 KERNEL 模組中的非強制性多工時程系統，本章討論的是後者。只有當 System VM 獲得了 WIN386 給予的一個 time slice，KERNEL 的時程系統才會開始運作。這一章對於什麼時候可以釋放控制權 (或說程式執行權) 有一些觀念上的釐清。我們通常認為程式沒有訊息時才可能釋放控制權，而由於一般程式是以 GetMessage/TranslateMessage 的隱藏形式完成非強制性多工，所以上述觀念可以成立。但如果直接使用 Yield() 函式，即使 App Queue 中有訊息，依然可以強制釋放控制權。Pietrek 寫了一個小程式做實驗，饒富趣味。</p>
+
+<p class="calibre2">我向來喜歡把寫常駐程式的人稱為走鋼絲的人，他們要在很危險的環境中保持冷靜力圖平衡，小心翼翼地不要在三角關係中失控。許多常駐程式員喜歡使用 DOS 的idle interrupt (INT 28h)，但很多人不知道 Windows 的時程系統也有 idle loop，會產生 INT 2Fh/1689h。如果你以 PeekMessage() 取代 GetMessage()，抓間隙時間處理背景工作，那麼 idle loop 就會被抑制。</p>
+
+<p class="calibre2">第七章介紹 Windows 的訊息系統。作者剖析訊息的資料結構，訊息的來源分類，訊息的貯存空間 (App Queue 和 System Queue)，以及 GetMessage/PeekMessage/TranslateMessage 等幾個常用的處理訊息的 API 函式。對於 WM_PAINT 和 WM_TIMER 這兩個行徑特異的訊息，也對其產生時機和內部 flag 設定花了不少篇幅解釋。最後並對 Windows 的輸入系統做了一些批判，解釋 Windows Debugger 的先天限制以及 Win32 在輸入系統上的改良。</p>
+
+<p class="calibre2">第八章介紹動態聯結的觀念。Petzold 以及 Yao 兩位先生對於動態聯結所需的instance thunk、reload thunk 和 MakeProcInstance() 等都有很好的討論(他們的書在 1993/01 本專欄介紹過)，本章則更從編譯器、聯結器的 fixup 開始說明，相當好。如果我們能了解 OBJ 檔和 EXE 檔的詳細格式，讀起來一定更能旁徵博引左右逢源，這些資訊可以從 MS-DOS Encyclopedia (Microsoft Press) 書中獲得。</p>
+
+<p class="calibre2">作者常借用物件導向的觀念解釋 Windows，如果你懂 C++ 語言，知道 class/object，知道 member-function、data-member 的意義與其精神，對他的比喻當能心領神會。Pietrek 在第四章以物件導向觀念解釋 Subclassing，在第五章再以物件導向觀念解釋 GDI 的 logical device 和 physical device block。第七章以人體循環系統比喻 Windows 的訊息系統，也是出色的說法。</p>
+
+<p class="calibre2">對系統感興趣的人 (Kernel-Guy)，本書一定讓你如魚得水，只怕你唯一的抱怨是 : 一大堆的 API 函式虛擬碼令人心煩氣燥。而文字瀚海圖片沙漠的情形也一再考驗讀者的定力與耐力。然而小瑕不掩大瑜。我向來認為釀了一瓶好酒的人不必聲嘶力竭地廣告它，這本書就是一瓶好酒。</p>
+
+<p class="calibre2">作者 Pietrek 自 1993/10 起已登上 Microsoft Systems Journal 的 Windows Q&amp;A 主持人寶座，沒兩把刷子的人上這位子可是如坐針氈。至於他是因為 Windows Internals 一書引起注意而被重金禮聘或是因為 MSJ 長期培訓而有寫 Windows Internals 的功力，我不知道 (也不在意)。</p>
+
+<p class="calibre2">朋友們在書店選書的方式如何 ? 看不看序 ? 看不看前言 ? 別抓起書像數鈔票般一頁頁流覽，漫無目的的跳躍。從序中可以看出作者的創作心路歷程，作者的抱負理想，還可以看出作者的文筆斤兩。有些作者的風格如跳樑小丑，哈哈一笑嗤之以鼻之餘可省下買書錢。書序，好看的很呢。大抵你可以從外文書的 Preface 或 Acknowledge 或 Introduction 或 Foreword 看到些類似「序」的東西。Pietrek 在本書最前面的 Introduction 部份提到他感謝的人，其中對於編輯有這麼一段感性談話 :</p>
+
+<p class="calibre2">首先我要謝謝的，當然是我的編輯 Andrew Schulman。沒有他這本書幾乎不可能完成。當我們開始為這本書築夢時，它看起來是那麼令人畏縮可怖。只因為我知道他可以助我一臂之力我才有勇氣進行下去。幾乎我所寫的每一筆資料他都有令人驚訝的豐富知識，而且他也注意不讓太多細節扼殺了想像空間。每次當我認為我已經鉅細靡遺地涵蓋了一整章細部討論，他會以數百個毫不誇張的意見把我推回原點，促使我完成更詳細的討論。我不能夠想像是否還有更好的編輯如他了。 </p>
+
+<p class="calibre2">我把這段文字翻譯出來，用在提醒國內電腦書籍出版業者，一本技術書籍影響學子之甚超乎想像，出書不能不慎，建立 "peer review" (同僚覆審) 制度非常有必要。許多我所知道的國內電腦書籍出書過程，會讓讀者駭然。電影有製片人，唱片有製作人，為什麼電腦書籍沒有 ? 如何能夠叫我們信服一個作者可以「精通」DOS、Windows、PEII、AutoCAD、dBase、Word、Excel ... 十數種大大小小的作業系統與應用軟體 ? 如何能夠叫我們信服一本五天之內連寫帶編到出版的書 (說者猶面帶得色，真個是為了搶市場先機而踐踏書籍尊嚴) ? 又如何能夠叫我們認同竟然可以對同一個主題出幾十本書的作者 ? 哪一本是他的心得 ? 哪一本是他的力作 ?</p>
+
+<p class="calibre2">我多麼期盼國內出現審稿制度以及群力製作單位，期盼像 Schulman 這樣的專家級編輯。少年當立凌雲志，我雖不再年少卻也多麼期許自己的學養能夠成為那樣的編輯。但是話說回來，要一個編輯可不是掛名領錢尸位素餐，如果只為了圖作家的知名度，拉來助長聲勢，那真真是再沒意義的事了；如果「名作家」與書的技術層面不搭軋，更是畫虎不成反類犬 ! 我已經在國內看到一些這樣的產品。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 DOS and Windows Protected Mode <br class="calibre3"/>作者 Al Williams<br class="calibre3"/>出版 Addison Wesley<br class="calibre3"/>頁數 19 章，503 頁<br class="calibre3"/>售價 US$ 39.95 (含磁片)</p>
+
+<p class="calibre2">Part I Introduction to DOS Extenders<br class="calibre3"/>1. What's a DOS Extender, Anyway ?<br class="calibre3"/>2. DOS Extenders : Under the Hood<br class="calibre3"/>3. The DOS Extender Tool Box<br class="calibre3"/>4. Protected Mode : The Inside Story</p>
+
+<p class="calibre2">Part II DOS Extenders and Windows in Detail<br class="calibre3"/>5. Dipping into DPMI<br class="calibre3"/>6. Stretching Your Data<br class="calibre3"/>7. Segments : Take Them or Leave Them<br class="calibre3"/>8. Looking Up and Old Address<br class="calibre3"/>9. Interrupts : A Function Call By Any Other Name<br class="calibre3"/>10. Return to Real Mode<br class="calibre3"/>11. Extending Extenders - Virtual Memory to the Rescue<br class="calibre3"/>12. Something Borrowed<br class="calibre3"/>13. Handling User Exceptions - Expect the Unexpected<br class="calibre3"/>14. Windows (and DOS) Times 32<br class="calibre3"/>15. Protected Performance</p>
+
+<p class="calibre2">Part III Big Problems, Big Solutions<br class="calibre3"/>16. Welcome to the Real (Protected) World<br class="calibre3"/>17. A DOS Extended Mutant Turtle<br class="calibre3"/>18. A 386 Disk Duplicator<br class="calibre3"/>19. Windows, DOS, and You</p>
+
+<p class="calibre2">Appendix A Glossary<br class="calibre3"/>Appendix B DOS Protected-Mode Interface (DPMI)<br class="calibre3"/>Appendix C Manufacturers of DOS Extenders and Related Tools<br class="calibre3"/>Appendix D 286|DOS-Extender Lite User's Guide<br class="calibre3"/>Bibliography </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img32.jpeg" alt="img32.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">去年四月我介紹了一本 Extending DOS，是討論 Intel CPU 保護模式及相關軟體環境的重量級作品。今天我們看看另一本好書。</p>
+
+<p class="calibre2">在作業系統改朝換代煙硝四起的今天，對於 DOS 的未來，許多人有許多種不同的看法，有人認為 DOS 必須死，有人認為 DOS 來日方長 (請參考 PC Magazine 1992/10/13 的 DOS Lives，中文版 1993/01 的 DOS 運命知多少)。我在去年四月的無責任書評中引述兩位專欄名家 Jeff Prosise 和 Charles Petzold 的話饒富趣味。其實這些作家有時候是為了闡述某一種技術觀點而發表對市場領域太過侵略的言論，我們抱持著欣賞而非信仰的態度是比較健康的。經目之事猶恐未真，背後之言豈能全信，在一場精譬筆戰中篩選出各種論點之成立依據，再佐以自己的判斷，才能讓我們隨之成長。迥異兩派人馬中，顯然本書作者 Williams 是 DOS 保皇黨的一員 (至少他在書中的論調是如此)。</p>
+
+<p class="calibre2">Windows 3.0/3.1 之前早就存在 DOS Extender，Windows 的出現只是加速這一保護模式潮流的前進。今天在一波一波好看亮麗的 Windows 應用軟體推波助瀾下，我們更應了解 Windows 背後的 DOS Extender 保護模式技術。DOS Extender 是允許 DOS 程式配置大量記憶體的一層迷你作業環境，一個 32 位元 DOS Extender 尤其能夠打破長久以來 16 位元環境的 64K 記憶體節區的桎梏 (這一點連Windows 3.1 也做不到)，不再需要 huge 指標。</p>
+
+<p class="calibre2">看到 DOS Extender 有時候我們不要想它是個產品，要想它代表一種技術。如果 DOS Extender 以產品的形式存在，那麼焦點不在其能力是否比 Windows 強，而在程式發展時的透通性。EMS/XMS 技術可以增強 DOS 程式的記憶體能力，但使用起來不夠透通。DOS Extender 提供的是 DOS-Like 的程式寫法。除了動態記憶體配置，EXE 檔案本身也可以擴充超過 1MB。</p>
+
+<p class="calibre2">本書多達十九章，每一章都十分簡短。第一章即以一個需要大量記憶體的程式為例，說明 (1) DOS 版本 (2) EMS 版本 (3) DOS Extender 版本的差異。透通性使程式只要重新編譯聯結 (甚至只要重新聯結)，就可以享受大量記憶體。然而如果「完全」透通而不是「大部份」透通，這本書大概可以省去一半篇幅。正因為使用指標以及第一個百萬位元組時都需付出特別的關注，所以後續許多章節才會針對不同的 DOS Extender 示範不同的程式寫法。</p>
+
+<p class="calibre2">第二章對 DOS Extender 有概略性介紹。第三章介紹 DOS Extender 的相關工具，包括 DOS Extender 產品、32 位元編譯器聯結器等系統軟體的產品名稱、廠商名稱。其中較知名的軟體國內都有得買，不妨注意一下軟體銀行和軟體貿易商、代理商的產品目錄。</p>
+
+<p class="calibre2">第四章介紹 Intel 保護模式的內部架構，這是難度比較高的一章。你猜對了，本章從 selector、descriptor 說起，談到 LDT/GDT/IDT，以及 DPL (Descriptor Privilege Level)。藉著 DPL 系統可收保護之效，但有些DOS Extender 會破壞這一層保護，為的是簡化其本身設計。這種 DOS Extender 就不能有效保護系統免受應用程式的不當侵擾。本章也介紹保護模式中的 TSS (Task State Segment)，它用來支援多工。TSS Descriptor 指出記憶體中的一塊區域，內有各暫存器的影像。一般討論保護模式的文章中甚少對 TSS 眷顧。本章還提到 gate，如果讀者對 call gate 感興趣，1993/05 的 MSJ 有一篇 : Run Priviledged Code from Your Windows-based Program Using Call Gates (作者 Matt Pietrek 正是 Windows Internals 的作者)。所謂 gate 是 GDT 或 LDT 或 IDT 中特別種類的 descriptor，內含 CS:(E)IP，是即將轉換控制權的目的地。亦等於說 gate 是一種特別的 descriptor，定義一個函式。</p>
+
+<p class="calibre2">想深入研究 DOS Extender，當然最好的方法是 UTSL (還記得這個名詞嗎，看看本文前面的註)，有三個管道可以獲得 DOS Extender 原始碼。第一是 GNU C++，這是一套完整的工具，包括 C/C++ 編譯器，組譯器，符號除錯器，一個支援虛擬記憶體和 VCPI 規格的 DOS Extender，它是一個 ShareWare；第二個來源是作者在他的另一本書 DOS 6 : A Developer's Guide 中的一個例子 (這本書的紙張有夠糟糕，在上面輕輕寫字，就可以有力透紙背入木三分的效果)；第三個來源是 Ray Duncan 於 1991/03/12 發表於 PC Magazine [Power Programming] 專欄中的 Creating a DPMI Based DOS Extender of Your Own 一文所附的例子，這個例子因為有 DPMI 的幫助而非常非常小巧。像我這樣的業餘人士只因好奇想一探DOS Extender 實際長個什麼樣子，不妨選擇第三者。</p>
+
+<p class="calibre2">第五章介紹 DPMI。你可以把 DPMI 的 INT 31h 想像是對保護模式 DOS 的標準介面，就像 INT 21h 是對真實模式 DOS 的標準介面一般。這一章提供一個使用於全書的程式架構。作者寫了一個 Windows 空殼程式，使用者按下功能表中的 "Run Test Program" 時固定會去呼叫一個名為 test() 的函式，這個 test() 就是程式員的表演舞台。文中有一段方塊特別解釋在 Windows 程式中不要使用 Microsoft C 的 int86x() 函式，我自己才疏學淺還不能完全領會 (因為我曾直接用過，好像沒什麼問題)，讀者請多注意。</p>
+
+<p class="calibre2">第六章介紹在 16 位元和 32 位元環境下資料大小的差異。關於這一部份 Charles Petzold 曾在 1992/07 的 MSJ 中有一篇深入討論 : The Case for 32 Bits，可輔助參考。</p>
+
+<p class="calibre2">指標大小以及 size_t 大小通常我們會注意，比較為人疏忽的是資料的 alignment。下面這個例子 :</p>
+
+<p class="calibre2"><small class="calibre9">struct {<br class="calibre3"/>  short id;<br class="calibre3"/>  long type;<br class="calibre3"/>  char name[9];<br class="calibre3"/>  long info;<br class="calibre3"/>  char c1;<br class="calibre3"/>namelist[10000];</small> </p>
+
+<p class="calibre2">雖然整個結構只需 20 個位元組，但因在 32 位元環境中編譯器預設的 alignment 為DWORD，所以每一個結構實際耗掉 28 個位元組，編譯器會對每一個不足 4 位元組的單元補足為 4 位元組 (但你的程式感覺不到)。10000 個元素的陣列將因此浪費 80000 位元組。如果把資料設定為 byte alignment，就不會有任何浪費。不僅僅空間浪費是個問題，如果你以 DOS 中斷獲得 MCB (Memory Control Block)放到上述這個結構中會出錯，因為真正的 MCB 是 20 個位元組，不多也不少。</p>
+
+<p class="calibre2">雖然在 DOS Extender 環境中寫程式是透通的，但關於 32 位元編譯器帶來的特性還是不能不注意。至於如何設定資料的 alignment，視編譯器而定。本章詳細列出Borland、Microsoft、Intel、WATCOM、MetaWare 等知名廠商的設定方式。這一章也提綱契領地說明了提高程式移植性的設計要領。</p>
+
+<p class="calibre2">第七章講節區 (segment)。Intel 的節區架構一直是增加程式迷惑性與困難度的大幫兇。Motorola 680x0 那樣單純的線性定址方式大概是 PC 程式員的夢想。DOS Extender 提供的 Flat Mode 就是類似的線性定址方式，這種模式中節區可以成長為4GB，不再需要什麼 near/far/huge 指標，全部都是 32 位元指標。不過 Flat Model 帶來的困擾是系統容易被破壞，就好像真實模式中的 DOS 一樣，因為它失去了 segmentation 的保護層。Intel 的Code Builder 是這種情況的代表。所以即使一個節區可達 4GB，有些 DOS Extender (如 Phar Lap) 仍然支援 Segmentation，視訊緩衝區和第一個百萬位元組等重要區域仍然被區隔到單獨的節區中。本章的討論也涵蓋 Windows。</p>
+
+<p class="calibre2">第八章主題是如何使用 1MB 內的記憶體。不同的 DOS Extender 有不同的作法，像 Intel 的 Code Builder 是把 1MB 位址對映到應用程式位址空間中的第一個 1MB，所以 pointer = segment &lt;&lt; 4 + offset；Rational 4G/W 則是令 1MB 從 0 開始，令你的程式從4MB 開始 (這裡的 4MB 是邏輯位址，機器並不需要真有4MB 才能運作)；GNU C++/386 的 GO32 (也是個 DOS Extender) 讓你的程式從 0 開始，讓 1MB 從 0xE0000000 開始；Phar Lap 的 386 Extender 作法是提供特定的 0x37 節區指向 1MB 位址，因此要獲得一個指向視訊緩衝區的指標可以這麼做 :</p>
+
+<p class="calibre2"><small class="calibre9">char _far *ptr; </small> <small class="calibre9">FP_SEG(ptr) = 0x37; </small> <small class="calibre9">FP_OFF(ptr) = 0xB8000;</small> </p>
+
+<p class="calibre2">Windows 程式呢 ? 可以使用 KERNEL 預先定義好的一些 selector，或是使用LDT API 如 AllocSelector()、SetSelectorBase()、SetSelectorLimit()。</p>
+
+<p class="calibre2">第九章介紹中斷。中斷在 PC 中扮演重要角色，PC 使用它支援 I/O 設備，以及系統呼叫。不同的 DOS Extender 和不同的編譯器有截然不同的中斷處理技術。有一種DOS Extender 是把 CPU 切回真實模式再處理中斷，這種我們稱為 Switcher Extender；另一種是在 V86 模式中模擬真實模式處理中斷，這種我們稱為 V86 Extender (例如 Windows)。後者總是在保護模式中處理中斷，所以它只需要一套中斷向量，在處理過程中再決定要不要呼叫真實模式的中斷服務常式。</p>
+
+<p class="calibre2">第十章介紹真實模式的回返動作。通常當你呼叫一個 DOS Extender 不支援的中斷(例如 DOS 未公開函式)，或是呼叫一個不容易轉換為保護模式碼的既存函式庫(可能是買來的)，或是為了增進效率，就會考慮使用真實模式中斷服務常式。真實模式碼分為常式與中斷兩種，前者的參數以堆疊傳遞，比較麻煩；後者的參數靠暫存器傳遞，比較容易些。我們在 Windows 程式中呼叫 int86() 其實是由保護模式的中斷服務常式服務，它做好參數轉換之後才 (可能) 呼叫真實模式的中斷服務常式。</p>
+
+<p class="calibre2">第十一章以很少的篇幅介紹虛擬記憶體。第十二章介紹 stub 程式以及動態聯結函式庫。DOS Extender 的 EXE 通常是仿效 Windows 或 OS/2 的 NE 檔或 LE 檔格式，把保護模式碼和真實模式碼 (也就是 stub) 放在一個 .EXE 檔案中。書中舉了一個例子，是在 Rational 4GW 中自行設計 stub，在 stub 中呼叫 DOS Extender 執行起保護模式碼，並把原來的命令句參數加上一個新的參數，傳給保護模式碼。實用上這個新參數可以放一個真實模式位址或是一個中斷號碼，做為讓保護模式碼呼叫真實模式常式的依據 (與第十章有關係)。</p>
+
+<p class="calibre2">動態聯結函式庫是 DOS Extender 除了 stub 之外另外從其他作業系統(主要是 OS/2 和 Windows) 借來的觀念。Extender DLL 的觀念與Windows DLL 是一樣的，製作時必須參考你手上的編譯器手冊和 DOS Extender 手冊。它們的不同在於多工，Windows 是多工環境而絕大部份的 DOS Extender 不是，所以設計 Extender DLL 時就不必考慮為每一個 client 配置各別空間。</p>
+
+<p class="calibre2">十三章解決 User Exception 和 Critical Error。前者由 Ctrl-C 或 Ctrl-Break 引發，後者與裝置有關，會帶給使用者 "Abort, Retry, Fail ?" 訊息。這些通通都是exception。一般而言 C 函式庫會提供一些處理函式，像是以 signal() 和harderr() 分別設定處理 user exception 和 Critical Error 的新函式，以及以 onexit() 設定一個程式結束前呼叫的函式。某些 DOS Extender 也提供對應的函式，像 Phar Lap 的 286 Extender 就有個類似 onexit() 的 DosExitList()。如果要更低階處理，也可以直接攔截 0x1B (Control-Break)，0x23 (^C)，0x24 (critical error) 等中斷。前面的方法如 signal() 並不能避免螢幕上出現 ^C 字樣，如果要避免它就只好尋求更低階的手法。書中對這些更低階的處理有實際程式例。</p>
+
+<p class="calibre2">十四章介紹 32 位元 DOS 與 Windows，但關於 32 位元 Windows 並非介紹Windows NT，而是 Win32s 環境 (或許有那麼一天 Windows NT 會成為執政黨，但目前當家主政的是桌上型 Windows)。把 DOS Extender 的觀念應用到 Windows 上就成了 Win32s (你可以說它是一個 Windows Extender)。我們不要忘記，Windows 3.x 的本質是 16 位元，使用 Win32s API 的好處只是程式員得享 32 位元API，很方便，實際執行效率並不若單純的 16 位元程式那麼好，時間會浪費在「轉換」(thunk time) 上面。在 thunk 之間轉換控制權就像 DOS Extender 切換 CPU 模式一樣。Win32s 的缺點當然是它沒有全部實作出 Win32 API，但縫隙多少已被其他系統廠商彌補，例如 Phar Lap 的 TNT 32 位元 DOS Extender 就提供了Win32s 所沒有的 Win32 Console API。只要多付出一些注意，我們就可以寫出一個在 Windows NT、Windows 3.1、DOS (Extender) 環境下都能執行的 32 位元程式。</p>
+
+<p class="calibre2">十五章旨在如何增進 32 位元執行效率。方法包括儘量不要改變節區暫存器、使用正確的 alignment、使用暫存器變數、儘量避免模式轉換、以及不要放棄在 386 CPU 中一次處理 4 個位元組資料的權利 (這是386 CPU 最自然最快速的狀態)。集掖成裘聚沙成塔，結果是很可觀的。</p>
+
+<p class="calibre2">十六章給那些想進入保護模式真正寫個軟體而不只是玩玩的人一些重點整理，並對後三章的個案做摘要說明。這三個個案分別是十七章的 TURTLE，一個在 Phar Lap 286|DOS-Extender 環境中跑的圖形命令語言 (類似 Logo)。由於保護模式提供大量記憶體，Turtle 動用了 11 個圖形緩衝區，每個大小是 64K (因為這個程式在 320x200x256 VGA 上跑)。第二個個案是十八章的 CB386，這是 Intel Code Builder 製作出來的程式，可以把目前軟碟上的磁片內容全部讀到記憶體中，有點類似 2.88 MB 的軟碟驅動程式；第三個個案是十九章的 Windows 程式，主要目的是實驗DOS 程式與 Windows 程式之間的溝通，讓一個名為 WINRUN 的 DOS 程式利用名為WINX 的 Windows 程式機能，在 DOS Box 中啟動 (launch) 任何 Windows 程式。由於 Windows 的普及程度，我想第三個個案最能引起你的注意，何況它還探索到虛擬機器之間的通訊。我決定把這個設計架構說清楚一點。</p>
+
+<p class="calibre2">WINX 有兩部份，一是 WINX.C，這是 Windows 程式碼，一是 WINXDOS.C，這是 DOS 程式碼，被放在 WINX.EXE 中做為 stub 程式。你可以在 DOS 提示號下鍵入 "WINX" 取代鍵入 "WIN"，這時候 WINX.EXE 中的 WINXDOS 首先執行，安裝好一個新的 INT2Fh 中斷服務常式並維護一塊 1MB 之內的記憶體緩衝區，然後以 spawnpl(P_WAIT,...) 執行 win.com。之後 WINX 在 Windows 環境中跑起來，設定計時器，等待記憶體緩衝區隨時可能進來的字串 (被視為命令)。另一方面 DOS 程式WINRUN.EXE 在 DOS Box 中被執行時會呼叫 INT 2Fh 把命令列參數放到緩衝區中，於是被 WINX 取得，改頭換面成為 WinExec(...)。結果是 : 使用者可以直接在 DOS Box 的DOS 提示號下執行一個 Windows 程式。另一個根據 WINRUN 改裝的程式 RUNSTUB.EXE 則可當做任何一個 Windows 程式的 stub，這樣獲得的 EXE 程式將可以直接由使用者在DOS Box 中鍵入檔名後獲得執行 (當然必須是 WINX 已安裝好的情況下)。設計理念十分精采。整組程式以最新的 MSC 8.0 亦可順利製作完成 (MSC 8.0 即 Visual C++)。</p>
+
+<p class="calibre2">附錄B 是關於 DPMI 的詳細內容。如果你想要完整的 DPMI 規格，應該去函 Intel，可免費獲得一份資料。此處列出每一個DPMI 函式的使用方法，包括呼叫前暫存器要怎麼用，呼叫後的暫存器內容代表什麼意義。對於實用目的而言已是十分齊備。只是...我發現了一個致命錯誤，圖B-1 的 Real Mode Register Structure 少了 EAX 4 個位元組，你若渾然不覺依該圖設計程式，一定很慘。這張圖將用於 DPMI 0300h 至 0303h 四個函式(DOS 與 Windows 溝通時很重要的四個函式) :</p>
+
+<p class="calibre2"><small class="calibre9">■ DPMI 0300h : Simulate Real Mode Interrupt <br class="calibre3"/>■ DPMI 0301h : Call Real Mode Procedure with Far Return Frame <br class="calibre3"/>■ DPMI 0302h : Call Real Mode Procedure with Interrupt Return Frame <br class="calibre3"/>■ DPMI 0303h : Allocate Real Mode Callback Address</small> </p>
+
+<p class="calibre2">這本書和 Ray Duncan 的 Extending DOS 比起來，比較偏實用上的問題。它告訴我們在不同的 C 編譯器下以及不同的 DOS Extender 下可能遭遇的問題、應該如何解決、或是怎麼做會有比較理想的效率。DOS Extender 程式與 DOS 程式雖有相當程度的透通，但凡用到指標或 1MB 內的記憶體直接存取時，仍需審慎了解你手上的 DOS Extender 以及 C 編譯器的特性，才能對症下藥。如果把寫常駐程式形容為走鋼絲，那麼設計 DOS Extender 的那些天才所遭遇的風險真是只能以危如累卵來形容。</p>
+
+<p class="calibre2">到底 DOS 與這個世界的潮流要拔河到什麼時候 ? 你問侯捷的態度 ? 我嘛，我是比較喜歡 Windows，但是給一個好理由，我也不會反駁 DOS 長命百歲的說法。(在所謂軟體忠誠度上我根本是牆頭草，哪一個系統哪一種工具強勢我就趕快學習它。我不想螳臂擋車，沒這個實力也沒這份意興，家中還有人等著養呢。所有抗拒潮流的人都只因為影響到他個人的生計，而影響生計是因為他不願意學習新知)。證諸歷史 (雖只短短十年)，DOS 總是絕地逢生。當我在 DOS 上礙手礙腳時，我認為 DOS 無救了；當我發現 DOS Extender 時，我又覺得 DOS 有希望；當 Windows 3.0 出來，我想 DOS 完了；現今我又把希望留給 32 位元 DOS。也許我是個善變的人，可是別忘記這句話 : 成功總向善變的人送秋波。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>期刊 Windows/DOS Developer's Journal <br class="calibre3"/>頁數 每期大約 95 頁。<br class="calibre3"/>售價 全年 12 期 US$ 64.0 </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img33.jpeg" alt="img33.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2"><a href="http://jjhou.boolan.com/review1-10.htm" target="_blank" class="calibre5">去年五月我推薦了三本外文雜誌</a> ，有讀者來信向我要雜誌訂購單。我非常高興朋友們有勇氣把自己的求知觸角更向外伸出。這真的需要一些勇氣，怕麻煩如我者，想到訂閱手續以及收不到雜誌時求助無門的恐懼，多一半會打消念頭。使用信用卡訂購會方便的多。</p>
+
+<p class="calibre2">今天再介紹一本雜誌給各位，這是 Windows/DOS Developer's Journal (WDDJ)。這本期刊比較稀奇，擁有的人似乎很少，工研院和資策會大樓上的資訊圖書館都沒有，是一顆尚未被廣為欣賞的珍珠。每一期的 WDDJ 都會有一個主題，有時候是 NT，有時候是多媒體，有時候是物件導向。它也有一個 Windows Questions and Answers 專欄，以及一個 Tech Tips 專欄，有時候也有 book review。大部份時候還會選擇一項產品做深度報導。和 MSJ 以及 DDJ 不同的是，前二者純粹是技術文章以及廣告，WDDJ 還有一個專門報導新產品的園地。</p>
+
+<p class="calibre2">為讓讀者大約了解 WDDJ 的文章取材方向，我把上一年的題目整理列表於後。如果你想獲得比較低階的技術，像是虛擬機器，中斷，VxD，這本刊物是比較可能的。如果你想補齊過期雜誌，也可以，每一期單價 US$ 11.0 (比當期的還貴，老外的觀念怎麼盡和咱們不同 ?!)。</p>
+
+<p class="calibre2">表三\ WDDJ 近一年的文章大要</p>
+
+<p class="calibre2"><b class="calibre6">本網站 略</b></p>
+</body>
+</html>
