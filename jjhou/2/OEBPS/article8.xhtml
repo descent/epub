@@ -15,61 +15,61 @@
 </style></head>
   <body class="calibre">
 <h2 class="calibre1">你正站在十字路口 (2)</h2>
-<p class="calibre2">每個人都說以 SDK 開發 Windows 軟體多麼煩人，多麼痛苦。我從不認為 ! 如果你了解每一個程序的每一個原由，何難之有 ? 可重複使用的 C++ 軟體元件和設計良好的 C 函式之間有很大的差別嗎 ? 在原有的 Windows 程式碼中玩一點剪貼遊戲，把視窗標題和視窗類別名稱改一改、圖式 (icon) 改一改、顏色改一改、表單改一改，然後在視窗函式的 switch 敘述中多打造幾個 case，麻煩嗎 ? 一點也不 ! 倒有一種完全掌握每一點每一滴並且「看你往哪兒跑」的快感。這種快感大概只有骨子裡流著 100 ㄆㄚ 理工血液的工程師才享受得到，也才願意享受。</p>
+<p class="calibre2">每個人都說以 SDK 開發 Windows 軟體多麼煩人, 多麼痛苦。我從不認為 ! 如果你了解每一個程序的每一個原由, 何難之有 ? 可重複使用的 C++ 軟體元件和設計良好的 C 函式之間有很大的差別嗎 ? 在原有的 Windows 程式碼中玩一點剪貼遊戲, 把視窗標題和視窗類別名稱改一改、圖式 (icon) 改一改、顏色改一改、表單改一改, 然後在視窗函式的 switch 敘述中多打造幾個 case, 麻煩嗎 ? 一點也不 ! 倒有一種完全掌握每一點每一滴並且「看你往哪兒跑」的快感。這種快感大概只有骨子裡流著 100 ㄆㄚ 理工血液的工程師才享受得到, 也才願意享受。</p>
 
-<p class="calibre2">噢噢，以上是我一年前的想法 。自從我知道並了解 Application Framework 這種開發工具，我就不做如是想了。沒有比較，難以分出高下，SDK API 原是高階的應用程式介面，在 Application Framework 面前卻宛如低階的組合語言。</p>
+<p class="calibre2">噢噢, 以上是我一年前的想法 。自從我知道並了解 Application Framework 這種開發工具, 我就不做如是想了。沒有比較, 難以分出高下, SDK API 原是高階的應用程式介面, 在 Application Framework 面前卻宛如低階的組合語言。</p>
 
-<p class="calibre2">(註 : SDK 全名是 Software Development Kit，軟體開發工具。每一個環境都可以 有它自己的 SDK。例如 DOS Extender 也可以有 SDK。但現在 SDK 三個字常常成為 Windows SDK 的代名詞。其實把所謂的 Windows SDK 程式稱為 Windows API 應用程式 恐怕恰當些，這種程式不限使用 Microsoft SDK，也可以使用 Borland、Symentec 或其他廠商的 Windows 軟體開發工具進行編譯聯結)</p>
+<p class="calibre2">(註 : SDK 全名是 Software Development Kit, 軟體開發工具。每一個環境都可以 有它自己的 SDK。例如 DOS Extender 也可以有 SDK。但現在 SDK 三個字常常成為 Windows SDK 的代名詞。其實把所謂的 Windows SDK 程式稱為 Windows API 應用程式 恐怕恰當些, 這種程式不限使用 Microsoft SDK, 也可以使用 Borland、Symentec 或其他廠商的 Windows 軟體開發工具進行編譯聯結)</p>
 
 <p class="calibre2">■ Application Framework </p>
 
-<p class="calibre2">什麼是 Application Framework ? 你可以說這種產品在良好的規劃與測試之下，提供大量的一般性程式機能；這些機能彼此之間有強大的凝聚力。我們來分析一下這個很文謅謅、很不具體的定義。</p>
+<p class="calibre2">什麼是 Application Framework ? 你可以說這種產品在良好的規劃與測試之下, 提供大量的一般性程式機能；這些機能彼此之間有強大的凝聚力。我們來分析一下這個很文謅謅、很不具體的定義。</p>
 
-<p class="calibre2">1) 在良好的規劃與測試之下 - 這是 Application Framework 設計者與開發人員的責任， 我們只是使用者，不干我們的事。當然，掏錢的時候，你得謹慎評估哪一套 才是良好規劃與測試之下的產品，因為通常選擇了一套 Application Framework， 也幾乎就跟定了一套編譯器。</p>
+<p class="calibre2">1) 在良好的規劃與測試之下 - 這是 Application Framework 設計者與開發人員的責任,  我們只是使用者, 不干我們的事。當然, 掏錢的時候, 你得謹慎評估哪一套 才是良好規劃與測試之下的產品, 因為通常選擇了一套 Application Framework,  也幾乎就跟定了一套編譯器。</p>
 
-<p class="calibre2">2) 提供大量的一般性程式機能 - 什麼是一般性程式機能 ? [About] 對話盒、[File] 表單、 [Edit] 表單、[Help] 表單、工具欄 (toolbar)、狀態欄 (status bar) 等等都是。 撇開使用者介面不談，資料的儲存與顯示、印表機輸出與輸出前的預視也都是一般性程式 機能。尤有甚者，SDI (Single Document Interface，單文件介面)、MDI (Multiple Document Interface，多文件介面) 和 OLE (Object Linked &amp; Embedded， 物件聯結與內嵌) 也都算是一般性程式機能，因為它們並不涉及一個應用程式特定 之資料型態。</p>
+<p class="calibre2">2) 提供大量的一般性程式機能 - 什麼是一般性程式機能 ? [About] 對話盒、[File] 表單、 [Edit] 表單、[Help] 表單、工具欄 (toolbar)、狀態欄 (status bar) 等等都是。 撇開使用者介面不談, 資料的儲存與顯示、印表機輸出與輸出前的預視也都是一般性程式 機能。尤有甚者, SDI (Single Document Interface, 單文件介面)、MDI (Multiple Document Interface, 多文件介面) 和 OLE (Object Linked &amp; Embedded,  物件聯結與內嵌) 也都算是一般性程式機能, 因為它們並不涉及一個應用程式特定 之資料型態。</p>
 
-<p class="calibre2">關於應用程式特定之資料型態，我必須對上面的說明有所補充。上面提到的資料 儲存與顯示、印表機輸出以及輸出預視，都與資料結構有關。Application Framework 絕對不可能知道它的使用者將如何規劃資料格式，所以它提供的只是一個空殼， 和一些管理資料的輔助工具 (諸如陣列、串列)。你，身為一個 Application Framework 的用戶，必須因應實際需要之資料結構，設計出關鍵性的處理函式， 例如檔案存取動作 (在物件導向領域中稱為 Serialization，也就是 MFC 的 Serialize 函式)、顯示幕的輸出動作 (在 MFC 中稱為 OnDraw 函式)。這些位居 關鍵地位並且與應用程式之資料格式息息相關的函式，需要你自己設計。</p>
+<p class="calibre2">關於應用程式特定之資料型態, 我必須對上面的說明有所補充。上面提到的資料 儲存與顯示、印表機輸出以及輸出預視, 都與資料結構有關。Application Framework 絕對不可能知道它的使用者將如何規劃資料格式, 所以它提供的只是一個空殼,  和一些管理資料的輔助工具 (諸如陣列、串列)。你, 身為一個 Application Framework 的用戶, 必須因應實際需要之資料結構, 設計出關鍵性的處理函式,  例如檔案存取動作 (在物件導向領域中稱為 Serialization, 也就是 MFC 的 Serialize 函式)、顯示幕的輸出動作 (在 MFC 中稱為 OnDraw 函式)。這些位居 關鍵地位並且與應用程式之資料格式息息相關的函式, 需要你自己設計。</p>
 
-<p class="calibre2">如果關鍵性的動作都靠我們親手完成的話，Application Framework 除了 對 UI 介面有些貢獻，又帶來什麼其他價值呢 ? 它的價值在於下面一個性質。</p>
+<p class="calibre2">如果關鍵性的動作都靠我們親手完成的話, Application Framework 除了 對 UI 介面有些貢獻, 又帶來什麼其他價值呢 ? 它的價值在於下面一個性質。</p>
 
-<p class="calibre2">3) 機能彼此之間有強大的凝聚力 - 你不妨把 Application Framework 視為一種工具， 可以快速製造出一部汽車的華麗外殼 (目前全世界最流行的外殼)，以及汽車內部 的油路電路，只缺最重要的引擎部份。依車主的喜好，植入引擎後，這部汽車就能 上路上工了。在這裡我要強調的是「油路電路」，當你使用 Application Framework 提供的各個程式機能 (軟體元件)，它們之間有強大的凝聚力，關係密切。舉個例子， 你在 [File Open] 對話盒中 (這是 Application Framework 提供的) 選擇一個 檔名，檔名會自動包裝，開啟一個 Archive 檔案，再把 handle 交給那個負責磁碟讀寫動作的函式 (在 MFC 名為 Serialize)。 所以你 (應用軟體設計者) 不必再管瑣屑的雜事，只要專心於最關鍵的磁碟讀寫動作 即可。不必在取經的大道上，常常迷失於路旁幽徑。</p>
+<p class="calibre2">3) 機能彼此之間有強大的凝聚力 - 你不妨把 Application Framework 視為一種工具,  可以快速製造出一部汽車的華麗外殼 (目前全世界最流行的外殼), 以及汽車內部 的油路電路, 只缺最重要的引擎部份。依車主的喜好, 植入引擎後, 這部汽車就能 上路上工了。在這裡我要強調的是「油路電路」, 當你使用 Application Framework 提供的各個程式機能 (軟體元件), 它們之間有強大的凝聚力, 關係密切。舉個例子,  你在 [File Open] 對話盒中 (這是 Application Framework 提供的) 選擇一個 檔名, 檔名會自動包裝, 開啟一個 Archive 檔案, 再把 handle 交給那個負責磁碟讀寫動作的函式 (在 MFC 名為 Serialize)。 所以你 (應用軟體設計者) 不必再管瑣屑的雜事, 只要專心於最關鍵的磁碟讀寫動作 即可。不必在取經的大道上, 常常迷失於路旁幽徑。</p>
 
-<p class="calibre2">資料的本體我們稱為 Document，資料的外顯我們稱為 View。再舉一個 Document-View 之間關係密切的例子 : 你可以為一份資料產生許多觀察視窗 (許多 View)，這些子視窗 的管理已內含在 MDI 介面之中，我們什麼也不必做；如果你在某一個 View 視窗中修改 了資料內容，只要讓 Document 發出命令，所有的 View 視窗都同步更新。</p>
+<p class="calibre2">資料的本體我們稱為 Document, 資料的外顯我們稱為 View。再舉一個 Document-View 之間關係密切的例子 : 你可以為一份資料產生許多觀察視窗 (許多 View), 這些子視窗 的管理已內含在 MDI 介面之中, 我們什麼也不必做；如果你在某一個 View 視窗中修改 了資料內容, 只要讓 Document 發出命令, 所有的 View 視窗都同步更新。</p>
 
-<p class="calibre2">一般的類別庫 (Class Library) 和 Application Framework 有什麼差別 ? 關鍵就在於上述的第三項特質。由於要用就得用一整組類別，所以你得乖乖遵循特定的程式風格(程式寫法)。對於藝術家們，這是難以忍受的事；身為一個工程師的我，想到的卻是一句老話 :「沒有規矩，無以成就方圓」。只要能夠提升我的生產力，又有長遠的支援，我很樂意接受這種沒有痛苦的束縛。</p>
+<p class="calibre2">一般的類別庫 (Class Library) 和 Application Framework 有什麼差別 ? 關鍵就在於上述的第三項特質。由於要用就得用一整組類別, 所以你得乖乖遵循特定的程式風格(程式寫法)。對於藝術家們, 這是難以忍受的事；身為一個工程師的我, 想到的卻是一句老話 :「沒有規矩, 無以成就方圓」。只要能夠提升我的生產力, 又有長遠的支援, 我很樂意接受這種沒有痛苦的束縛。</p>
 
 <p class="calibre2">■ MFC 與 OWL </p>
 
 <p class="calibre2">Application Framework 以什麼型態呈現出來 ? 它又該如何使用呢 ?</p>
 
-<p class="calibre2">物件導向產品，當然是以骨子裡已有物件導向精神的 C++ 語言來完成最適當。Application Framework 就是以 C++ 類別庫 (Class Library) 的形態呈現出來。只要你充份了解 C++ 語言中的繼承性質，以及虛擬函式的精義，就能夠把 Application Framework 運用得很好。Application Framework 設計者把那些最關鍵性的、最與應用程式特殊格式息息相關的動作通通設計為虛擬函式，等著你改寫 (override) 它。</p>
+<p class="calibre2">物件導向產品, 當然是以骨子裡已有物件導向精神的 C++ 語言來完成最適當。Application Framework 就是以 C++ 類別庫 (Class Library) 的形態呈現出來。只要你充份了解 C++ 語言中的繼承性質, 以及虛擬函式的精義, 就能夠把 Application Framework 運用得很好。Application Framework 設計者把那些最關鍵性的、最與應用程式特殊格式息息相關的動作通通設計為虛擬函式, 等著你改寫 (override) 它。</p>
 
-<p class="calibre2">PC 環境中出現兩套成功的 Application Framework 產品，一是 Microsoft 公司的MFC (Microsoft Foundation Classes)，一是 Borland 公司的 OWL (Object Windows Library)。這兩套產品都有上述的 Document-View 架構，類別的劃分大致上也相似。二者技術各有所長，但 MFC 佔著東家是 Windows 開創者之便，在 OLE 及 ODBC 等方面的類別支援上，動作比較迅速。另外，以加盟店 (註) 的數目來看，MFC 的聲勢也浩大些。(註: Microsoft、Symantec、Metaware、Watcom 都採用 MFC 做為其開發環境中的 application framework)。</p>
+<p class="calibre2">PC 環境中出現兩套成功的 Application Framework 產品, 一是 Microsoft 公司的MFC (Microsoft Foundation Classes), 一是 Borland 公司的 OWL (Object Windows Library)。這兩套產品都有上述的 Document-View 架構, 類別的劃分大致上也相似。二者技術各有所長, 但 MFC 佔著東家是 Windows 開創者之便, 在 OLE 及 ODBC 等方面的類別支援上, 動作比較迅速。另外, 以加盟店 (註) 的數目來看, MFC 的聲勢也浩大些。(註: Microsoft、Symantec、Metaware、Watcom 都採用 MFC 做為其開發環境中的 application framework)。</p>
 
-<p class="calibre2">除了 Application Framework 本身，它搭配的整合開發工具也是我之所以認為傳統SDK 程式員太過辛苦的原因。MFC 搭配 Visual C++ 的各個 Wizards，OWL 則搭配Borland C/C++ 的各個 Experts。這些開發工具為我們自動產出骨幹程式碼，維護類別與虛擬函式，自動幫我們加上訊息處理常式的空殼、函式原型、訊息映射表格的項目...，總之，為我們做掉一切瑣事，讓程式員在關鍵的虛擬函式身上專心下功夫。</p>
+<p class="calibre2">除了 Application Framework 本身, 它搭配的整合開發工具也是我之所以認為傳統SDK 程式員太過辛苦的原因。MFC 搭配 Visual C++ 的各個 Wizards, OWL 則搭配Borland C/C++ 的各個 Experts。這些開發工具為我們自動產出骨幹程式碼, 維護類別與虛擬函式, 自動幫我們加上訊息處理常式的空殼、函式原型、訊息映射表格的項目..., 總之, 為我們做掉一切瑣事, 讓程式員在關鍵的虛擬函式身上專心下功夫。</p>
 
-<p class="calibre2">不管你喜歡哪一個產品，我都要說，你是睿智的。選擇 Application Framework 就是一種睿智的表現，因為它是組合式軟體機能最好的槓桿支點。</p>
+<p class="calibre2">不管你喜歡哪一個產品, 我都要說, 你是睿智的。選擇 Application Framework 就是一種睿智的表現, 因為它是組合式軟體機能最好的槓桿支點。</p>
 
 <p class="calibre2">■ 漸悟 C++ </p>
 
-<p class="calibre2">喊了很久，C++ 卻變成程式設計領域裡的一個圖騰 --- 一種被崇拜的符號和標幟，用來區分氏族血統。軟體界，至少咱們國內的軟體界，有著 OOP (註) 這麼個小小團體，身上流著貴族的血液。(註 : OOP 是 Object Oriented Programming 的縮寫，發聲類似"巫婆")。</p>
+<p class="calibre2">喊了很久, C++ 卻變成程式設計領域裡的一個圖騰 --- 一種被崇拜的符號和標幟, 用來區分氏族血統。軟體界, 至少咱們國內的軟體界, 有著 OOP (註) 這麼個小小團體, 身上流著貴族的血液。(註 : OOP 是 Object Oriented Programming 的縮寫, 發聲類似"巫婆")。</p>
 
-<p class="calibre2">「貴族」表示人數稀少，也表示 C++ 難以親近 (根據我所接觸的軟體界朋友以及研討會學員的反應)。稀少和難以親近不是 Bjarne Stroustrup (C++ 原創者) 的目的。常聽 OO 專家說，人類的思維本來就是物件導向的，並且舉一大堆貓狗蝸牛猴子動物園做為例子，但是根據平庸如我的經驗，我想人類命令電腦解決問題的時候，思路恐怕還是「一條鞭」、循序性的。既然知道電腦沒有人類的智慧，既然知道電腦是一個指令一個指令地執行，我就很難一下子被說服，一段碼和另一段碼會「自動」產生什麼關聯。物件導向式的軟體 UI 介面的確是直覺而非常容易上手的，物件導向式的軟體技術卻需要教導、學習、揣摩。揣摩就表示要慢慢地磨細細地嚥，所以平庸如我者，接觸了 C++ 數年之後，才慢慢體會了一些「物件導向」的精神。</p>
+<p class="calibre2">「貴族」表示人數稀少, 也表示 C++ 難以親近 (根據我所接觸的軟體界朋友以及研討會學員的反應)。稀少和難以親近不是 Bjarne Stroustrup (C++ 原創者) 的目的。常聽 OO 專家說, 人類的思維本來就是物件導向的, 並且舉一大堆貓狗蝸牛猴子動物園做為例子, 但是根據平庸如我的經驗, 我想人類命令電腦解決問題的時候, 思路恐怕還是「一條鞭」、循序性的。既然知道電腦沒有人類的智慧, 既然知道電腦是一個指令一個指令地執行, 我就很難一下子被說服, 一段碼和另一段碼會「自動」產生什麼關聯。物件導向式的軟體 UI 介面的確是直覺而非常容易上手的, 物件導向式的軟體技術卻需要教導、學習、揣摩。揣摩就表示要慢慢地磨細細地嚥, 所以平庸如我者, 接觸了 C++ 數年之後, 才慢慢體會了一些「物件導向」的精神。</p>
 
-<p class="calibre2">C++ 是一種扭轉程式員思維模式的語言。一個人思維模式的扭轉，不可能那麼輕而易舉。傳統循序性語言用得愈多愈久的人，快速接受 C++ 的機率愈低。沒學過 C 而直接學 C++ 者，我只遇過一個 (C++ 中還不是有 C ?!)。至於說 C++ 是他這一生第一個程式語言的人，我還沒有碰過。我講這麼多是要告訴你 : 覺得 C++ 不容易體會的人，你絕對不會是第一個，而且你也絕不會孤單 (至少我與你作伴)。就在今天早上，一位資深 (8 年) 軟體工程師還和我聊到 :『C++ 真的那麼好那麼重要嘛 ? 真的那麼自然嗎 ? 怎麼我 ...』。</p>
+<p class="calibre2">C++ 是一種扭轉程式員思維模式的語言。一個人思維模式的扭轉, 不可能那麼輕而易舉。傳統循序性語言用得愈多愈久的人, 快速接受 C++ 的機率愈低。沒學過 C 而直接學 C++ 者, 我只遇過一個 (C++ 中還不是有 C ?!)。至於說 C++ 是他這一生第一個程式語言的人, 我還沒有碰過。我講這麼多是要告訴你 : 覺得 C++ 不容易體會的人, 你絕對不會是第一個, 而且你也絕不會孤單 (至少我與你作伴)。就在今天早上, 一位資深 (8 年) 軟體工程師還和我聊到 :『C++ 真的那麼好那麼重要嘛 ? 真的那麼自然嗎 ? 怎麼我 ...』。</p>
 
-<p class="calibre2">大纛愈舉愈高的時候，即使看不清楚上面寫些什麼，大多數人也會跟著搖旗吶喊。我們應該有自己的見解。我並不討厭 C++ 和 OO，甚而愈來愈喜歡它，但當你訴說 C++ 多好多好的時候，應該要從內心裡說，從自己的體會與經驗來說，不是拾別人的牙慧來說。C++ 很重要，至少，不會 C++ 你就不能使用 Application Framework --- 在我看來這夠嚴重的了。Application Framework 可能會成為學習 C++ 的重大誘因，至少，這個誘因在我身上成立。</p>
+<p class="calibre2">大纛愈舉愈高的時候, 即使看不清楚上面寫些什麼, 大多數人也會跟著搖旗吶喊。我們應該有自己的見解。我並不討厭 C++ 和 OO, 甚而愈來愈喜歡它, 但當你訴說 C++ 多好多好的時候, 應該要從內心裡說, 從自己的體會與經驗來說, 不是拾別人的牙慧來說。C++ 很重要, 至少, 不會 C++ 你就不能使用 Application Framework --- 在我看來這夠嚴重的了。Application Framework 可能會成為學習 C++ 的重大誘因, 至少, 這個誘因在我身上成立。</p>
 
 <p class="calibre2">■ 效率與移植性 </p>
 
-<p class="calibre2">Application Framework 應用程式當然比單純的 Windows API 程式效率低，因為它多了一些包裝。有些動作包裝了好幾層，有些動作包裝比較少。無論如何包裝，都會扯效率的後腿。你該評估的，是這個「慢」有沒有慢在節骨眼兒上。</p>
+<p class="calibre2">Application Framework 應用程式當然比單純的 Windows API 程式效率低, 因為它多了一些包裝。有些動作包裝了好幾層, 有些動作包裝比較少。無論如何包裝, 都會扯效率的後腿。你該評估的, 是這個「慢」有沒有慢在節骨眼兒上。</p>
 
-<p class="calibre2">對於效率，我個人比較不那麼在意。硬體的進步很快，讓 CPU 振盪頻率為我們解決效率的苦惱，對許多應用領域而言是足夠的。我比較在乎程式的維護、開發效率、以及跨平台性。Application Framework 既然有包裝，就可以在包裝之下更換不同的 API。MFC 對 16 位元應用程式和 32 位元應用程式的移植性做的不錯 (這是我實地使用 Visual C++ v1.5 和v2.0 之後的心得)，OWL 則在跨平台方面有比較遠大的志向 (宣稱要橫跨 OS/2、Windows、Mac、UNIX)。</p>
+<p class="calibre2">對於效率, 我個人比較不那麼在意。硬體的進步很快, 讓 CPU 振盪頻率為我們解決效率的苦惱, 對許多應用領域而言是足夠的。我比較在乎程式的維護、開發效率、以及跨平台性。Application Framework 既然有包裝, 就可以在包裝之下更換不同的 API。MFC 對 16 位元應用程式和 32 位元應用程式的移植性做的不錯 (這是我實地使用 Visual C++ v1.5 和v2.0 之後的心得), OWL 則在跨平台方面有比較遠大的志向 (宣稱要橫跨 OS/2、Windows、Mac、UNIX)。</p>
 
 <p class="calibre2">■ 良心建議 </p>
 
-<p class="calibre2">趕快學習 Application Framework 並且實際應用它，這是我的良心建議。如果別人的手上都是針刺飛彈，拿著 57 步槍的你如何抗衡 ? 真的要執白梃以撻堅甲利兵嗎 ? 像 OLE 這種還在拼命往前衝的新規格與新技術，如果你要在程式中含入它，非得使用 Application Framework 不可。使用它，才跟得上最新介面，最新技術。一位朋友很煩惱手上十萬行的程式，不知如何移植到 MFC。我想他算是好的，至少他已經企圖打開機會的大門。</p>
+<p class="calibre2">趕快學習 Application Framework 並且實際應用它, 這是我的良心建議。如果別人的手上都是針刺飛彈, 拿著 57 步槍的你如何抗衡 ? 真的要執白梃以撻堅甲利兵嗎 ? 像 OLE 這種還在拼命往前衝的新規格與新技術, 如果你要在程式中含入它, 非得使用 Application Framework 不可。使用它, 才跟得上最新介面, 最新技術。一位朋友很煩惱手上十萬行的程式, 不知如何移植到 MFC。我想他算是好的, 至少他已經企圖打開機會的大門。</p>
 
-<p class="calibre2">Andrew Schulman 曾在 Dr Dobb's Journal 上說 :『Microsoft 的應用軟體愈來愈像作業系統的一部份』。你可以從很多角度去想這句話。這話嘲諷 Microsoft 藉著作業系統的優勢哄抬其應用軟體。從軟體開發的角度，我聯想到的是，Microsoft 把它的最佳軟體 (Excel、Word) 上的各種最好最新的使用者介面，都包裝在MFC 類別中給你使用。如果能因此輕易做出和這些世界級軟體同等級的 UI 介面，你心不心動 ?<br class="calibre5"/></p>
+<p class="calibre2">Andrew Schulman 曾在 Dr Dobb's Journal 上說 :『Microsoft 的應用軟體愈來愈像作業系統的一部份』。你可以從很多角度去想這句話。這話嘲諷 Microsoft 藉著作業系統的優勢哄抬其應用軟體。從軟體開發的角度, 我聯想到的是, Microsoft 把它的最佳軟體 (Excel、Word) 上的各種最好最新的使用者介面, 都包裝在MFC 類別中給你使用。如果能因此輕易做出和這些世界級軟體同等級的 UI 介面, 你心不心動 ?<br class="calibre5"/></p>
 </body></html>
