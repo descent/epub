@@ -43,7 +43,7 @@
 
 <p class="calibre2">Put一個Key,Value對到Hash表中：</p>
 
-<pre style="white-space: pre-wrap;">
+<pre style="white-space: pre-wrap;  font-family: serif;">
 <b> 1</b> public V put(K key, V value)
 <b> 2</b> {
 <b> 3</b>     ......
@@ -70,7 +70,7 @@
 <p class="calibre2">檢查容量是否超標</p>
 
 
-<pre style="white-space: pre-wrap;">
+<pre style="white-space: pre-wrap;  font-family: serif;">
 <b> 1</b> void addEntry(int hash, K key, V value, int bucketIndex)
 <b> 2</b> {
 <b> 3</b>     Entry&lt;K,V&gt; e = table[bucketIndex];
@@ -83,7 +83,7 @@
 
 <p class="calibre2">新建一個更大尺寸的hash表，然後把數據從老的Hash表中遷移到新的Hash表中。</p>
 
-<pre style="white-space: pre-wrap;">
+<pre style="white-space: pre-wrap;  font-family: serif;">
 <b>11</b> void resize(int newCapacity)
 <b>12</b> {
 <b>13</b>     Entry[] oldTable = table;
@@ -100,7 +100,7 @@
 
 <p class="calibre2">遷移的源代碼，注意高亮處：</p>
 
-<pre style="white-space: pre-wrap;">
+<pre style="white-space: pre-wrap;  font-family: serif;">
 <b>24</b> void transfer(Entry[] newTable)
 <b>25</b> {
 <b>26</b>   Entry[] src = table;
@@ -143,7 +143,7 @@
 
 <p class="calibre2">我們再回頭看一下我們的 transfer代碼中的這個細節：</p>
 
-<pre style="white-space: pre-wrap;">
+<pre style="white-space: pre-wrap;  font-family: serif;">
 <b>1</b> do {
 <b>2</b>     Entry&lt;K,V&gt; next = e.next; // &lt;--假设线程一执行到这里就被调度挂起了
 <b>3</b>     int i = indexFor(e.hash, newCapacity);
