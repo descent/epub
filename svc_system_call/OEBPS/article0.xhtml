@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+<title>http://www.grabmybooks.com</title>
+<link rel="stylesheet" href="css/book.css" type="text/css"/>
+</head>
+<body>
+<h2>An effective implementation of the ARM Cortex-M3 SVCall interrupt</h2>
+<p><b> Effective Use of ARM Cortex-M3 SVCall </b></p>
+
+<p>The ARM Cortex-M3 service call (SVCall) can be a tricky feature to integrate in to your system software. It is useful for two things:</p>
+
+<p>Allowing a piece of code to execute without interruption <br/>Jumping to privileged mode from unprivileged mode </p>
+
+<p><b>SVCall Introduction</b></p>
+
+<p>The SVCall (contraction of service call) is a software triggered interrupt. It is useful for several reasons. First, depending on interrupt priorities, the handler can be uninterruptible by one interrupt but interruptible by another. For example, if you have a piece of code that should not be interrupted by the timer but can be interrupted by the UART, you can set the interrupt priorities on the ARM Cortex-M3 in such a fashion to have the SVCall interrupt priority be higher than the timer but lower than the UART. Second, if you are using the MPU or privileged mode on the ARM Cortex-M3, the SVCall provides the code executing in unprivileged mode a way to access privileged resources.</p>
+
+<p>The <i>SVC</i> instruction invokes the service call interrupt. The bottom 8-bits of the SVC instruction can be set to any value and then interpreted by the interrupt handler. This essentially allows the user a way to execute 256 different types of service calls. Alternatively, parameters can be placed on the stack and then extracted by the interrupt handler to provide unlimited service calls with up to three parameters. The sample code below shows how to do this using two parameters.</p>
+
+<p><b>SVCall Sample Code</b></p>
+
+<p>To effectively use the service call interrupt, we pass two arguments to a function which immediately invokes the <i>SVC</i> instruction. The arguments are a pointer to a function to execute in privileged mode and a pointer to a data structure that the function can use to read/write data in the caller&#39;s context. The following code shows the prototype and body of the function.</p>
+
+<p>//we need to decrease the optimization so the the compiler<br/>//does not ignore func and args<br/>void service_call(void (*func)(void*), void* args) __attribute__((optimize(&#34;1&#34;));<br/>void service_call(void (*func)(void*), void* args){<br/>//by convention func is in r0 and args is in r1<br/>asm volatile(&#34;svc 0&#34;);<br/>}</p>
+
+<p>When <i>SVC</i> is executed, the <i>NVIC</i> immediately stacks various registers including <i>r0</i> and <i>r1</i> and then executes the interrupt handler. The interrupt handler then needs to grab the values of <i>r0</i> and <i>r1</i> from the stack. The value in r0 is the function pointer while r1 is a pointer to some data in the caller&#39;s context. The <i>r0</i> value is type casted as a function and executed with a single argument, the value of <i>r1</i> . </p>
+
+<p>typedef void (*svcall_t)(void*);<br/>void svcall_handler(void){<br/>register uint32_t * frame;<br/>register svcall_t call;<br/>register void * args;<br/>asm volatile (&#34;MRS %0, psp\n\t&#34; : &#34;=r&#34; (frame) ); //assumes PSP in use when service_call() invoked<br/>call = (svcall_t)frame[0];<br/>args = (void*)(frame[1]);<br/>call(args);<br/>}</p>
+
+<p>Finally, to make a privileged call:</p>
+
+<p>void my_priv_func(void * data){<br/>int * my_int;<br/>my_int = data;<br/>if (*my_int == 10 ){<br/>*my_int = 0;<br/>}<br/>}<br/>int main(void){<br/>int var;<br/>var = 10;<br/>service_call(my_priv_func, &#38;var); //executes my_priv_func() in interrupt mode<br/>if( var == 0 ){<br/>//if this is true, that means everything worked<br/>}<br/>return 0;<br/>}</p>
+
+<p><b>Conclusion</b></p>
+
+<p>This very simple code sample provides a powerful and effective mechanism for using the ARM Cortex-CM3 SVCall (service call) interrupt. It allows an arbitrary function to be executed uninterrupted in privileged mode. The code is both re-entrant and thread-safe (as long as the context-switch can&#39;t interrupt the service call handler).</p>
+</body>
+</html>
