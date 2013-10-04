@@ -24,15 +24,57 @@
 
 <p>To effectively use the service call interrupt, we pass two arguments to a function which immediately invokes the <i>SVC</i> instruction. The arguments are a pointer to a function to execute in privileged mode and a pointer to a data structure that the function can use to read/write data in the caller&#39;s context. The following code shows the prototype and body of the function.</p>
 
-<p>//we need to decrease the optimization so the the compiler<br/>//does not ignore func and args<br/>void service_call(void (*func)(void*), void* args) __attribute__((optimize(&#34;1&#34;));<br/>void service_call(void (*func)(void*), void* args){<br/>//by convention func is in r0 and args is in r1<br/>asm volatile(&#34;svc 0&#34;);<br/>}</p>
+
+<pre style="white-space: pre-wrap;">
+<b> 1</b> //we need to decrease the optimization so the the compiler
+<b> 2</b> //does not ignore func and args
+<b> 3</b> void service_call(void (*func)(void*), void* args) __attribute__((optimize(&quot;1&quot;));
+<b> 4</b>  
+<b> 5</b> void service_call(void (*func)(void*), void* args){
+<b> 6</b>      //by convention func is in r0 and args is in r1
+<b> 7</b>      asm volatile(&quot;svc 0&quot;);
+<b> 8</b> }
+</pre>
 
 <p>When <i>SVC</i> is executed, the <i>NVIC</i> immediately stacks various registers including <i>r0</i> and <i>r1</i> and then executes the interrupt handler. The interrupt handler then needs to grab the values of <i>r0</i> and <i>r1</i> from the stack. The value in r0 is the function pointer while r1 is a pointer to some data in the caller&#39;s context. The <i>r0</i> value is type casted as a function and executed with a single argument, the value of <i>r1</i> . </p>
 
-<p>typedef void (*svcall_t)(void*);<br/>void svcall_handler(void){<br/>register uint32_t * frame;<br/>register svcall_t call;<br/>register void * args;<br/>asm volatile (&#34;MRS %0, psp\n\t&#34; : &#34;=r&#34; (frame) ); //assumes PSP in use when service_call() invoked<br/>call = (svcall_t)frame[0];<br/>args = (void*)(frame[1]);<br/>call(args);<br/>}</p>
+<pre style="white-space: pre-wrap;">
+<b>10</b> typedef void (*svcall_t)(void*);
+<b>11</b>  
+<b>12</b> void svcall_handler(void){
+<b>13</b>   register uint32_t * frame;
+<b>14</b>   register svcall_t call;
+<b>15</b>   register void * args;
+<b>16</b>   asm volatile (&quot;MRS %0, psp\n\t&quot; : &quot;=r&quot; (frame) ); //assumes PSP in use when service_call() invoked
+<b>17</b>   call = (svcall_t)frame[0];
+<b>18</b>   args = (void*)(frame[1]);
+<b>19</b>   call(args);
+<b>20</b> }
+</pre>
+
 
 <p>Finally, to make a privileged call:</p>
 
-<p>void my_priv_func(void * data){<br/>int * my_int;<br/>my_int = data;<br/>if (*my_int == 10 ){<br/>*my_int = 0;<br/>}<br/>}<br/>int main(void){<br/>int var;<br/>var = 10;<br/>service_call(my_priv_func, &#38;var); //executes my_priv_func() in interrupt mode<br/>if( var == 0 ){<br/>//if this is true, that means everything worked<br/>}<br/>return 0;<br/>}</p>
+<pre style="white-space: pre-wrap;">
+<b>23</b> void my_priv_func(void * data){
+<b>24</b>     int * my_int;
+<b>25</b>     my_int = data;
+<b>26</b>     if (*my_int == 10 ){
+<b>27</b>         *my_int = 0;
+<b>28</b>     }
+<b>29</b> }
+<b>30</b>  
+<b>31</b> int main(void){
+<b>32</b>     int var;
+<b>33</b>     var = 10;
+<b>34</b>     service_call(my_priv_func, &amp;var); //executes my_priv_func() in interrupt mode
+<b>35</b>     if( var == 0 ){
+<b>36</b>         //if this is true, that means everything worked
+<b>37</b>     }
+<b>38</b>     return 0;
+<b>39</b> }
+</pre>
+
 
 <p><b>Conclusion</b></p>
 
