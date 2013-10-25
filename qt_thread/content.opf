@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>http://www.grabmybooks.com</dc:publisher>
+    <meta name="calibre:title_sort" content="Threads in Qt"/>
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="__CA__.py" opf:role="aut">__CA__.py</dc:creator>
+    <meta name="calibre:timestamp" content="2013-10-22T07:24:28+00:00"/>
+    <dc:title>Threads in Qt</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>2013-10-22T07:24:28+00:00</dc:date>
+    <dc:contributor opf:role="bkp">calibre (0.8.38) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier opf:scheme="URI">http|//www.grabmybooks.com/1382426355632_504795</dc:identifier>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">69be42e4-eae4-4907-8a77-e5d853e85c63</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="OEBPS/article0.xhtml" id="article0" media-type="application/xhtml+xml"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="article0"/>
+  </spine>
+  <guide>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+  </guide>
+</package>

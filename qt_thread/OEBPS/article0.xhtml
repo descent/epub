@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">Threads in Qt</h2>
+<h2 class="calibre1">http://legnaleurc.blogspot.tw/2011/10/threads-in-qt.html</h2>
+
+<h2>
+<a href="http://developer.qt.nokia.com/wiki/Threads_Events_QObjects" target="_blank" class="calibre4">Threads, Events and QObjects | Qt Wiki</a> 
+</h2>
+
+<p>
+寫出好用的泛型程式碼需要天份, 寫出具有異常安全性的程式碼需要細心, 而要寫出完全多緒安全的程式碼, 你需要的是新鮮的肝. 
+</p>
+
+<p>
+基本上這篇文章最大的重點就是, 如無必要不需繼承 QThread, 因為如果你這麼做, 事情通常不會像你想的那樣運作.
+</p>
+
+<p>
+QThread 的設計意圖是作為一個管理 thread 的物件, 它並不代表 thread 本身, 所以你應該做的是建立一個 QThread 物件, 然後使用 QObject::moveToThread 把你需要在該 thread 上執行的 QObject 移到 QThread. QThread 一旦執行完畢就無法再次啟動, 如果還要使用 thread 必須要建立另一個 QThread.
+</p>
+
+<p>
+我整理一下 QObject 和 thread 之間的關係: 
+</p>
+
+
+<ol>
+<li>每個 QObject 都屬於某條 thread</li>
+<li>QObject 的 thread 歸屬取決於它被建立時在哪條 thread 上</li>
+<li>如果 QObject 有 parent, 則 parent 必須要和自己處在同一條 thread</li>
+<li>QObject::moveToThread 只能在該 QObject 所屬的 thread 上呼叫</li>
+</ol>
+
+<p>
+QThread 或 QRunnable 之所以特別容易被誤用的原因就在很多使用者沒有正確理解以上特點.
+</p>
+
+<p>
+QThread::QThread (建構子)和 QThread::run 被執行時, 所處的 thread 是不同的, 所以在 QThread::run 裡所生成任何以 this 為 parent 的 QObject 都是誤用, 因為這違反了第三條.
+</p>
+
+<p>
+第三條和第四條存在的理由基本上是為了多緒安全, 因為 QObject 有義務回收所有的 child QObject, 若是 parent 和 children 處在不同的 thread, 就無法安全的回收. 修改位於其他 thread 的 QObject 之 thread 歸屬當然也是很危險的.
+</p>
+
+<p>
+所以原則上，在任何成員函式(包含 constructor, destructor)裡, 只要 QThread::currentThread() 和 this->thread() 不一樣, 你的心裡就該響起最大的警鐘, 因為你正在操作另一條 thread 上的物件且無任何保護!
+</p>
+
+<p>
+這個問題如何對 QObject 的 parent/children 造成影響? 以下程式展示了一個典型的錯誤運用: 
+</p>
+
+<pre style="white-space: pre-wrap;">
+<b> 1</b> class Downloader : public QThread 
+<b> 2</b> {
+<b> 3</b>   public:
+<b> 4</b>     Downloader( QObject * parent ) : QThread( parent ), manager_( new QNetworkAccessManager( this ) )
+<b> 5</b>     virtual void run() 
+<b> 6</b>     {
+<b> 7</b>       // ...
+<b> 8</b>       QNetworkReply * reply = this-&gt;manager_-&gt;get( /* ... */ );
+<b> 9</b>       // ...
+<b>10</b>     }
+<b>11</b>   private:
+<b>12</b>     QNetworkAccessManager * manager_;
+<b>13</b> };
+</pre>
+
+<p class="calibre2">以上的程式碼片段, Downloader::Downloader 和 Downloader::run 所處的 thread 鐵定是不同的, 因為 QThread 物件一定是先在某條 thread 上被建立出來, 呼叫 QThread::start 時建立一條新 thread, 在該 thread 上執行 run 的內容.<br class="calibre5"/>而 Downloader 的所有 QObject children 建立時都在原本的 thread 上, 在 Downloader::run 裡自然也不能用了. 運氣好的話你會看到執行期 Qt 出現警告, 運氣不好的話你什麼都看不到, 然後兀自地納悶為什麼這段程式碼不能運作.<br class="calibre5"/>要怎麼解決這些問題, 其實很棘手, 因為 thread 在編譯期是很抽象的, 加上不同的問題會有不同的解法. 依經驗我只能列出一些準則: <b class="calibre3">在 QThread::run 或 QRunnable::run 內避免使用那些是 QObject 的成員變數</b> .<br class="calibre5"/>如果你真的需要用到那些物件, 在 run 裡建立它們, 並在 run 裡銷毀它們.<br class="calibre5"/><b class="calibre3">善用 QObject::deleteLater()</b> .<br class="calibre5"/>當你需要回收一個 QObject 時, 使用 deleteLater 基本上比 operator delete 安全, 因為 </p>
+
+<ol>
+<li>它可在不同的 thread 呼叫, Qt 會把這個請求置入該 QObject 所屬的 thread 的 event queue, 並在適當時機呼叫 operator delete</li>
+<li>它是個 slot, 你可以輕鬆地利用 signal 觸發回收動作</li>
+</ol>
+
+<p class="calibre2"><b class="calibre3">謹慎地使用 QObject::moveToThread()</b> .<br class="calibre5"/>很多 QObject 在呼叫成員函式時會在內部建立其他的 QObject. 在 thread 間移動時如不小心很容易在回收物件時 crash, 因為物件被要求在己經不存在的 thread 上執行回收.<br class="calibre5"/><b class="calibre3">善用 QMetaObject 式的成員函式呼叫</b> .<br class="calibre5"/>QMetaObject 系統就是 signal/slot 的骨幹, QObject::connect 和 QMetaObject::invoke 的最後一個參數可以用來控制呼叫方式. 其呼叫方式可分為兩種: </p>
+
+<ol>
+<li>視為直接叫用, 和一般 function call 相同. (Qt::DirectConnection)</li>
+<li>將此呼叫置入 event queue, 會在適當的 event loop 裡執行呼叫. (Qt::QueuedConnection)</li>
+</ol>
+
+<p class="calibre2">預設參數是 Qt::AutoConnection, 即在呼叫時判斷 QThread::currentThread() 和被呼叫的 QObject::thread() 是否相同, 是則用第一種方式, 否則用第二種方式.<br class="calibre5"/>當你無論如何一定要操作另一條 thread 的 QObject 時, 使用 signal/slot 或是 QMetaObject::invokeMethod 吧! Qt 保證這是安全的. 你可以在宣告成員函式時加上 Q_INVOKABLE 讓它可以被 QMetaObject 使用.</p>
+
+<p class="calibre2">socket-&gt;write( msg ); // if this don't work, try fallowing<br class="calibre5"/>QMetaObject::invokeMethod( socket, "write", Q_ARG( const QString &amp;, msg ) );</p>
+
+<p class="calibre2">以上是我對 Qt thread system 的理解, 如有錯誤歡迎指正.</p>
+</body>
+</html>
