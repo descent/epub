@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>http://www.grabmybooks.com</dc:publisher>
+    <meta name="calibre:title_sort" content="一個「蠅量級」 C 語言協程庫 | 酷 殼"/>
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="我的上鋪叫路遙" opf:role="aut">我的上鋪叫路遙</dc:creator>
+    <meta name="calibre:timestamp" content="2014-03-01T00:37:26+00:00"/>
+    <dc:title>一個「蠅量級」 C 語言協程庫 | 酷 殼</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>0101-01-01T00:00:00+00:00</dc:date>
+    <dc:contributor opf:role="bkp">calibre (0.9.41) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier opf:scheme="URI">http|//www.grabmybooks.com/1393634136218_104024</dc:identifier>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">35af614a-6e99-432a-8c29-df0b77189946</dc:identifier>
+    <dc:identifier opf:scheme="calibre">35af614a-6e99-432a-8c29-df0b77189946</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="OEBPS/article0.xhtml" id="article0" media-type="application/xhtml+xml"/>
+    <item href="page_styles.css" id="page_css" media-type="text/css"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="article0"/>
+  </spine>
+  <guide>
+    <reference href="titlepage.xhtml" title="Cover" type="cover"/>
+  </guide>
+</package>
