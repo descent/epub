@@ -59,25 +59,21 @@
 
 <p class="calibre2">連續對它調用 10 次，它能分別返回 0 到 9。該怎樣實現呢？可以利用 goto 語句，如果我們在函數中加入一個狀態變量，就可以這樣實現：</p>
 
-
 <pre style="white-space: pre-wrap;">
-<b> 1</b> &lt;pre style=&quot;white-space: pre-wrap;&quot;&gt;
-<b> 2</b> &lt;b&gt; 1&lt;/b&gt; # producer coroutine
-<b> 3</b> &lt;b&gt; 2&lt;/b&gt; loop
-<b> 4</b> &lt;b&gt; 3&lt;/b&gt; while queue is not full
-<b> 5</b> &lt;b&gt; 4&lt;/b&gt;   create some new items
-<b> 6</b> &lt;b&gt; 5&lt;/b&gt;   add the items to queue
-<b> 7</b> &lt;b&gt; 6&lt;/b&gt; yield to consumer
-<b> 8</b> &lt;b&gt; 7&lt;/b&gt;  
-<b> 9</b> &lt;b&gt; 8&lt;/b&gt; # consumer coroutine
-<b>10</b> &lt;b&gt; 9&lt;/b&gt; loop
-<b>11</b> &lt;b&gt;10&lt;/b&gt; while queue is not empty
-<b>12</b> &lt;b&gt;11&lt;/b&gt;   remove some items from queue
-<b>13</b> &lt;b&gt;12&lt;/b&gt;   use the items
-<b>14</b> &lt;b&gt;13&lt;/b&gt; yield to producer
-<b>15</b> &lt;/pre&gt;
+<b> 1</b> int function(void) {
+<b> 2</b>   static int i, state = 0;
+<b> 3</b>   switch (state) {
+<b> 4</b>     case 0: goto LABEL0;
+<b> 5</b>     case 1: goto LABEL1;
+<b> 6</b>   }
+<b> 7</b>   LABEL0: /* start of function */
+<b> 8</b>   for (i = 0; i &lt; 10; i++) {
+<b> 9</b>     state = 1; /* so we will come back to LABEL1 */
+<b>10</b>     return i;
+<b>11</b>     LABEL1:; /* resume control straight after the return */
+<b>12</b>   }
+<b>13</b> }
 </pre>
-
 
 <p class="calibre2">這個方法是可行的。我們在所有需要 yield 的位置都加上標籤：起始位置加一個，還有所有 return 語句之後都加一個。每個標籤用數字編號，我們在狀態變量中保存這個編號，這樣就能在我們下次調用時告訴我們應該跳到哪個標籤上。每次返回前，更新狀態變量，指向到正確的標籤；不論調用多少次，針對狀態變量的 switch 語句都能找到我們要跳轉到的位置。</p>
 
@@ -140,11 +136,19 @@
 
 <p class="calibre2">想一想，一個函數如果包含這樣的小代碼塊：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 </td> <td class="calibre5">case STATE1: <br class="calibre6"/>/* perform some activity */ <br class="calibre6"/>if (condition) state = STATE2; else state = STATE3; <br class="calibre6"/></td> </tr> </table>
+<pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
+<b>1</b> case STATE1:
+<b>2</b> /* perform some activity */
+<b>3</b> if (condition) state = STATE2; else state = STATE3;
+</pre>
 
 <p class="calibre2">對於看代碼的人說，這和包含下面小代碼塊的函數沒有多大區別：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 </td> <td class="calibre5">LABEL1: <br class="calibre6"/>/* perform some activity */ <br class="calibre6"/>if (condition) goto LABEL2; else goto LABEL3; <br class="calibre6"/></td> </tr> </table>
+<pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
+<b>5</b> LABEL1:
+<b>6</b> /* perform some activity */
+<b>7</b> if (condition) goto LABEL2; else goto LABEL3;
+</pre>
 
 <p class="calibre2">是的，這兩個函數的結構在視覺上是一樣的，而對於函數中實現的算法，兩個函數都一樣不利於查看。因為你使用協程的宏而炒你魷魚的人，一樣會因為你寫的函數是由小塊的代碼和 goto 語句組成而吼著炒了你。只是這次他們沒有冤枉你，因為像那樣設計的函數會嚴重擾亂算法的結構。</p>
 
@@ -160,7 +164,13 @@
 
 <p class="calibre2">感謝 Simon Tatham 的淳淳教誨，接下來我們可以 hack 一下源碼了。先來看看實現 protothreads 的數據結構， 實際上它就是協程的<b class="calibre3">上下文結構體</b> ，用以保存狀態變量，相信你很快就明白為何它的「堆棧」只有 2 個字節：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 </td> <td class="calibre5">struct pt { <br class="calibre6"/>lc_t lc; <br class="calibre6"/>} <br class="calibre6"/></td> </tr> </table>
+<table border="1" class="calibre4">
+<tr class="row">
+<td class="calibre5">struct pt
+<br class="calibre6"/>{ 
+<br class="calibre6"/>lc_t lc; 
+<br class="calibre6"/>} 
+<br class="calibre6"/></td> </tr> </table>
 
 <p class="calibre2">裡面只有一個 short 類型的變量，實際上它是用來保存上一次出讓點的程序計數器。這也映證了協程比線程的靈活之處，就是協程可以是 stackless 的，如果需要實現的功能很單一，比如像生產者-消費者模型那樣用來做事件通知，那麼實際上協程需要保存的狀態變量僅僅是一個程序計數器即可。像 python generator 也是 stackless 的，當然實現一個迭代生成器可能還需要保留上一個迭代值，前面 C 的例子是用 static 變量保存，你也可以設置成員變量添加到上下文結構體裡面。如果你真的不確定用協程調度時需要保存多少狀態變量，那還是用 ucontext 好了，它的上下文提供了堆棧和信號，但是由用戶負責分配資源，詳細使用方法見聯機文檔。。</p>
 
@@ -174,15 +184,35 @@
 
 <p class="calibre2">但這種「原語」有個難以察覺的缺陷：<b class="calibre3">就是你無法在 LC_RESUME 和 LC_END （或者包含它們的組件）之間的代碼中使用 switch-case語句，因為這會引起外圍的 switch 跳轉錯誤！</b> 為此，protothreads 又實現了基於 GNU C 的調度「原語」。在 GNU C 下還有一種語法糖叫做標籤指針，就是在一個 label 前面加 &amp;&amp;（不是地址的地址，是 GNU 自定義的符號），可以用 void 指針類型保存，然後 goto 跳轉：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 </td> <td class="calibre5">typedef void * lc_t； <br class="calibre6"/>#define LC_INIT(s) s = NULL <br class="calibre6"/>#define LC_RESUME(s) \ <br class="calibre6"/>do { \ <br class="calibre6"/>if (s != NULL) { \ <br class="calibre6"/>goto *s; \ <br class="calibre6"/>} <br class="calibre6"/>} while (0) <br class="calibre6"/>#define LC_CONCAT2(s1, s2) s1##s2 <br class="calibre6"/>#define LC_CONCAT(s1, s2) LC_CONCAT2(s1, s2) <br class="calibre6"/>#define LC_SET(s) \ <br class="calibre6"/>do { \ <br class="calibre6"/>LC_CONCAT(LC_LABEL, __LINE__): \ <br class="calibre6"/>（s） = &amp;&amp;LC_CONCAT(LC_LABEL, __LINE__); \ <br class="calibre6"/>} while (0) <br class="calibre6"/></td> </tr> </table>
+<pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
+<b> 1</b> typedef void * lc_t；
+<b> 2</b> #define LC_INIT(s) s = NULL
+<b> 3</b> #define LC_RESUME(s) \
+<b> 4</b>   do { \
+<b> 5</b>     if (s != NULL) { \
+<b> 6</b>       goto *s; \
+<b> 7</b>     }
+<b> 8</b>   } while (0)
+<b> 9</b> #define LC_CONCAT2(s1, s2) s1##s2
+<b>10</b> #define LC_CONCAT(s1, s2) LC_CONCAT2(s1, s2)
+<b>11</b> #define LC_SET(s) \
+<b>12</b>   do { \
+<b>13</b>     LC_CONCAT(LC_LABEL, __LINE__): \
+<b>14</b>     （s） = &amp;&amp;LC_CONCAT(LC_LABEL, __LINE__); \
+<b>15</b>   } while (0)
+</pre>
 
 <p class="calibre2">好了，有了前面的基礎知識，理解這些「原語」就是小菜一疊，下面看看如何建立「組件」，同時也是 protothreads API，我們先定義四個退出碼作為協程的<b class="calibre3">調度狀態機</b> ：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 </td> <td class="calibre5">#define PT_WAITING 0 <br class="calibre6"/>#define PT_YIELDED 1 <br class="calibre6"/>#define PT_EXITED  2 <br class="calibre6"/>#define PT_ENDED   3 <br class="calibre6"/></td> </tr> </table>
+<table border="1" class="calibre4">
+<tr class="row">
+
+<td class="calibre5">1 #define PT_WAITING 0 
+<br class="calibre6"/>2 #define PT_YIELDED 1 <br class="calibre6"/>3 #define PT_EXITED  2 <br class="calibre6"/>4 #define PT_ENDED   3 <br class="calibre6"/></td> </tr> </table>
 
 <p class="calibre2">下面這些 API 可直接在應用程序中調用：</p>
 
-<pre style="white-space: pre-wrap;">
+<pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
 <b> 1</b> /* 初始化一个协程，也即初始化状态变量 */
 <b> 2</b> #define PT_INIT(pt) LC_INIT((pt)-&gt;lc)
 <b> 3</b>  
