@@ -8,13 +8,13 @@
 </head>
   <body class="calibre">
 <h2 class="calibre1">一個「蠅量級」 C 語言協程庫 | 酷 殼 - CoolShell.cn</h2>
-<p class="calibre2"><b class="calibre3">（感謝網友 </b> <a href="http://weibo.com/fullofbull" target="_blank"><b class="calibre3">@我的上鋪叫路遙</b> </a> <b class="calibre3"> 投稿）</b> </p>
+<p class="calibre2"><b class="calibre3"> (感謝網友 </b> <a href="http://weibo.com/fullofbull" target="_blank"><b class="calibre3">@我的上鋪叫路遙</b> </a> <b class="calibre3"> 投稿) </b> </p>
 
-<p class="calibre2">協程(coroutine)顧名思義就是「協作的例程」（co-operative routines）。跟具有操作系統概念的線程不一樣，協程是在用戶空間利用程序語言的語法語義就能實現邏輯上類似多任務的編程技巧。實際上協程的概念比線程還要早，按照 Knuth 的說法<b class="calibre3">「子例程是協程的特例」</b> ，一個子例程就是一次子函數調用，那麼實際上協程就是類函數一樣的程序組件，你可以在一個線程裡面輕鬆創建數十萬個協程，就像數十萬次函數調用一樣。只不過子例程只有一個調用入口起始點，返回之後就結束了，而協程入口既可以是起始點，又可以從上一個返回點繼續執行，也就是說協程之間可以通過 yield 方式轉移執行權，<b class="calibre3">對稱（symmetric）、平級</b> 地調用對方，而不是像例程那樣上下級調用關係。當然 Knuth 的「特例」指的是協程也可以模擬例程那樣實現上下級調用關係，這就叫<b class="calibre3">非對稱協程</b> （asymmetric coroutines）。</p>
+<p class="calibre2">協程 (coroutine) 顧名思義就是「協作的例程」 (co-operative routines) 。跟具有操作系統概念的線程不一樣, 協程是在用戶空間利用程序語言的語法語義就能實現邏輯上類似多任務的編程技巧。實際上協程的概念比線程還要早, 按照 Knuth 的說法<b class="calibre3">「子例程是協程的特例」</b>, 一個子例程就是一次子函數調用, 那麼實際上協程就是類函數一樣的程序組件, 你可以在一個線程裡面輕鬆創建數十萬個協程, 就像數十萬次函數調用一樣。只不過子例程只有一個調用入口起始點, 返回之後就結束了, 而協程入口既可以是起始點, 又可以從上一個返回點繼續執行, 也就是說協程之間可以通過 yield 方式轉移執行權, <b class="calibre3">對稱 (symmetric)、平級</b>地調用對方, 而不是像例程那樣上下級調用關係。當然 Knuth 的「特例」指的是協程也可以模擬例程那樣實現上下級調用關係, 這就叫<b class="calibre3">非對稱協程</b> (asymmetric coroutines) 。</p>
 
 <p class="calibre2"><b class="calibre3">基於事件驅動模型</b></p>
 
-<p class="calibre2">我們舉一個例子來看看一種<b class="calibre3">對稱協程</b> 調用場景，大家最熟悉的「生產者-消費者」事件驅動模型，一個協程負責生產產品並將它們加入隊列，另一個負責從隊列中取出產品並使用它。為了提高效率，你想一次增加或刪除多個產品。偽代碼可以是這樣的：</p>
+<p class="calibre2">我們舉一個例子來看看一種<b class="calibre3">對稱協程</b> 調用場景, 大家最熟悉的「生產者-消費者」事件驅動模型, 一個協程負責生產產品並將它們加入隊列, 另一個負責從隊列中取出產品並使用它。為了提高效率, 你想一次增加或刪除多個產品。偽代碼可以是這樣的：</p>
 
 <pre style="white-space: pre-wrap;">
 <b> 1</b> # producer coroutine
@@ -33,31 +33,31 @@
 </pre>
 
 
-<p class="calibre2">大多數教材上拿這種模型作為多線程的例子，實際上多線程在此的應用還是顯得有點「重量級」，由於缺乏 yield 語義，線程之間不得不使用同步機制來避免產生全局資源的竟態，這就不可避免產生了休眠、調度、切換上下文一類的系統開銷，而且線程調度還會產生時序上的不確定性。而對於協程來說，「掛起」的概念只不過是轉讓代碼執行權並調用另外的協程，待到轉讓的協程告一段落後重新得到調用並從掛起點「喚醒」，這種協程間的調用是邏輯上可控的，時序上確定的，可謂一切盡在掌握中。</p>
+<p class="calibre2">大多數教材上拿這種模型作為多線程的例子, 實際上多線程在此的應用還是顯得有點「重量級」, 由於缺乏 yield 語義, 線程之間不得不使用同步機制來避免產生全局資源的竟態, 這就不可避免產生了休眠、調度、切換上下文一類的系統開銷, 而且線程調度還會產生時序上的不確定性。而對於協程來說, 「掛起」的概念只不過是轉讓代碼執行權並調用另外的協程, 待到轉讓的協程告一段落後重新得到調用並從掛起點「喚醒」, 這種協程間的調用是邏輯上可控的, 時序上確定的, 可謂一切盡在掌握中。</p>
 
-<p class="calibre2">當今一些具備協程語義的語言，比較重量級的如C#、erlang、golang，以及輕量級的python、lua、javascript、ruby，還有函數式的scala、scheme等。相比之下，作為原生態語言的 C 反而處於尷尬的地位，原因在於 C 依賴於一種叫做<b class="calibre3">棧幀</b> 的例程調用，例程內部的狀態量和返回值都保留在堆棧上，這意味著生產者和消費者相互之間無法實現平級調用，當然你可以改寫成把生產者作為主例程然後將產品作為傳遞參數調用消費者例程，這樣的代碼寫起來費力不討好而且看起來會很難受，特別當協程數目達到十萬數量級，這種寫法就過於僵化了。</p>
+<p class="calibre2">當今一些具備協程語義的語言, 比較重量級的如C#、erlang、golang, 以及輕量級的python、lua、javascript、ruby, 還有函數式的scala、scheme等。相比之下, 作為原生態語言的 C 反而處於尷尬的地位, 原因在於 C 依賴於一種叫做<b class="calibre3">棧幀</b> 的例程調用, 例程內部的狀態量和返回值都保留在堆棧上, 這意味著生產者和消費者相互之間無法實現平級調用, 當然你可以改寫成把生產者作為主例程然後將產品作為傳遞參數調用消費者例程, 這樣的代碼寫起來費力不討好而且看起來會很難受, 特別當協程數目達到十萬數量級, 這種寫法就過於僵化了。</p>
 
-<p class="calibre2">這就引出了協程的概念，<b class="calibre3">如果將每個協程的上下文（比如程序計數器）保存在其它地方而不是堆棧上，協程之間相互調用時，被調用的協程只要從堆棧以外的地方恢復上次出讓點之前的上下文即可，這有點類似於 CPU 的上下文切換，</b> 遺憾的是似乎只有更底層的彙編語言才能做到這一點。</p>
+<p class="calibre2">這就引出了協程的概念, <b class="calibre3">如果將每個協程的上下文 (比如程序計數器) 保存在其它地方而不是堆棧上, 協程之間相互調用時, 被調用的協程只要從堆棧以外的地方恢復上次出讓點之前的上下文即可, 這有點類似於 CPU 的上下文切換, </b> 遺憾的是似乎只有更底層的彙編語言才能做到這一點。</p>
 
-<p class="calibre2">難道 C 語言只能用多線程嗎？幸運的是，C 標準庫給我們提供了兩種協程調度原語：一種是<a href="http://zh.wikipedia.org/wiki/Setjmp.h" target="_blank">setjmp/longjmp</a> ，另一種是<a href="http://pubs.opengroup.org/onlinepubs/7990989799/xsh/ucontext.h.html" target="_blank">ucontext 組件</a> ，它們內部（當然是用彙編語言）實現了協程的上下文切換，相較之下前者在應用上會產生相當的不確定性（比如不好封裝，具體說明參考聯機文檔），所以後者應用更廣泛一些，網上絕大多數 C 協程庫也是基於 ucontext 組件實現的。</p>
+<p class="calibre2">難道 C 語言只能用多線程嗎? 幸運的是, C 標準庫給我們提供了兩種協程調度原語：一種是<a href="http://zh.wikipedia.org/wiki/Setjmp.h" target="_blank">setjmp/longjmp</a>, 另一種是<a href="http://pubs.opengroup.org/onlinepubs/7990989799/xsh/ucontext.h.html" target="_blank">ucontext 組件</a>, 它們內部 (當然是用彙編語言) 實現了協程的上下文切換, 相較之下前者在應用上會產生相當的不確定性 (比如不好封裝, 具體說明參考聯機文檔) , 所以後者應用更廣泛一些, 網上絕大多數 C 協程庫也是基於 ucontext 組件實現的。</p>
 
 <p class="calibre2"><b class="calibre3">「蠅量級」的協程庫</b></p>
 
-<p class="calibre2">在此，我來介紹一種「蠅量級」的開源 C 協程庫 <a href="http://dunkels.com/adam/pt/" target="_blank">protothreads</a> 。這是一個全部用 ANSI C 寫成的庫，之所以稱為「蠅量級」的，就是說，實現已經不能再精簡了，幾乎就是原語級別。事實上 protothreads 整個庫不需要鏈接加載，因為所有源碼都是頭文件，類似於 STL 這樣不依賴任何第三方庫，在任何平台上可移植；總共也就 5 個頭文件，有效代碼量不足 100 行；API 都是宏定義的，所以不存在調用開銷；最後，每個協程的空間開銷是 2 個字節（是的，你沒有看錯，就是一個 short 單位的「棧」！）當然這種精簡是要以使用上的侷限為代價的，接下來的分析會說明這一點。</p>
+<p class="calibre2">在此, 我來介紹一種「蠅量級」的開源 C 協程庫 <a href="http://dunkels.com/adam/pt/" target="_blank">protothreads</a> 。這是一個全部用 ANSI C 寫成的庫, 之所以稱為「蠅量級」的, 就是說, 實現已經不能再精簡了, 幾乎就是原語級別。事實上 protothreads 整個庫不需要鏈接加載, 因為所有源碼都是頭文件, 類似於 STL 這樣不依賴任何第三方庫, 在任何平台上可移植；總共也就 5 個頭文件, 有效代碼量不足 100 行；API 都是宏定義的, 所以不存在調用開銷；最後, 每個協程的空間開銷是 2 個字節 (是的, 你沒有看錯, 就是一個 short 單位的「棧」！) 當然這種精簡是要以使用上的侷限為代價的, 接下來的分析會說明這一點。</p>
 
-<p class="calibre2">先來看看 protothreads 作者，<a href="http://dunkels.com/adam/" target="_blank">Adam Dunkels</a> ，一位來自瑞典皇家理工學院的計算機天才帥哥。話說這哥們挺有意思的，寫了好多輕量級的作品，都是 BSD 許可證。順便說一句，輕量級開源軟件全世界多如牛毛，可像這位哥們寫得如此出名的並不多。比如嵌入式網絡操作系統 <a href="http://www.contiki-os.org/" target="_blank">Contiki</a> ，國人耳熟能詳的 TCP/IP 協議棧 <a href="http://en.wikipedia.org/wiki/UIP_(micro_IP)" target="_blank">uIP</a> 和 <a href="http://savannah.nongnu.org/projects/lwip/" target="_blank">lwIP</a> 也是出自其手。上述這些軟件都是經過數十年企業級應用的考驗，質量之高可想而知。</p>
+<p class="calibre2">先來看看 protothreads 作者, <a href="http://dunkels.com/adam/" target="_blank">Adam Dunkels</a>, 一位來自瑞典皇家理工學院的計算機天才帥哥。話說這哥們挺有意思的, 寫了好多輕量級的作品, 都是 BSD 許可證。順便說一句, 輕量級開源軟件全世界多如牛毛, 可像這位哥們寫得如此出名的並不多。比如嵌入式網絡操作系統 <a href="http://www.contiki-os.org/" target="_blank">Contiki</a>, 國人耳熟能詳的 TCP/IP 協議棧 <a href="http://en.wikipedia.org/wiki/UIP_(micro_IP)" target="_blank">uIP</a> 和 <a href="http://savannah.nongnu.org/projects/lwip/" target="_blank">lwIP</a> 也是出自其手。上述這些軟件都是經過數十年企業級應用的考驗, 質量之高可想而知。</p>
 
-<p class="calibre2">很多人會好奇如此「蠅量級」的代碼究竟是怎麼實現的呢？在分析 protothreads 源碼之前，我先來給大家補一補 C 語言的基礎課;-^)簡而言之，這利用了 C 語言特性上的一個「奇技淫巧」，而且這種技巧恐怕連許多具備十年以上經驗的 C 程序員老手都不見得知曉。當然這裡先要聲明我不是推薦大家都這麼用，實際上這是以破壞語言的代碼規範為代價，在一些嚴肅的項目工程中需要謹慎對待，除非你想被炒魷魚。</p>
+<p class="calibre2">很多人會好奇如此「蠅量級」的代碼究竟是怎麼實現的呢? 在分析 protothreads 源碼之前, 我先來給大家補一補 C 語言的基礎課;-^)簡而言之, 這利用了 C 語言特性上的一個「奇技淫巧」, 而且這種技巧恐怕連許多具備十年以上經驗的 C 程序員老手都不見得知曉。當然這裡先要聲明我不是推薦大家都這麼用, 實際上這是以破壞語言的代碼規範為代價, 在一些嚴肅的項目工程中需要謹慎對待, 除非你想被炒魷魚。</p>
 
 <p class="calibre2"><b class="calibre3">C 語言的「yield 語義」</b></p>
 
-<p class="calibre2">下面的教程來自於一位 ARM 工程師、天才黑客 <a href="http://www.chiark.greenend.org.uk/~sgtatham/" target="_blank">Simon Tatham</a> （開源 Telnet/SSH 客戶端 <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/" target="_blank">PuTTY</a> 和彙編器 <a href="http://www.nasm.us/" target="_blank">NASM</a> 的作者，吐槽一句，PuTTY的源碼號稱是所有正式項目裡最難 hack 的 C，你應該猜到作者是什麼語言出身）的博文：<a href="http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html" target="_blank">Coroutines in C</a> 。中文譯文在<a href="http://www.oschina.net/translate/coroutines-in-c" target="_blank">這裡</a> 。</p>
+<p class="calibre2">下面的教程來自於一位 ARM 工程師、天才黑客 <a href="http://www.chiark.greenend.org.uk/~sgtatham/" target="_blank">Simon Tatham</a>  (開源 Telnet/SSH 客戶端 <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/" target="_blank">PuTTY</a> 和彙編器 <a href="http://www.nasm.us/" target="_blank">NASM</a> 的作者, 吐槽一句, PuTTY的源碼號稱是所有正式項目裡最難 hack 的 C, 你應該猜到作者是什麼語言出身) 的博文：<a href="http://www.chiark.greenend.org.uk/~sgtatham/coroutines.html" target="_blank">Coroutines in C</a> 。中文譯文在<a href="http://www.oschina.net/translate/coroutines-in-c" target="_blank">這裡</a> 。</p>
 
-<p class="calibre2">我們知道 python 的 yield 語義功能類似於一種迭代生成器，函數會保留上次的調用狀態，並在下次調用時會從上個返回點繼續執行。用 C 語言來寫就像這樣：</p>
+<p class="calibre2">我們知道 python 的 yield 語義功能類似於一種迭代生成器, 函數會保留上次的調用狀態, 並在下次調用時會從上個返回點繼續執行。用 C 語言來寫就像這樣：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 5 </td> <td class="calibre5">int function( void ) { <br class="calibre6"/>int i; <br class="calibre6"/>for (i = 0; i &lt; 10; i++) <br class="calibre6"/>return i;   /* won't work, but wouldn't it be nice */ <br class="calibre6"/>} <br class="calibre6"/></td> </tr> </table>
+<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 5 </td> <td class="calibre5">int function( void)  { <br class="calibre6"/>int i; <br class="calibre6"/>for (i = 0; i &lt; 10; i++) <br class="calibre6"/>return i;   /* won't work, but wouldn't it be nice */ <br class="calibre6"/>} <br class="calibre6"/></td> </tr> </table>
 
-<p class="calibre2">連續對它調用 10 次，它能分別返回 0 到 9。該怎樣實現呢？可以利用 goto 語句，如果我們在函數中加入一個狀態變量，就可以這樣實現：</p>
+<p class="calibre2">連續對它調用 10 次, 它能分別返回 0 到 9。該怎樣實現呢? 可以利用 goto 語句, 如果我們在函數中加入一個狀態變量, 就可以這樣實現：</p>
 
 <pre style="white-space: pre-wrap;">
 <b> 1</b> int function(void) {
@@ -75,11 +75,11 @@
 <b>13</b> }
 </pre>
 
-<p class="calibre2">這個方法是可行的。我們在所有需要 yield 的位置都加上標籤：起始位置加一個，還有所有 return 語句之後都加一個。每個標籤用數字編號，我們在狀態變量中保存這個編號，這樣就能在我們下次調用時告訴我們應該跳到哪個標籤上。每次返回前，更新狀態變量，指向到正確的標籤；不論調用多少次，針對狀態變量的 switch 語句都能找到我們要跳轉到的位置。</p>
+<p class="calibre2">這個方法是可行的。我們在所有需要 yield 的位置都加上標籤：起始位置加一個, 還有所有 return 語句之後都加一個。每個標籤用數字編號, 我們在狀態變量中保存這個編號, 這樣就能在我們下次調用時告訴我們應該跳到哪個標籤上。每次返回前, 更新狀態變量, 指向到正確的標籤；不論調用多少次, 針對狀態變量的 switch 語句都能找到我們要跳轉到的位置。</p>
 
-<p class="calibre2">但這還是難看得很。最糟糕的部分是所有的標籤都需要手工維護，還必須保證函數中的標籤和開頭 switch 語句中的一致。每次新增一個 return 語句，就必須想一個新的標籤名並將其加到 switch 語句中；每次刪除 return 語句時，同樣也必須刪除對應的標籤。這使得維護代碼的工作量增加了一倍。</p>
+<p class="calibre2">但這還是難看得很。最糟糕的部分是所有的標籤都需要手工維護, 還必須保證函數中的標籤和開頭 switch 語句中的一致。每次新增一個 return 語句, 就必須想一個新的標籤名並將其加到 switch 語句中；每次刪除 return 語句時, 同樣也必須刪除對應的標籤。這使得維護代碼的工作量增加了一倍。</p>
 
-<p class="calibre2">仔細想想，其實我們可以不用 switch 語句來決定要跳轉到哪裡去執行，而是<b class="calibre3">直接利用 switch 語句本身來實現跳轉</b> ：</p>
+<p class="calibre2">仔細想想, 其實我們可以不用 switch 語句來決定要跳轉到哪裡去執行, 而是<b class="calibre3">直接利用 switch 語句本身來實現跳轉</b> ：</p>
 
 <pre style="white-space: pre-wrap;">
 <b> 1</b> int function(void) {
@@ -95,7 +95,7 @@
 <b>11</b> }
 </pre>
 
-<p class="calibre2">酷！沒想到 switch-case 語句可以這樣用，其實說白了 C 語言就是脫胎於彙編語言的，switch-case 跟 if-else 一樣，無非就是彙編的條件跳轉指令的另類實現而已（這也間接解釋了為何彙編程序員經常揶揄 C 語言是「大便一樣的代碼」）。我們還可以用 __LINE__ 宏使其更加一般化：</p>
+<p class="calibre2">酷！沒想到 switch-case 語句可以這樣用, 其實說白了 C 語言就是脫胎於彙編語言的, switch-case 跟 if-else 一樣, 無非就是彙編的條件跳轉指令的另類實現而已 (這也間接解釋了為何彙編程序員經常揶揄 C 語言是「大便一樣的代碼」) 。我們還可以用 __LINE__ 宏使其更加一般化：</p>
 
 <pre style="white-space: pre-wrap;">
 <b> 1</b> int function(void) {
@@ -111,7 +111,7 @@
 <b>11</b> }
 </pre>
 
-<p class="calibre2">這樣一來我們可以用宏提煉出一種範式，封裝成組件：</p>
+<p class="calibre2">這樣一來我們可以用宏提煉出一種範式, 封裝成組件：</p>
 
 <pre style="white-space: pre-wrap;">
 <b> 1</b> #define Begin() static int state=0; switch(state) { case 0:
@@ -126,15 +126,15 @@
 <b>10</b> }
 </pre>
 
-<p class="calibre2">怎麼樣，看起來像不像發明了一種全新的語言？<b class="calibre3">實際上我們利用了 switch-case 的分支跳轉特性，以及預編譯的 __LINE__ 宏，實現了一種隱式狀態機，最終實現了「yield 語義」。</b> </p>
+<p class="calibre2">怎麼樣, 看起來像不像發明了一種全新的語言? <b class="calibre3">實際上我們利用了 switch-case 的分支跳轉特性, 以及預編譯的 __LINE__ 宏, 實現了一種隱式狀態機, 最終實現了「yield 語義」。</b> </p>
 
-<p class="calibre2">還有一個問題，當你歡天喜地地將這種鮮為人知的技巧運用到你的項目中，並成功地拿去向你的上司邀功問賞的時候，你的上司會怎樣看待你的代碼呢？你的宏定義中大括號沒有匹配完整，在代碼塊中包含了未用到的 case，Begin 和 Yield 宏裡面不完整的七拼八湊……你簡直就是公司裡不遵守編碼規範的反面榜樣！</p>
+<p class="calibre2">還有一個問題, 當你歡天喜地地將這種鮮為人知的技巧運用到你的項目中, 並成功地拿去向你的上司邀功問賞的時候, 你的上司會怎樣看待你的代碼呢? 你的宏定義中大括號沒有匹配完整, 在代碼塊中包含了未用到的 case, Begin 和 Yield 宏裡面不完整的七拼八湊……你簡直就是公司裡不遵守編碼規範的反面榜樣！</p>
 
-<p class="calibre2">別著急，在原文中 Simon Tatham 大牛幫你找到一個堅定的反駁理由，我覺得對程序員來說簡直是金玉良言。</p>
+<p class="calibre2">別著急, 在原文中 Simon Tatham 大牛幫你找到一個堅定的反駁理由, 我覺得對程序員來說簡直是金玉良言。</p>
 
-<p class="calibre2">將編程規範用在這裡是不對的。文章裡給出的示例代碼不是很長，也不很複雜，即便以狀態機的方式改寫還是能夠看懂的。但是隨著代碼越來越長，改寫的難度將越來越大，改寫對直觀性造成的損失也變得相當相當大。</p>
+<p class="calibre2">將編程規範用在這裡是不對的。文章裡給出的示例代碼不是很長, 也不很複雜, 即便以狀態機的方式改寫還是能夠看懂的。但是隨著代碼越來越長, 改寫的難度將越來越大, 改寫對直觀性造成的損失也變得相當相當大。</p>
 
-<p class="calibre2">想一想，一個函數如果包含這樣的小代碼塊：</p>
+<p class="calibre2">想一想, 一個函數如果包含這樣的小代碼塊：</p>
 
 <pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
 <b>1</b> case STATE1:
@@ -142,7 +142,7 @@
 <b>3</b> if (condition) state = STATE2; else state = STATE3;
 </pre>
 
-<p class="calibre2">對於看代碼的人說，這和包含下面小代碼塊的函數沒有多大區別：</p>
+<p class="calibre2">對於看代碼的人說, 這和包含下面小代碼塊的函數沒有多大區別：</p>
 
 <pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
 <b>5</b> LABEL1:
@@ -150,19 +150,19 @@
 <b>7</b> if (condition) goto LABEL2; else goto LABEL3;
 </pre>
 
-<p class="calibre2">是的，這兩個函數的結構在視覺上是一樣的，而對於函數中實現的算法，兩個函數都一樣不利於查看。因為你使用協程的宏而炒你魷魚的人，一樣會因為你寫的函數是由小塊的代碼和 goto 語句組成而吼著炒了你。只是這次他們沒有冤枉你，因為像那樣設計的函數會嚴重擾亂算法的結構。</p>
+<p class="calibre2">是的, 這兩個函數的結構在視覺上是一樣的, 而對於函數中實現的算法, 兩個函數都一樣不利於查看。因為你使用協程的宏而炒你魷魚的人, 一樣會因為你寫的函數是由小塊的代碼和 goto 語句組成而吼著炒了你。只是這次他們沒有冤枉你, 因為像那樣設計的函數會嚴重擾亂算法的結構。</p>
 
-<p class="calibre2"><b class="calibre3">編程規範的目標就是為了代碼清晰。</b> 如果將一些重要的東西，像 switch、return 以及 case 語句，隱藏到起「障眼」作用的宏中，從編程規範的角度講，可以說你擾亂了程序的語法結構，並且違背了代碼清晰這一要求。但是我們這樣做是為了突出程序的算法結構，而算法結構恰恰是看代碼的人更想瞭解的。</p>
+<p class="calibre2"><b class="calibre3">編程規範的目標就是為了代碼清晰。</b> 如果將一些重要的東西, 像 switch、return 以及 case 語句, 隱藏到起「障眼」作用的宏中, 從編程規範的角度講, 可以說你擾亂了程序的語法結構, 並且違背了代碼清晰這一要求。但是我們這樣做是為了突出程序的算法結構, 而算法結構恰恰是看代碼的人更想瞭解的。</p>
 
-<p class="calibre2"><b class="calibre3">任何編程規範，堅持犧牲算法清晰度來換取語法清晰度的，都應該重寫。</b> 如果你的上司因為使用了這一技巧而解僱你，那麼在保安把你往外拖的時候要不斷告訴他這一點。</p>
+<p class="calibre2"><b class="calibre3">任何編程規範, 堅持犧牲算法清晰度來換取語法清晰度的, 都應該重寫。</b> 如果你的上司因為使用了這一技巧而解僱你, 那麼在保安把你往外拖的時候要不斷告訴他這一點。</p>
 
-<p class="calibre2">原文作者最後給出了一個 MIT 許可證的 <a href="http://www.chiark.greenend.org.uk/~sgtatham/coroutine.h" target="_blank">coroutine.h</a> 頭文件。值得一提的是，正如文中所說，這種協程實現方法有個使用上的侷限，就是<b class="calibre3">協程調度狀態的保存依賴於 static 變量，而不是堆棧上的局部變量</b> ，實際上也無法用局部變量（堆棧）來保存狀態，這就使得代碼不具備可重入性和多線程應用。後來作者補充了一種技巧，就是將局部變量包裝成函數參數傳入的一個虛構的上下文結構體指針，然後用動態分配的堆來「模擬」堆棧，解決了線程可重入問題。但這樣一來反而有損代碼清晰，比如所有局部變量都要寫成對象成員的引用方式，特別是局部變量很多的時候很麻煩，再比如宏定義 malloc/free 的玩法過於託大，不易控制，搞不好還增加了被炒魷魚的風險（只不過這次是你活該）。</p>
+<p class="calibre2">原文作者最後給出了一個 MIT 許可證的 <a href="http://www.chiark.greenend.org.uk/~sgtatham/coroutine.h" target="_blank">coroutine.h</a> 頭文件。值得一提的是, 正如文中所說, 這種協程實現方法有個使用上的侷限, 就是<b class="calibre3">協程調度狀態的保存依賴於 static 變量, 而不是堆棧上的局部變量</b>, 實際上也無法用局部變量 (堆棧) 來保存狀態, 這就使得代碼不具備可重入性和多線程應用。後來作者補充了一種技巧, 就是將局部變量包裝成函數參數傳入的一個虛構的上下文結構體指針, 然後用動態分配的堆來「模擬」堆棧, 解決了線程可重入問題。但這樣一來反而有損代碼清晰, 比如所有局部變量都要寫成對象成員的引用方式, 特別是局部變量很多的時候很麻煩, 再比如宏定義 malloc/free 的玩法過於託大, 不易控制, 搞不好還增加了被炒魷魚的風險 (只不過這次是你活該) 。</p>
 
-<p class="calibre2">我個人認為，既然協程本身是一種單線程的方案，那麼我們應該假定應用環境是單線程的，不存在代碼重入問題，所以我們可以大膽地使用 static 變量，維持代碼的簡潔和可讀性。事實上<b class="calibre3">我們也不應該在多線程環境下考慮使用這麼簡陋的協程</b> ，非要用的話，前面提到 glibc 的 ucontext 組件也是一種可行的替代方案，它提供了一種協程私有堆棧的上下文，當然這種用法在跨線程上也並非沒有限制，請仔細閱讀聯機文檔。</p>
+<p class="calibre2">我個人認為, 既然協程本身是一種單線程的方案, 那麼我們應該假定應用環境是單線程的, 不存在代碼重入問題, 所以我們可以大膽地使用 static 變量, 維持代碼的簡潔和可讀性。事實上<b class="calibre3">我們也不應該在多線程環境下考慮使用這麼簡陋的協程</b>, 非要用的話, 前面提到 glibc 的 ucontext 組件也是一種可行的替代方案, 它提供了一種協程私有堆棧的上下文, 當然這種用法在跨線程上也並非沒有限制, 請仔細閱讀聯機文檔。</p>
 
 <p class="calibre2"><b class="calibre3">Protothreads的上下文</b></p>
 
-<p class="calibre2">感謝 Simon Tatham 的淳淳教誨，接下來我們可以 hack 一下源碼了。先來看看實現 protothreads 的數據結構， 實際上它就是協程的<b class="calibre3">上下文結構體</b> ，用以保存狀態變量，相信你很快就明白為何它的「堆棧」只有 2 個字節：</p>
+<p class="calibre2">感謝 Simon Tatham 的淳淳教誨, 接下來我們可以 hack 一下源碼了。先來看看實現 protothreads 的數據結構,  實際上它就是協程的<b class="calibre3">上下文結構體</b>, 用以保存狀態變量, 相信你很快就明白為何它的「堆棧」只有 2 個字節：</p>
 
 <table border="1" class="calibre4">
 <tr class="row">
@@ -172,17 +172,17 @@
 <br class="calibre6"/>} 
 <br class="calibre6"/></td> </tr> </table>
 
-<p class="calibre2">裡面只有一個 short 類型的變量，實際上它是用來保存上一次出讓點的程序計數器。這也映證了協程比線程的靈活之處，就是協程可以是 stackless 的，如果需要實現的功能很單一，比如像生產者-消費者模型那樣用來做事件通知，那麼實際上協程需要保存的狀態變量僅僅是一個程序計數器即可。像 python generator 也是 stackless 的，當然實現一個迭代生成器可能還需要保留上一個迭代值，前面 C 的例子是用 static 變量保存，你也可以設置成員變量添加到上下文結構體裡面。如果你真的不確定用協程調度時需要保存多少狀態變量，那還是用 ucontext 好了，它的上下文提供了堆棧和信號，但是由用戶負責分配資源，詳細使用方法見聯機文檔。。</p>
+<p class="calibre2">裡面只有一個 short 類型的變量, 實際上它是用來保存上一次出讓點的程序計數器。這也映證了協程比線程的靈活之處, 就是協程可以是 stackless 的, 如果需要實現的功能很單一, 比如像生產者-消費者模型那樣用來做事件通知, 那麼實際上協程需要保存的狀態變量僅僅是一個程序計數器即可。像 python generator 也是 stackless 的, 當然實現一個迭代生成器可能還需要保留上一個迭代值, 前面 C 的例子是用 static 變量保存, 你也可以設置成員變量添加到上下文結構體裡面。如果你真的不確定用協程調度時需要保存多少狀態變量, 那還是用 ucontext 好了, 它的上下文提供了堆棧和信號, 但是由用戶負責分配資源, 詳細使用方法見聯機文檔。。</p>
 
 <table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 5 6 </td> <td class="calibre5">typedef struct ucontext { <br class="calibre6"/>struct ucontext_t *uc_link; <br class="calibre6"/>sigset_t uc_sigmask; <br class="calibre6"/>stack_t uc_stack; <br class="calibre6"/>... <br class="calibre6"/>} ucontext_t; <br class="calibre6"/></td> </tr> </table>
 
 <p class="calibre2"><b class="calibre3">Protothreads的原語和組件</b></p>
 
-<p class="calibre2">有點扯遠了，回到 protothreads，看看提供的協程「原語」。有兩種實現方法，在 ANSI C 下，就是傳統的 switch-case 語句：</p>
+<p class="calibre2">有點扯遠了, 回到 protothreads, 看看提供的協程「原語」。有兩種實現方法, 在 ANSI C 下, 就是傳統的 switch-case 語句：</p>
 
-<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 </td> <td class="calibre5">#define LC_INIT（s） s = 0;  // 源碼中是有分號的，一個低級 bug，啊哈～ <br class="calibre6"/>#define LC_RESUME(s) switch (s) { case 0: <br class="calibre6"/>#define LC_SET(s) s = __LINE__; case __LINE__: <br class="calibre6"/>#define LC_END(s) } <br class="calibre6"/></td> </tr> </table>
+<table border="1" class="calibre4"><tr class="row"><td class="calibre5">1 2 3 4 </td> <td class="calibre5">#define LC_INIT (s)  s = 0;  // 源碼中是有分號的, 一個低級 bug, 啊哈～ <br class="calibre6"/>#define LC_RESUME(s) switch (s) { case 0: <br class="calibre6"/>#define LC_SET(s) s = __LINE__; case __LINE__: <br class="calibre6"/>#define LC_END(s) } <br class="calibre6"/></td> </tr> </table>
 
-<p class="calibre2">但這種「原語」有個難以察覺的缺陷：<b class="calibre3">就是你無法在 LC_RESUME 和 LC_END （或者包含它們的組件）之間的代碼中使用 switch-case語句，因為這會引起外圍的 switch 跳轉錯誤！</b> 為此，protothreads 又實現了基於 GNU C 的調度「原語」。在 GNU C 下還有一種語法糖叫做標籤指針，就是在一個 label 前面加 &amp;&amp;（不是地址的地址，是 GNU 自定義的符號），可以用 void 指針類型保存，然後 goto 跳轉：</p>
+<p class="calibre2">但這種「原語」有個難以察覺的缺陷：<b class="calibre3">就是你無法在 LC_RESUME 和 LC_END  (或者包含它們的組件) 之間的代碼中使用 switch-case語句, 因為這會引起外圍的 switch 跳轉錯誤！</b> 為此, protothreads 又實現了基於 GNU C 的調度「原語」。在 GNU C 下還有一種語法糖叫做標籤指針, 就是在一個 label 前面加 &amp;&amp; (不是地址的地址, 是 GNU 自定義的符號) , 可以用 void 指針類型保存, 然後 goto 跳轉：</p>
 
 <pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
 <b> 1</b> typedef void * lc_t；
@@ -198,11 +198,11 @@
 <b>11</b> #define LC_SET(s) \
 <b>12</b>   do { \
 <b>13</b>     LC_CONCAT(LC_LABEL, __LINE__): \
-<b>14</b>     （s） = &amp;&amp;LC_CONCAT(LC_LABEL, __LINE__); \
+<b>14</b>      (s)  = &amp;&amp;LC_CONCAT(LC_LABEL, __LINE__); \
 <b>15</b>   } while (0)
 </pre>
 
-<p class="calibre2">好了，有了前面的基礎知識，理解這些「原語」就是小菜一疊，下面看看如何建立「組件」，同時也是 protothreads API，我們先定義四個退出碼作為協程的<b class="calibre3">調度狀態機</b> ：</p>
+<p class="calibre2">好了, 有了前面的基礎知識, 理解這些「原語」就是小菜一疊, 下面看看如何建立「組件」, 同時也是 protothreads API, 我們先定義四個退出碼作為協程的<b class="calibre3">調度狀態機</b> ：</p>
 
 <table border="1" class="calibre4">
 <tr class="row">
@@ -213,20 +213,20 @@
 <p class="calibre2">下面這些 API 可直接在應用程序中調用：</p>
 
 <pre style="white-space: pre-wrap;font-family: georgia, times new roman, times roman, times, roman, serif;">
-<b> 1</b> /* 初始化一个协程，也即初始化状态变量 */
+<b> 1</b> /* 初始化一个协程, 也即初始化状态变量 */
 <b> 2</b> #define PT_INIT(pt) LC_INIT((pt)-&gt;lc)
 <b> 3</b>  
-<b> 4</b> /* 声明一个函数，返回值为 char 即退出码，表示函数体内使用了 proto thread，（个人觉得有些多此一举） */
+<b> 4</b> /* 声明一个函数, 返回值为 char 即退出码, 表示函数体内使用了 proto thread,  (个人觉得有些多此一举)  */
 <b> 5</b> #define PT_THREAD(name_args) char name_args
 <b> 6</b>  
-<b> 7</b> /* 协程入口点， PT_YIELD_FLAG=0表示出让，=1表示不出让，放在 switch 语句前面，下次调用的时候可以跳转到上次出让点继续执行 */
+<b> 7</b> /* 协程入口点,  PT_YIELD_FLAG=0表示出让, =1表示不出让, 放在 switch 语句前面, 下次调用的时候可以跳转到上次出让点继续执行 */
 <b> 8</b> #define PT_BEGIN(pt) { char PT_YIELD_FLAG = 1; LC_RESUME((pt)-&gt;lc)
 <b> 9</b>  
-<b>10</b> /* 协程退出点，至此一个协程算是终止了，清空所有上下文和标志 */
+<b>10</b> /* 协程退出点, 至此一个协程算是终止了, 清空所有上下文和标志 */
 <b>11</b> #define PT_END(pt) LC_END((pt)-&gt;lc); PT_YIELD_FLAG = 0; \
 <b>12</b>                    PT_INIT(pt); return PT_ENDED; }
 <b>13</b>  
-<b>14</b> /* 协程出让点，如果此时协程状态变量 lc 已经变为 __LINE__ 跳转过来的，那么 PT_YIELD_FLAG = 1，表示从出让点继续执行。 */
+<b>14</b> /* 协程出让点, 如果此时协程状态变量 lc 已经变为 __LINE__ 跳转过来的, 那么 PT_YIELD_FLAG = 1, 表示从出让点继续执行。 */
 <b>15</b> #define PT_YIELD(pt)        \
 <b>16</b>   do {            \
 <b>17</b>     PT_YIELD_FLAG = 0;        \
@@ -246,7 +246,7 @@
 <b>31</b>     }           \
 <b>32</b>   } while(0)
 <b>33</b>  
-<b>34</b> /* 协程阻塞点(blocking),本质上等同于 PT_YIELD_UNTIL，只不过退出码是 PT_WAITING，用来模拟信号量同步 */
+<b>34</b> /* 协程阻塞点(blocking),本质上等同于 PT_YIELD_UNTIL, 只不过退出码是 PT_WAITING, 用来模拟信号量同步 */
 <b>35</b> #define PT_WAIT_UNTIL(pt, condition)          \
 <b>36</b>   do {            \
 <b>37</b>     LC_SET((pt)-&gt;lc);       \
@@ -258,13 +258,13 @@
 <b>43</b> /* 同 PT_WAIT_UNTIL 条件反转 */
 <b>44</b> #define PT_WAIT_WHILE(pt, cond)  PT_WAIT_UNTIL((pt), !(cond))
 <b>45</b>  
-<b>46</b> /* 协程调度，调用协程 f 并检查它的退出码，直到协程终止返回 0，否则返回 1。 */
+<b>46</b> /* 协程调度, 调用协程 f 并检查它的退出码, 直到协程终止返回 0, 否则返回 1。 */
 <b>47</b> #define PT_SCHEDULE(f) ((f) &lt; PT_EXITED)
 <b>48</b>  
-<b>49</b> /* 这用于非对称协程，调用者是主协程，pt 是和子协程 thread （可以是多个）关联的上下文句柄，主协程阻塞自己调度子协程，直到所有子协程终止 */
+<b>49</b> /* 这用于非对称协程, 调用者是主协程, pt 是和子协程 thread  (可以是多个) 关联的上下文句柄, 主协程阻塞自己调度子协程, 直到所有子协程终止 */
 <b>50</b> #define PT_WAIT_THREAD(pt, thread) PT_WAIT_WHILE((pt), PT_SCHEDULE(thread))
 <b>51</b>  
-<b>52</b> /* 用于协程嵌套调度，child 是子协程的上下文句柄 */
+<b>52</b> /* 用于协程嵌套调度, child 是子协程的上下文句柄 */
 <b>53</b> #define PT_SPAWN(pt, child, thread)   \
 <b>54</b>   do {            \
 <b>55</b>     PT_INIT((child));       \
@@ -272,7 +272,7 @@
 <b>57</b>   } while(0)
 </pre>
 
-<p class="calibre2">暫時介紹這麼多，用戶還可以根據自己的需求隨意擴展組件，比如實現信號量，你會發現脫離了操作系統環境下的信號量竟是如此簡單：</p>
+<p class="calibre2">暫時介紹這麼多, 用戶還可以根據自己的需求隨意擴展組件, 比如實現信號量, 你會發現脫離了操作系統環境下的信號量竟是如此簡單：</p>
 
 <pre style="white-space: pre-wrap;">
 <b> 1</b> struct pt_sem {
@@ -290,7 +290,7 @@
 <b>13</b> #define PT_SEM_SIGNAL(pt, s) ++(s)-&gt;count
 </pre>
 
-<p class="calibre2">這些應該不需要我多說了吧，呵呵，讓我們回到最初例舉的生產者-消費者模型，看看protothreads表現怎樣。</p>
+<p class="calibre2">這些應該不需要我多說了吧, 呵呵, 讓我們回到最初例舉的生產者-消費者模型, 看看protothreads表現怎樣。</p>
 
 <p class="calibre2"><b class="calibre3">Protothreads實戰</b></p>
 
@@ -347,23 +347,23 @@
 <b>50</b> }
 </pre>
 
-<p class="calibre2">源碼包中的 example-buffer.c 包含了可運行的完整示例，我就不全部貼了。整體框架就是一個 asymmetric coroutines，包括一個主協程 driver_thread 和兩個子協程 producer 和 consumer ，其實不用多說大家也懂的，代碼非常清晰直觀。我們完全可以通過單線程實現一個簡單的事件處理需求，你可以任意添加數十萬個協程，幾乎不會引起任何額外的系統開銷和資源佔用。唯一需要留意的地方就是沒有一個局部變量，因為 protothreads 是 stackless 的，但這不是問題，首先我們已經假定運行環境是單線程的，其次在一個簡化的需求下也用不了多少「局部變量」。如果在協程出讓時需要保存一些額外的狀態量，像迭代生成器，只要數目和大小都是確定並且可控的話，自行擴展協程上下文結構體即可。</p>
+<p class="calibre2">源碼包中的 example-buffer.c 包含了可運行的完整示例, 我就不全部貼了。整體框架就是一個 asymmetric coroutines, 包括一個主協程 driver_thread 和兩個子協程 producer 和 consumer, 其實不用多說大家也懂的, 代碼非常清晰直觀。我們完全可以通過單線程實現一個簡單的事件處理需求, 你可以任意添加數十萬個協程, 幾乎不會引起任何額外的系統開銷和資源佔用。唯一需要留意的地方就是沒有一個局部變量, 因為 protothreads 是 stackless 的, 但這不是問題, 首先我們已經假定運行環境是單線程的, 其次在一個簡化的需求下也用不了多少「局部變量」。如果在協程出讓時需要保存一些額外的狀態量, 像迭代生成器, 只要數目和大小都是確定並且可控的話, 自行擴展協程上下文結構體即可。</p>
 
-<p class="calibre2">當然這不是說 protothreads 是萬能的，它只是貢獻了一種模型，你要使用它首先就得學會適應它。下面列舉一些 protothreads 的使用限制：</p>
+<p class="calibre2">當然這不是說 protothreads 是萬能的, 它只是貢獻了一種模型, 你要使用它首先就得學會適應它。下面列舉一些 protothreads 的使用限制：</p>
 
-<p class="calibre2">由於協程是stackless的，儘量不要使用局部變量，除非該變量對於協程狀態是無關緊要的，同理可推，協程所在的代碼是不可重入的。</p>
+<p class="calibre2">由於協程是stackless的, 儘量不要使用局部變量, 除非該變量對於協程狀態是無關緊要的, 同理可推, 協程所在的代碼是不可重入的。</p>
 
-<p class="calibre2">如果協程使用 switch-case 原語封裝的組件，那麼禁止在實際應用中使用 switch-case 語句，除非用 GNU C 語法中的標籤指針替代。</p>
+<p class="calibre2">如果協程使用 switch-case 原語封裝的組件, 那麼禁止在實際應用中使用 switch-case 語句, 除非用 GNU C 語法中的標籤指針替代。</p>
 
-<p class="calibre2">一個協程內部可以調用其它例程，比如庫函數或系統調用，但必須保證該例程是非阻塞的，否則所在線程內的所有協程都將被阻塞。畢竟線程才是執行的最小單位，協程不過是按「時間片輪度」的例程而已。</p>
+<p class="calibre2">一個協程內部可以調用其它例程, 比如庫函數或系統調用, 但必須保證該例程是非阻塞的, 否則所在線程內的所有協程都將被阻塞。畢竟線程才是執行的最小單位, 協程不過是按「時間片輪度」的例程而已。</p>
 
-<p class="calibre2">官網上還例舉了更多<a href="http://dunkels.com/adam/pt/examples.html" target="_blank">實例</a> ，都非常實用。另外，一個叫 Craig Graham 的工程師擴展了 pt.h，使得 protothreads 支持 sleep/wake/kill 等操作，文件在此 <a href="http://dunkels.com/adam/download/graham-pt.h" target="_blank">graham-pt.h</a> 。</p>
+<p class="calibre2">官網上還例舉了更多<a href="http://dunkels.com/adam/pt/examples.html" target="_blank">實例</a>, 都非常實用。另外, 一個叫 Craig Graham 的工程師擴展了 pt.h, 使得 protothreads 支持 sleep/wake/kill 等操作, 文件在此 <a href="http://dunkels.com/adam/download/graham-pt.h" target="_blank">graham-pt.h</a> 。</p>
 
 <p class="calibre2"><b class="calibre3">協程庫 DIY 攻略</b></p>
 
-<p class="calibre2">看到這裡，手養的你是否想迫不及待地 DIY 一個協程組件呢？哪怕很多動態語言本身已經支持了協程語義，很多 C 程序員仍然傾向於自己實現組件，網上很多開源代碼底層用的主要還是 glibc 的 ucontext 組件，畢竟提供堆棧的協程組件使用起來更加通用方便。你可以自己寫一個調度器，然後模擬線程上下文，再然後……你就能搞出一個跨平台的COS了（笑）。GNU Pth 線程庫就是這麼實現的，其原作者德國人 <a href="http://engelschall.com/" target="_blank">Ralf S. Engelschall</a> （又是個開源大牛，還寫了 <a href="http://engelschall.com/software-artist.php" target="_blank">OpenSSL 等許多作品</a> ）就寫了一篇<a href="http://xmailserver.org/rse-pmt.pdf" target="_blank">論文</a> 教大家如何實現一個線程庫。另外 protothreads 官網上也有一大堆<a href="http://dunkels.com/adam/pt/links.html" target="_blank">推薦閱讀</a> 。Have fun！</p>
+<p class="calibre2">看到這裡, 手養的你是否想迫不及待地 DIY 一個協程組件呢? 哪怕很多動態語言本身已經支持了協程語義, 很多 C 程序員仍然傾向於自己實現組件, 網上很多開源代碼底層用的主要還是 glibc 的 ucontext 組件, 畢竟提供堆棧的協程組件使用起來更加通用方便。你可以自己寫一個調度器, 然後模擬線程上下文, 再然後……你就能搞出一個跨平台的COS了 (笑) 。GNU Pth 線程庫就是這麼實現的, 其原作者德國人 <a href="http://engelschall.com/" target="_blank">Ralf S. Engelschall</a>  (又是個開源大牛, 還寫了 <a href="http://engelschall.com/software-artist.php" target="_blank">OpenSSL 等許多作品</a> ) 就寫了一篇<a href="http://xmailserver.org/rse-pmt.pdf" target="_blank">論文</a> 教大家如何實現一個線程庫。另外 protothreads 官網上也有一大堆<a href="http://dunkels.com/adam/pt/links.html" target="_blank">推薦閱讀</a> 。Have fun！</p>
 
-<p class="calibre2">（全文完） </p>
+<p class="calibre2"> (全文完)  </p>
 
 </body>
 </html>
