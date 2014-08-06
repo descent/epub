@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">苦澀後的甘甜 - Windows 系統深耕</h2>
+<p class="calibre2">探索作業系統, 當然苦澀。<br class="calibre8"/>練習 system programming, 當然痛苦。<br class="calibre8"/>但是歷鍊過後, 那種掌握來龍去脈、洞悉系統奧秘的感覺, <br class="calibre8"/>又讓我們苦後回甘, 如溽夏苦茶。 </p>
+
+<p class="calibre2">關於 Windows 作業系統, 首先我要說點和我個人有關的題外話。</p>
+
+<p class="calibre2">話說我那在淡江大學就讀資訊系三年級的表妹, 去年修了一門「作業系統」課程。期中考採分組報告形式, 由各組挑選主題做專題報告 (口頭加書面) 。我這表妹非常英勇威武地挑了「虛擬機器」這個題目 (真是初生之犢不畏虎呀) , 然後聽說表姊夫好像在這個領域有點心得, 還發表過相關文章, 於是邀我喝杯咖啡, 順便問候一下表姊的生活, 順便...呃...聊聊 Windows 虛擬機器。而我也以演講所用的三兩投影片略盡棉薄。</p>
+
+<p class="calibre2">後來, 她很高興地打電話來告訴我, 老師相當滿意她這一組的表現, 並且在得知我就是我的表妹的表姊夫之後, 邀請我到學校做個演講。我因此認識了好幾位系上老師和近百位系上同學。你看, 人生多麼奇妙！倪匡有一本小說講人的前世今生, 他說你這一輩子所接觸的人都在前世彼此有所糾葛關聯。啊, 緣份很是奇妙！</p>
+
+<p class="calibre2">故事還沒有結束。上個月我參加一個尾牙聚餐, 近尾聲時廁所人滿為患。我正排隊等候, 冷不妨一聲</p>
+
+<p class="calibre2">『請問您是侯老師嗎? 』旁邊隊伍的鄰兵說。<br class="calibre8"/>『喔, 是的, 請問您是...』<br class="calibre8"/>『我是您的讀者啦, 上次您到淡江演講, 我也在場聽講』<br class="calibre8"/>『喔, 是是...』。</p>
+
+<p class="calibre2">輪到我們雙雙就戰鬥位置, 一陣寂靜之後...</p>
+
+<p class="calibre2">『侯老師, 我正在讀您的那本 <a href="http://jjhou.boolan.com/jjwbooks-dissecting-mfc-2e.htm" target="_blank" class="calibre3">Dissecting MFC</a> 』, <br class="calibre8"/>『喔, 是是...』, <br class="calibre8"/>『裡頭第三章我覺得真好』, <br class="calibre8"/>『喔, 是是, 謝謝...』, <br class="calibre8"/>『我可以 mail 給您討論問題嗎? 』<br class="calibre8"/>『喔, 是是, 當然當然...』。</p>
+
+<p class="calibre2">有點兒尷尬, 在那樣的場合。不是有人說過嗎, 千萬別在廁所裡認人。切記！切記！</p>
+
+<p class="calibre2">言歸正傳。這次我的主題正是 Windows 作業系統。對於電腦的終端使用者而言, 作業系統提供的應該是一層不見晦澀的服務。一層雖然讓你感覺不出, 卻能夠使每件事情每個動作順暢無礙的環境。</p>
+
+<p class="calibre2">作業系統之於終端使用者, 差不多像那種「緊貼著你的肌膚, 但是薄得感受不到」的東西。作業系統之於軟體開發者, 則出現一種論調: 『誰管什麼作業系統, 我的程式寫得好就好了』。也對, 問題是, 怎麼樣能夠把程式寫得好寫得完全? 這和軟體開發的目標與定位有關係。如果你的目標在除錯軟體 (我是指像CodeView、SoftIce/W、BoundsChecker、Winspect 等產品) , 或是工具軟體 (我是指像 DUMPBIN、HeapWalk、WinSpy 等產品) , 你當然不能不對作業系統有深刻的瞭解。即連一般的 Windows 應用程式設計, 也多少需要某種程度的作業系統知識, 程度的多寡深淺則視使用哪一種開發工具而定。如果你用的是 Visual Basic、MFC 或OWL、Delphi、RAD 開發環境 (如 C++ Builder) , 你不需要太多的作業系統知識。如果採用SDK programming, 則對作業系統需要相當深度的涉獵, 否則一知半解, 恐怕臨淵履薄, 狀況頻出。</p>
+
+<p class="calibre2">話說回來, 使用 SDK 的所謂「古典派 Windows 程式設計者」, 可以因為使用並瞭解系統提供的 APIs, 而對系統的行徑有所掌握, 對整個龐大機制的運作有所概念。這些人在技術層次上就不是光光 application framework 或 RAD (Rapid Application Development) 的使用者能夠望其項背的了。我在學校開授 Windows 作業系統課程, 就要求同學必須先有SDK programming 的基礎。沒有這種基礎而想修行 Windows 系統, 有點自討苦吃。</p>
+
+<p class="calibre2">探索作業系統, 當然苦澀。練習 system programming, 當然痛苦。但是歷鍊過後, 那種掌握來龍去脈、洞悉系統奧秘的感覺, 又讓我們苦後回甘, 如溽夏苦茶。</p>
+
+<p class="calibre2">今天介紹的三本 Windows 作業系統書籍, 大抵也就是你所能找到的僅有的三本相關店頭書籍 (trade book) 了。比較帶點學術味道的相關教科書 (text book) 也有, 但是我對那種枯燥東西沒興趣。這些所謂的 trade books 比較活潑生動、內容也比較反應實際, 和工業界的脈動比較接近。</p>
+
+<p class="calibre2">這三本書的作者都赫赫有名, 文筆洗練, Matt Pietrek 尤其帶個人感情 (意思就是很好看) 。三位作者之大名於我都有「一定要買」的吸引力, 他們都是期刊雜誌上的常客, 出沒於 Microsoft Systems Journal 或Dr. Dobb's Journal 或 PC Magazine, 也都是 (或曾經是) 專欄主持人。三本書都不算新, Matt 和 Jeffrey 行有年矣, Walter 亦已面世半載。</p>
+
+<p class="calibre2">讓我先對這三本書做個簡介: </p>
+
+<p class="calibre2">■<a href="http://jjhou.boolan.com/jjtbooks-win95-sys-prog-secrets.htm" target="_blank" class="calibre3">Windows 95 System Programming SECRETS </a> 挖寶高手 Matt Pietrek 繼 Windows Internals 後再次出馬。上次對象是 Windows 3.x, 這次直指 Windows 95。本書側重在16-/32- 位元核心資料結構的介紹, 及其相關函式 (含未公開函式) 的內部動作。這些核心資料結構包括 modules、processes、threads、tasks。本書也對 KRNL386/KERNEL32、GDI/GDI32、USER/USER32 三大模組做了非常徹底的挖掘, 幾乎到了寸草不留的地步。此外, 隱藏在三大模組背後的 VMM、VWIN32、ADVAPI32 等神秘的 VxDs, 作者也有非常深入的介紹。本書有一章專論 PE 檔案格式, 有一章談探索 Windows 系統的個人經驗與心得, 最後一章則給你一個spy 軟體設計的實務經驗。本書所附程式幾乎都是為證明「作者所言 (的那些內部結構) 不假」而設計的。</p>
+
+<p class="calibre2">■Advanced Windows (2nd Edition)  </p>
+
+<p class="calibre2">本書著重在 32 位元架構, 以及與系統核心有關係的 API 函式, 旨在從 Win32 API 的層面看系統。作者並不強調要「挖」出什麼內部秘密給你, 而是以公開的 APIs示範諸如行程操作、執行緒操作、排程、虛擬記憶體、同步化控制等與系統有關的題目。</p>
+
+<p class="calibre2">■<a href="http://jjhou.boolan.com/jjtbooks-sys-prog-for-win95.htm" target="_blank" class="calibre3">System Programming for Windows 95 </a> 本書著重在作業系統與硬體之間的介面、驅動程式與 VxDs, 旨在從硬體與軔體 (firmware) 層面看系統。這是三本書中最低階的一本, 和前兩本書有明顯的訴求差異。</p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">●Windows 95 System Progrmming SECRETS </p>
+
+<p class="calibre2">作者: Matt Pietrek<br class="calibre8"/>出版公司: IDG Press<br class="calibre8"/>出版日期: 1995 年第四季<br class="calibre8"/>頁數: 10 章, 780 頁<br class="calibre8"/>售價: US$ 49.99。含磁片一片。</p>
+
+<p class="calibre2">1. Putting Windows 95 in Perspective<br class="calibre8"/>2. What's New in Windows 95<br class="calibre8"/>3. Modules, Processes, and Threads<br class="calibre8"/>4. USER and GDI Subsystems<br class="calibre8"/>5. Memory Management<br class="calibre8"/>6. VWINKERNEL32386<br class="calibre8"/>7. Win16 Modules and Tasks<br class="calibre8"/>8. The Portable Executable and COFF OBJ Formats<br class="calibre8"/>9. Spelunking on Your Own<br class="calibre8"/>10. Writing a Win32 API spy<br class="calibre8"/>Appendix A: The Undocumented KERNEL32.DLL Import Library </p>
+
+<p class="calibre2"><a href="http://jjhou.boolan.com/jjtbooks-win95-sys-prog-secrets.htm" target="_blank" class="calibre3"><span class="imgBig"><img src="img/img71.jpeg" alt="img71.jpeg" class="calibre12"/></span></a> </p>
+
+<p class="calibre2">讓我先談談作者。Matt Pietrek 寫過 Windows Internals  (中譯本名為「Windows 系統徹底研究」, 旗標出版, 非常棒的一本譯作) , 那是對 Windows 3.x 的剖析, 剖析方式是以大量的虛擬碼 (pseudo code) 解釋 API 函式的內部動作。我覺得這種作法棒透了, 因為 API (Application Programming Interface) 就是作業系統的外顯特徵, 提供種種供應用程式役使的「命令」。你看, 如果我們知道GetMessage 如何從訊息佇列中取訊息、如何等待訊息、等待時如何配合排程器, 或如果我們知道 DispatchMessage 如何取出「訊息所歸屬之視窗」之視窗類別中所登記的視窗函式、並模擬 MakeProcInstancec 所建立之 instance thunk, 我們對系統的瞭解, 就絕不僅僅是手冊上的「抓取訊息、派送訊息」三言兩語能成就。這一切奧秘, API 函式的虛擬碼都可以展現出來。</p>
+
+<p class="calibre2">現在, Matt 重施故技, 矛頭對準 Windows 95。為什麼不是Windows NT? 唯一的理由是市場因素: 在 Win32 平台中Windows 95 是眾人焦點。Windows NT 曲高和寡, 還沒輪到它擅場。Win32s? 呵, 好久沒聽說了。</p>
+
+<p class="calibre2">API 虛擬碼不是可以瞎掰出來的, 為什麼 Matt Pietrek 有這樣的功力? Microsoft Systems Journal 主編 Eric Maffei 為本書所寫的序可窺一二: 『Matt 的技術大師生涯始自 1988 年的 Santa Cruz 大學畢業典禮。他獲得的是物理學位, 只修過兩門電腦課程。在加入 Borland 技術支援部門之後, 他很快因為一次評量而看清楚自己 -- 他獲得的是最低分。轉到Borland R&amp;D 部門的那段時光比較快樂。在那裡 Matt 寫了TDUMP 和 WinSpector。他甚至加入 OS/2 Turbo Debugger 的開發。他的辛勤工作獲得了豐富的報酬: 在一次裁員行動中他失業了。最後, Matt 在 Nu-Mega 公司找到了自我。今天他是 BoundsChecker 系列產品的主要建構者。』 </p>
+
+<p class="calibre2">Nu-Mega 公司的 SoftIce/W 和 BoundsChecker 都是極佳的Windows 系統層面除錯器。</p>
+
+<p class="calibre2">這本書的排版以及校稿錯誤時有出現。偶有「斷行」斷得不適當的情形, 錯別字則讓人懷疑是不是沒有使用自動拼字檢查功能? 下面是一些例子: </p>
+
+<p class="calibre2">☆ 把 abbreviated 說成 abreviated (p405) <br class="calibre8"/>☆ 把 16h 寫成 16 (p524) <br class="calibre8"/>☆ 把 IMakeProcInstance 寫成 MakeProcInstance (p540) <br class="calibre8"/>☆ 把 .drectve 寫成 .drective (p585) <br class="calibre8"/>☆ 把 directly 寫成 directlyl (p586) <br class="calibre8"/>☆ 把 RtlAllocateHeap 寫成 RTLAllocateHeap (p87) <br class="calibre8"/>☆ 把應該說 section 的地方說成 segment<br class="calibre8"/>☆ 把 002A0040 寫成 0002A0040 (p322)<br class="calibre8"/>☆ 把 VirtualFree 說成 VirtualAlloc (p319)<br class="calibre8"/>☆ 把 HeapWalk 說成 HeapAlloc (p379)<br class="calibre8"/>☆ 把 SetWindowLong 說成 SetWindowWord (p639)<br class="calibre8"/>☆ 把 from left to right 說成 from right to left (p650)<br class="calibre8"/>☆ 把 will be changed to 1 說成 will be incremented (p661)<br class="calibre8"/>☆ 把 Get_VMM_Version 說成 Get_Cur_VM_Handle (p679)<br class="calibre8"/>☆ 把 IMPLIB.EXE 說成 IMPORT.LIB (p759) </p>
+
+<p class="calibre2">這樣的錯誤估計約有 25 個之多。會不會造成誤解, 那就要看你的底子了。顯而易見這是趕工的結果。趕什麼? 趕當初Windows 95 的上市。所以我說嘛, 慢工出細活, 快手無好貨。我認為 IDG Books 出版社對待大師級作品實在太過輕佻, Windows Internals 在 Addison Wesley 發行, 就不曾出現這種現象。IDG Books 出版社向以市場導向聞名, 有一套 for dummies 系列, 聽說還有一套 for idiot 系列。我老天！</p>
+
+<p class="calibre2">Matt 的文筆很活潑也頗直率, 他對微軟的批判態度往往露骨地顯現在字裡行間, 讀起來辛辣過癮。這種文字放在雜誌期刊上頗合適, 放在書籍上則過猶不及。此外, 你可以稱Matt 為囉唆先生, 敘述起事情來雖然條理分明, 但用詞累贅。還好這不會影響讀者的權益 -- 同樣的東西多說兩次沒有什麼害處。</p>
+
+<p class="calibre2">現在我們來看看這本書的牛肉在哪裡。本書第一章概述三個Win32 平台: Win32s、Windows NT、Windows 95。第二章一開始就進入高潮, 把 Windows 95 的遮面紗掀開來, 曝露出其中的 DOS 血統。這一章告訴你 Windows 95 中 32 位元和16 位元成員的合作關係, 以及強制性多工和合作型多工之間的妥協 (關鍵在於 Win16Mutex) 。</p>
+
+<p class="calibre2">第三、四、五章分別就其主題深度挖掘其間的系統資料結構, 以及對應之 API 函式或內部函式的虛擬碼。第六章章名奇特, Matt 語不驚人死不休, VWINKERNEL32386 = VWIN32.VxD + KERNEL32.DLL + KRNL386.EXE。對作業系統基本教義派人士而言, USER 和 GDI 子系統可能都不值一哂, 唯以上三元素是 KERNEL 子系統的中堅份子, 一個是 ring0 VxD, 一個是32 位元 DLL, 一個是 16 位元 DLL, 三者互通款曲。這倒也是 Windows 95 的獨特生態。</p>
+
+<p class="calibre2">第七章介紹 Win16 modules 和 tasks。作者開宗明義這麼說: 『在一本專注於 Windows 95 32 位元架構的書籍中放一章 16 位元 KERNEL 資料結構, 是不是有些詭異? 然而, 很快你就會看到, 這些資料結構在 Windows 95 之中扮演非常重要的角色-- 對 16- 或 32- 位元程式都是如此。』這一章對 KRNL386 所維護的 16 位元 modules 和 tasks 做了一次導遊。</p>
+
+<p class="calibre2">第八章介紹 PE 可執行檔格式。這個題目對於 Win32 程式載入、DLL 模組載入、函式輸入與輸出 (import/export) 、動態聯結機制等等有著密不可分的關聯。Matt 的分析非常透徹, 磁片中的 PEDUMP (附原始碼) 則是其實作產品, 可分解 PE 檔案, 將其中一個個的 sections 的內容有意義地呈現出來。</p>
+
+<p class="calibre2">第九章是 Matt 的私房菜, 是他使用各種分析工具的經驗, 以及反組譯的實務心得。第十章 (最後一章) 的 spy 軟體設計, 則是對整個系統結構工程的總驗收。Matt 讓我們見識什麼叫做山川壯麗, 什麼叫做鬼斧神工！要完成一個非常有彈性, 而且面面俱到的spy 軟體, 你需要許多作業系統的知識, 以及編譯器的知識。你必須熟悉 PE可執行檔格式 (尤其在 PE header 以及 import section 方面) , 你必須熟悉函式呼叫時的參數傳遞方式以及回返位址的設定 (也就是堆疊的狀態) , 你必須知道中斷點與除錯訊息, 以及除錯器與被除錯程式的關係, 你必須知道有哪些 API 可以跨越行程處理別人的位址空間中的內容, 有哪些方法可以突破行程間的位址空間藩籬, 你也必須知道thread context 中的 EIP (Extended Instruction Pointer) 作用。我非常欣賞這第十章。</p>
+
+<p class="calibre2">本書深度夠、密度高。以資訊份量而言, 真正是物超所值！如果硬要說不足, 我想是對於知識的表達方式吧。Matt 頗能夠實踐「惜圖如金」的精神, 許多觀念或資料, 配合一張圖可以表現得淋漓盡致, Matt 卻不。整本書雖然有些不錯的示意圖, 但和浩瀚字海比起來, 如滄海一粟。</p>
+
+<p class="calibre2">鑽研 Windows 95 系統, 是不是一項划算的投資? 不是還有Windows NT 嗎? 95 和 NT 不是有許多不同嗎? 呵呵, 學問是堆積起來的。基礎愈深, 堆得愈高; 基礎愈廣, 堆得愈快。觸類旁通是我們在這個千變萬化一日千里的領域中最大的依侍。這本書讓我們全盤瞭解 Windows 95, 而 NT 只在隔壁房間。</p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">●Advanced Windows (2nd Edition)  </p>
+
+<p class="calibre2">作者: Jeffrey Richter<br class="calibre8"/>出版公司: Microsoft Press<br class="calibre8"/>出版日期: 1995 年第三季<br class="calibre8"/>頁數: 16 章, 930 頁<br class="calibre8"/>售價: US$ 44.95。含光碟一片。</p>
+
+<p class="calibre2">1. The Win32 API and Platforms That Support It<br class="calibre8"/>2. Processes<br class="calibre8"/>3. Threads<br class="calibre8"/>4. Win32 Memory Architecture<br class="calibre8"/>5. Exploring Virtual Memory<br class="calibre8"/>6. Using Virtual Memory in Your Own Applications<br class="calibre8"/>7. Memory-Mapped Files<br class="calibre8"/>8. Heaps<br class="calibre8"/>9. Thread Synchronization<br class="calibre8"/>10. Window Messages and Asynchronous input<br class="calibre8"/>11. Dynamic-Link Libraries<br class="calibre8"/>12. Threead-Local Storage<br class="calibre8"/>13. File Systems and File I/O<br class="calibre8"/>14. Structured Exception Handling<br class="calibre8"/>15. Unicode<br class="calibre8"/>16. Breaking Through Process Boundary Walls<br class="calibre8"/>Appendix A: Message Crackers<br class="calibre8"/>Appendix B: The Build Environment </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img72.jpeg" alt="img72.jpeg" class="calibre12"/></span></p>
+
+<p class="calibre2">同樣地, 讓我先談談作者。前面說過 Matt 擅長挖掘系統內部資料, 本書作者 Jeffrey則靠著 Windows 程式設計和系統知識兩方面的專業而知名。在程式設計方面, 他寫過經典好書Windows 3.0: A Developer's Guide (後來又有 3.1 和 95 兩版) 。在系統知識方面, 他寫過 Advanced Windows NT, 也就是Advanced Windows 的前身。這前後兩版書籍的封面都很酷, 烏七麻黑的油畫裡頭有三兩個中古法國軍官, 頗有傳承味道。Jeffrey 的隨書磁片範例程式都包裝得十分華麗, Advanced Windows 的安裝程式會現出一個有著書籍封面做為主要圖像的對話盒。</p>
+
+<p class="calibre2">註 : Jeffrey 的另一本書 <a href="http://jjhou.boolan.com/jjfbooks-win95adg.htm" target="_blank" class="calibre3">Windows 95: A Developer's Guide </a> , 其安裝程式更有 autoplay 功能, 以及一段 video/audio, 還有工作人員的名單 (類似電影散場前的字幕效果) , 真真絢麗奪目, 噱頭十足。奇怪的是, 這麼好的一本書 (Windows 95: A Developer's Guide) , 為什麼國內出版社沒有人爭取中文化譯權? 難道對於這一類高檔書籍, 大家目光都只放在技術大廠如 Microsoft Press 或 Addison Wesley 身上? 遺憾之至。</p>
+
+<p class="calibre2">回頭來看 Advanced Windows 的內容。同樣是談系統知識, 這本書和 Matt 那一本最明顯的區隔是它不談內部 (未公開) 的結構與函式, 它講檯面上的東西。好比說第二章 Processes, Jeffrey 非常詳細地解釋每一個和 process 有關的 APIs, 解釋其功能、參數、傳回值。第三章的 Threads 和第四章的Win32 Memory Architecture, 以及後續所有的章節, 也是以同樣的方式進行。適當時候 Jeffrey 會給一個範例程式, 利用他獨特的創意, 根據一個有趣的構思, 把介紹過的 APIs 演練一遍。本書所有的範例程式都是 dialog-based, 換句話說, WinMain() 之中只單純呼叫 DialogBox(), 其餘所有動作在 DlgProc() 中完成。雖然這種方式可以遂行作者所希望的「把程式所示範的動作集中在正討論的主題上」, 而導至比較容易的閱讀, 比較少的篇幅, 不過由於 Jeffrey 大量使用 WINDOWSX.H 的訊息剖析器 (一大堆巨集) , 使得這些程式的形式乍見之下有點兒古怪, 恐怕你需要一點點適應時間。</p>
+
+<p class="calibre2">和 Matt 的第 10 章一樣, Jeffrey 的第 16 章也有一個集技術大成的範例 InjLib, 而且是個可重複使用的函式。這個函式需要行程、執行緒、位址空間、同步化控制、動態聯結函式庫、結構化異常處理、Unicode 等技術。事實上 Matt 第 10 章的 Spy 程式亟需「把某個 DLL 注射到另一行程的位址空間中」, 正是 InjLib 的功能。Matt 亦在他的書中提到了 Jeffrey 的作法, 只不過他另創新法, 彌補了一些缺憾。Jeffrey 說『如果你瞭解 InjLib, 你就有資格說自己懂所謂的 Win32 程式設計了』。觀察其間技術, 我想 Jeffrey 的門檻實在不低。</p>
+
+<p class="calibre2">這本書的書名之所以把前一版的 "NT" 字眼去除, 因為它同時涵蓋了95 和 NT。凡未特殊聲明者, 便是普遍的、一般的 Win32 觀念與技術, 而在特別針對 95 或 NT 之處, 作者以明顯的圖示提醒讀者。相當詳實而細心。</p>
+
+<p class="calibre2">說到這本書, 我忍不住要提一下其中譯本 (張永慶/松崗) 。電腦書中譯本膽敢有譯序, 口氣不卑不亢又言之有物, 就已經夠吸引人並讓我暗暗叫好了。仔細觀之, 此書算得上國內高檔技術書籍中難得的作品。雖說翻譯水準並不是一直維持在高檔次, 但總的來說令人滿意, 可看出是出自內行人之手。書中偶有一些錯別字倒是無傷大雅, 把SetThreadPriority 的「不可累加性」譯為「可累加性」 (譯本 59 頁) , 是比較嚴重的錯誤。有時候, 打個盹兒眼睛一花, 把正面譯為負面, 校稿又沒校出來, 就出現這種對不起讀者的錯誤。這種錯誤我要很難為情地說: 我也犯過。雖不是情有可原, 倒也其景可臆, 其情可憫。但是把一個參數名稱 lpszMutexName 譯為「lpsz多工器Name」 (譯本285頁) , 就很離譜並且讓人難以想像是什麼原因了。愈到後面, 感覺愈往下走。到了第16章技術的頂峰, 卻是翻譯品質的谷底, 至此我不太有把握譯者的水平。好比說, 把 send or post 譯為「投遞、寄到」 (譯本 786 頁) , 並不能夠讓讀者知道原意, 因為 send 和 post 是兩個獨特而不同的訊息傳遞動作, 即使翻譯, 也應該註明原文。整章文字有一種撲朔迷離的朦朧感, 不夠精準。但是在某些地方, 又看得出譯者是懂得些門道的。</p>
+
+<p class="calibre2">這本書掛名主譯的是張永慶先生, 目錄之後列出所有譯者 (共五位) 及其學識背景。我喜歡這種明明白白的作法, 如果能夠列出哪一章由誰翻譯, 釐清責任歸屬, 就更好了。千萬不能明明是大雜燴, 卻避諱莫深, 更不能矇上眼睛就以為看不到, 摀著耳朵就以為聽不到。我知道有些書籍被大卸八塊, 譯好之後又沒人肯掛名 (誰敢? ) , 只好抓瞎抓個倒楣鬼來掛。諸君可以想像那種書籍的品質。電腦技術汰舊換新這麼快速, 以團隊方式來翻譯書籍是可以被接受的, 但團隊要有團隊的樣子, 團隊的品質。<br class="calibre8"/>雖然舉出前面幾個缺點, 但別忘記我說過這譯本『算得上是國內高檔技術書籍中難得的作品, 出自內行人之手』。看多了「志村大爆笑」級的各種譯本後, 我對這幾位譯者的崛起, 欣喜異常, 期望多多。</p>
+
+<p class="calibre2">新書通報: 本書已有第三版 , 名稱沒變, 封面則回歸「主流」-- 不再是烏七麻黑的中古法國軍官, 回歸到和 Programming Windows 95、Programming Windows 95 with MFC 一樣的制式風格。這有點令我失望, 想像中第一流作家總是「該」桀驁不馴些。我還沒有看過內容, 從目錄觀之, 第一章增加了 Windows NT 4.0 和 Windows CE 的簡介, 另增加了Kernel Objects 和 Device I/O 兩章, 以及一個新的附錄, 介紹 Fibers (Windows NT 4.0 所提供, 比 thread 更細微的東西) 。</p>
+
+<p class="calibre2"><b class="calibre6">Advanced Windows 3/e</b> </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img73.jpeg" alt="img73.jpeg" class="calibre12"/></span> </p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">●System Programming for Windows 95 </p>
+
+<p class="calibre2">作者: Walter Oney<br class="calibre8"/>出版公司: Microsoft Press<br class="calibre8"/>出版日期: 1996 年末<br class="calibre8"/>頁數: 17 章, 715 頁<br class="calibre8"/>售價: US$ 39.95。含光碟一片。</p>
+
+<p class="calibre2">Part I. Intruduction<br class="calibre8"/>1. Overview<br class="calibre8"/>2. Flavors of Windows and Drivers<br class="calibre8"/>3. Windows 95 System Architecture<br class="calibre8"/>4. Interfaces for Systems Programming<br class="calibre8"/>5. System Programming in Assembly Language<br class="calibre8"/>Part II. Virtual Device Driver Basics<br class="calibre8"/>6. The Virtual Machine Manager<br class="calibre8"/>7. Virtual Device Driver Mechanics<br class="calibre8"/>8. Initializing and Terminating Virtual Device Drivers<br class="calibre8"/>9. Basic VxD Programming Techniques<br class="calibre8"/>10. Helping Windows 95 Manage Virtual Machines<br class="calibre8"/>Part III. Input/Output Programming<br class="calibre8"/>11. Introduction to Plug and Play<br class="calibre8"/>12. Configuring Devices<br class="calibre8"/>13. Input/Output Programming<br class="calibre8"/>14. Communications Drivers<br class="calibre8"/>15. Block Device Drivers<br class="calibre8"/>Part IV. Extending the Operating System<br class="calibre8"/>16. Installable File Systems<br class="calibre8"/>17. The DOS Protected Mode Interface<br class="calibre8"/>Appendix A: Plug and Play Device Identifiers </p>
+
+<p class="calibre2"><a href="http://jjhou.boolan.com/jjtbooks-sys-prog-for-win95.htm" target="_blank" class="calibre3"><span class="imgBig"><img src="img/img74.jpeg" alt="img74.jpeg" class="calibre12"/></span></a> </p>
+
+<p class="calibre2">我還是要先談作者。Walter Oney 不比 Matt 或 Jeffrey 那麼有廣泛的知名度, 但他在期刊上偶而發表一些偏系統低階的文章, 也是實力派作家。自從我知道他有這個寫作計劃, 就盼呀盼的, 盼了一年有餘, 他老人家終於出書了。</p>
+
+<p class="calibre2">你很容易就可以從目錄中比對出此書與 Matt 和 Jeffrey 的差別: 自從 Part2 之後, 就幾乎全與硬體 (或虛擬硬體) 打交道了, 這些部份佔總篇幅的 88%。即使在Part1, 也是三兩下離不開 VxD、ring0、DMA、CR0、CR3、callgate...。在程式實作方面, Matt 和 Jeffrey 都寫 ring3 應用程式, Walter 寫的則是 ring0 VxD。你會獲得一種完全不同的視界開展 (與迷惑) 。VxD 的程式架構完全不同於一般Windows 程式, 雖然對等於 window procedure 它也有所謂的Device Control Procedure, 對等於 window message 它也有所謂的System Control Message, 對等於 Win32 API 它也有所謂的 VxD Service API, 不過你很有一些新東西要面對。尤其 VxD 的開發只能仰賴 assembly 語言或C/C++ 語言, 除了 Vireo Software 公司的 VToolsD 之外又沒有第二套整合開發環境, 益發增加它的神秘性和困難度。日昨我才和我的工研院朋友通過電話, 他說新計劃裡頭要寫 VxD。『要命, 誰知道VxD 怎麼寫啊！』他帶著誇張的口氣說。我可以想像成天在高階如 MFC 中打滾, 用慣各種Wizards 的人, 面對 VxD 的表情與心情。</p>
+
+<p class="calibre2">Part1 的各章都是概念性介紹。Part2 一開始 (第六章) 介紹VMM, 範圍集中在記憶體管理、中斷處理、執行緒排程三個功能。第七章可做為你踏進VxD 程式設計的第一個台階。Walter 以 44 頁的篇幅介紹 VxD 檔案格式 (輕描淡寫) 、九種 segments 以及產生它們所需使用的巨集、VxD 連結方式、DEF 檔案寫法、VxD 開發流程、VxD 組合語言形式、procedure 宣告方式、VxD C 語言形式。由於 VxD 形式十分標準, 程式碼產生器就有了一個生存空間。VToolsD 的 QuickVxD 工具讓你以填寫表格的方式, 完成一個 VxD 骨幹, 有點類似 Visual C++ 的 AppWizard。第七章最後簡介了 VToolsD 的使用方法與畫面。</p>
+
+<p class="calibre2">第八章介紹 VxD (包括靜態與動態) 的啟動與結束。所謂靜態 VxD 是指必須在 Windows 3.1 的 SYSTEM.INI 或Windows 95 的 Registry 中註冊, 才能夠被系統在開機啟動時一併載入的 VxD。至於動態 VxD, 就像DLL 一樣, 可以讓程式動態地搜尋, 動態地載入。動態 VxD 是 Windows 95 的新特質, 主要用以支援動態的硬體重新組態 (也就是喧騰一時的 plug and play) 。具體而言, 這一章介紹的就是 VxD 生命起始和結束時, 系統在不同時機送來的不同控制訊息、彼時的系統狀態、以及彼時可安全呼叫的其他 VxD Services。</p>
+
+<p class="calibre2">第九章就要比「骨幹程式」更深入一點地研究 VxD 了。要寫一個有點氣候的 VxD, 少不得需要呼叫其他現成的 (系統的) VxD Services。即連我自己寫過一個「抓取 CR3 系統暫存器」的陽春型 VxD, 雖然關鍵只在 mov eax, cr3 這一行, 抓到後也需呼叫 VMM 提供的 _MapPhysToLinear service, 才有大用處。要呼叫VxD Services, 你必須使用 VMMCall 或 VxDCall 巨集。這兩個巨集就像「芝麻開門」, 帶你進入由 VMM、VWIN32、VKD、VDD...提供的巨量 services 所構成的巨大寶庫中。你幾乎可以為所欲為。這讓我聯想到 Matt 在其第六章談到VxD 時的一個觀點: 『由於 VxDs 可以為所欲為, 暢所欲行, 只要你在寫應用程式時踢到鐵板, 你就可以寫一個 VxD 並從ring3 呼叫它。某些人 (包括我) 主張這樣的策略應該謹慎使用。我個人認為如果你能夠避免寫 VxD, 就應該儘量避免。系統之中無限權力的東西到底還是愈少愈好。我非常憂慮有一天我的硬碟之中充斥著一大堆的 VxDs, 只因為沒有經驗的程式員以為 VxD 是唯一解決問題的途徑。』</p>
+
+<p class="calibre2">你是不是同意 Matt 的看法, 我不知道, 不過我想你對 VxD 的興趣已經被大大撩起。</p>
+
+<p class="calibre2">如果要把功能強大無所不涵的 VxD Service 開放給 ring3 程式叫用, 你就必須寫一個自己的 VxD 做為中介站, 把對每一個service 的 VxDCall 動作包裝為一個可供 C 語言呼叫的外包函式。1000 個 Services 需要 1000 個外包函式? 這是不實際的, 這又讓我想起怪才 Andrew Schulman, 他曾在 Microsoft Systems Journal 的 1992.02 那期發表過一個Generic VxD, 以單一的 C 語言介面代理所有的 VxD service, 令人拍案叫絕。「DOS/Windows 虛擬機器作業環境」 (侯俊傑/旗標/1993) 第八章曾經詳細地介紹過 Schulman 的這個作法並示範了一些應用。這本書恐怕是絕了吧我想。</p>
+
+<p class="calibre2">除了呼叫 Services 之外, 你的 VxD 可能也希望提供 Service 給別人呼叫, 第九章有介紹相關作法。本章的另一個重點是介紹三個極重要的資料結構: VMCB (VM Control Block) 、CRS (Client Register Structure) 、TCB (Thread Control Block) 。認識這三個結構, 那就不只是對VxD 的撰寫有幫助, 而且進入「虛擬機器」的研究層面了。</p>
+
+<p class="calibre2">第十章前半部跳離 VxD 程式設計, 相當深刻地介紹虛擬機器, 包括它的誕生、它的 V86 部份、它的軟體中斷機制。後半部則介紹如何讓一個 ring3 程式直接呼叫 VxD (這也是當初使我密切注意本書的重要因素) : Win16 程式必須使用軟體中斷2Fh/1684h, Win32 程式則直接利用三個 SDK API 函式, CreateFile、DeviceIoControl 和 CloseHandle。讓一個 VxD 呼叫 ring3 程式可能嗎? 可能, 本章後半部提到了在 Win16 和 Win32 兩種環境下不同的作法。</p>
+
+<p class="calibre2">第11章介紹 Plug &amp; Play 驅動程式的寫法, 以及對應的 INF 檔設計方式。DDK 附有一個 INFEDIT 工具, 以圖形介面問答方式, 讓我們輕鬆做出INF 檔。</p>
+
+<p class="calibre2">Part3 的其餘各章 (12~15) 講述不同型態之裝置驅動程式的寫法。Part4是對作業系統的擴充。在長達 57 頁的第 16 章中, 我最感興趣的是 "File System API Hooking"一節, 簡單又強而有力。你可以利用這技術寫一個 VxD, 監視所有的檔案動作。除了滿足偷窺欲之外, 商機不小, 可做即時防毒、即時壓縮、即時加密。</p>
+
+<p class="calibre2">第 17 章的 DPMI 通常被放在一般系統程式設計書籍的最前面, Walter 逆向操作是因為, DPMI 的重要性已經遠遠降低了。我記得大約三年前, DPMI 是炙手可熱的題目。當初微軟主導制定 DPMI (INT31h 介面) , 是因為Windows 3.0 推出時 PC 市場上存在一種所謂的 DOS Extender 產品, 能夠將真實模式的 MS-DOS 程式不知不覺地切換到保護模式, 取用其間廣大的資源 (最主要是記憶體) 。Lotus1-2-3 3.0 就是這種結合了DOS Extender 而讓人驚豔的商業產品。DOS Extender 為遂行這種威力, 必須對整個系統握有監管的權 (責) , 或是處於一個 VCPI (Virtual Control Program Interface) 記憶體管理器的威力傘下。不幸的是 Windows 3.0 enhanded mode 接管了整部機器, 將前兩者全盤否定。為了「暫時」向主流低頭, 微軟推導 DPMI, 使 Extended DOS 程式得以順利移植到Windows 3.0 的 DOS Box 中。如今, 物換星移, DPMI 的存在, 只是為了繼續包容那些 16 位元的「Extended DOS 程式」而已。32 位元程式呢? 不必, Win32 底下有所謂的 console 程式, 方便得很, 根本不需要DPMI 或 DOS Extender。至於 Win32 Windows 程式, 使用任何軟體中斷都會失敗, 更不可能使用 DPMI。</p>
+
+<p class="calibre2"><b class="calibre6">Writing Windows VxDs and Device Drivers</b> </p>
+
+<p class="calibre2">我想你已經清楚, Walter 的書比 Matt 和 Jeffrey 又更低階一些。瞭解虛擬機器和 VxD, 對於瞭解 Windows 系統在 ring0 的活動狀況多有助益, 我已經決定在我開授的 Windows 作業系統課程中教導學生習作 VxD。如果你對這個主題有興趣, 我再推薦另一本好書: Writing Windows VxDs and Device Drivers  (Karen Hazzah/R&amp;D Books) 。這本書臺灣一直未見進口, 非常辜負其美妙的插圖和完整的觀念敘述。該書已有第二版, 購買時請注意。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img75.jpeg" alt="img75.jpeg" class="calibre12"/></span></p>
+</body>
+</html>

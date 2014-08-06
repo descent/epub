@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="6234fe41-3158-4d6c-995c-d4487043e864" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.8.38)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>無責任書評1</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="article0" playOrder="1">
+      <navLabel>
+        <text>一個老朋友的祝賀 鍾子期序</text>
+      </navLabel>
+      <content src="OEBPS/article0.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article1" playOrder="2">
+      <navLabel>
+        <text>一封來自海外的祝賀 曾銘源序</text>
+      </navLabel>
+      <content src="OEBPS/article1.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article2" playOrder="3">
+      <navLabel>
+        <text>一窺堂奧 劉瑞貞序</text>
+      </navLabel>
+      <content src="OEBPS/article2.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article3" playOrder="4">
+      <navLabel>
+        <text>我看無責任書評 施威銘序</text>
+      </navLabel>
+      <content src="OEBPS/article3.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article4" playOrder="5">
+      <navLabel>
+        <text>解脫之味不獨飲 侯捷自序</text>
+      </navLabel>
+      <content src="OEBPS/article4.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article5" playOrder="6">
+      <navLabel>
+        <text>三本 Windows 程式設計好書</text>
+      </navLabel>
+      <content src="OEBPS/article5.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article6" playOrder="7">
+      <navLabel>
+        <text>再談 Windows 程式設計好書</text>
+      </navLabel>
+      <content src="OEBPS/article6.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article7" playOrder="8">
+      <navLabel>
+        <text>窺視 DOS 和 Windows 的隱私</text>
+      </navLabel>
+      <content src="OEBPS/article7.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article8" playOrder="9">
+      <navLabel>
+        <text>無限延伸 DOS 視野</text>
+      </navLabel>
+      <content src="OEBPS/article8.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article9" playOrder="10">
+      <navLabel>
+        <text>資訊世界的另一扇窗－雜誌</text>
+      </navLabel>
+      <content src="OEBPS/article9.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article10" playOrder="11">
+      <navLabel>
+        <text>推動視窗的手－驅動程式</text>
+      </navLabel>
+      <content src="OEBPS/article10.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article11" playOrder="12">
+      <navLabel>
+        <text>美麗的電腦新世界－多媒體</text>
+      </navLabel>
+      <content src="OEBPS/article11.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article12" playOrder="13">
+      <navLabel>
+        <text>眩麗迷人的電腦藝術－圖形</text>
+      </navLabel>
+      <content src="OEBPS/article12.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article13" playOrder="14">
+      <navLabel>
+        <text>深入探究視窗及保護模式</text>
+      </navLabel>
+      <content src="OEBPS/article13.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article14" playOrder="15">
+      <navLabel>
+        <text>精采絕倫的電腦彩色書與電子書</text>
+      </navLabel>
+      <content src="OEBPS/article14.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article15" playOrder="16">
+      <navLabel>
+        <text>Windows NT 面面觀</text>
+      </navLabel>
+      <content src="OEBPS/article15.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article16" playOrder="17">
+      <navLabel>
+        <text>具有革命精神的 MFC 和 OLE2</text>
+      </navLabel>
+      <content src="OEBPS/article16.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="article17" playOrder="18">
+      <navLabel>
+        <text>讀者來函 無責任書評 1</text>
+      </navLabel>
+      <content src="OEBPS/article17.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

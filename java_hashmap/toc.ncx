@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="210cbf06-4625-4d16-8b60-368532f5b908" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.8.38)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>疫苗：Java HashMap的死循環</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="article0" playOrder="1">
+      <navLabel>
+        <text>疫苗：Java HashMap的死循環 | 酷殼 - CoolShell.cn</text>
+      </navLabel>
+      <content src="OEBPS/article0.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

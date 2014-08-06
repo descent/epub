@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="../styles/dotepub.css" type="text/css" />
+  <title>Dotepub.com</title>
+</head>
+
+<body>
+
+
+<p>
+In computer science, the test-and-set instruction is an instruction used to write to a memory location and return its old value as a single atomic (i.e., non-interruptible) operation. If multiple processes may access the same memory, and if a process is currently performing a test-and-set, no other process may begin another test-and-set until the first process is done. CPUs may use test-and-set instructions offered by other electronic components, such as dual-port RAM; CPUs may also offer a test-and-set instruction themselves.
+A lock can be built using an atomic test-and-set instruction as follows:
+</p>
+
+<pre>
+function Lock(boolean *lock)
+{
+    while (test_and_set(lock) == 1);
+}
+</pre>
+
+<p>
+The calling process obtains the lock if the old value was 0. It spins writing 1 to the variable until this occurs.
+</p>
+<p>
+Maurice Herlihy (1991) proved that test-and-set has a finite consensus number, in contrast to the compare-and-swap operation.
+The test-and-set operation can solve the wait-free consensus problem for no more than two concurrent processes.
+[1] However, more than two decades before Herlihy's proof, IBM had already replaced Test-and-set by Compare-and-swap,
+which is a more general solution to this problem. Ultimately,
+IBM would release a processor family with 12 processors, whereas Amdahl would release a processor family
+with the architectural maximum of 16 processors.  
+</p>
+
+
+
+
+<h1>
+Hardware implementation of test-and-set
+</h1>
+<p>
+DPRAM test-and-set instructions can work in many ways. Here are two variations, both of which describe a DPRAM which provides exactly 2 ports, allowing 2 separate electronic components (such as 2 CPUs) access to every memory location on the DPRAM.
+</p>
+<h2>
+Variation 1
+</h2>
+<p>
+When CPU 1 issues a test-and-set instruction, the DPRAM first makes an "internal note" of this by storing the address of the memory location in a special place. If at this point, CPU 2 happens to issue a test-and-set instruction for the same memory location, the DPRAM first checks its "internal note", recognizes the situation, and issues a BUSY interrupt, which tells CPU 2 that it must wait and retry. This is an implementation of a busy waiting or spinlock using the interrupt mechanism. Since this all happens at hardware speeds, CPU 2's wait to get out of the spin-lock is very short.
+</p>
+<p class="">Whether or not CPU 2 was trying to access the memory location, the DPRAM performs the test given by CPU 1. If the test succeeds, the DPRAM sets the memory location to the value given by CPU 1. Then the DPRAM wipes out its "internal note" that CPU 1 was writing there. At this point, CPU 2 could issue a test-and-set, which would succeed.</p>
+<h2>
+Variation 2
+</h2>
+
+<p class="">CPU 1 issues a test-and-set instruction to write to "memory location A". The DPRAM does not immediately store the value in memory location A, but instead simultaneously moves the current value to a special register, while setting the contents of memory location A to a special "flag value". If at this point, CPU 2 issues a test-and-set to memory location A, the DPRAM detects the special flag value, and as in Variation 1, issues a BUSY interrupt.</p><div id="" class=""><p>Whether or not CPU 2 was trying to access the memory location, the DPRAM now performs CPU 1's test. If the test succeeds, the DPRAM sets memory location A to the value specified by CPU 1. If the test fails, the DPRAM copies the value back from the special register to memory location A. Either operation wipes out the special flag value. If CPU 2 now issues a test-and-set, it will succeed.</p>
+
+<h1> <span class="mw-headline" id="Software_implementation_of_test-and-set">Software implementation of test-and-set</span></h1><p>Many processors have an atomic test-and-set machine language instruction. Those that do not can still implement an atomic test-and-set using an atomic swap (as shown below) or some other atomic read-modify-write instruction.</p><p>The test and set instruction when used with boolean values behaves like the following function. Crucially the entire function is executed atomically: no process can interrupt the function mid-execution and hence see a state that only exists during the execution of the function. This code only serves to help explain the behaviour of test-and-set; atomicity requires explicit hardware support and hence can't be implemented as a simple function. NOTE: In this example, 'lock' is assumed to be passed by reference (or by name) but the assignment to 'initial' creates a new value (not just copying a reference).</p>
+<pre>
+function TestAndSet(boolean lock) 
+{
+  boolean initial = lock
+  lock = true
+  return initial
+}
+</pre>
+
+<p>The above code segment is not atomic in the sense of the test-and-set instruction. It also differs from the descriptions of DPRAM hardware test-and-set above in that here the "set" value and the test are fixed and invariant, and the "set" part of the operation is done regardless of the outcome of the test, whereas in the description of DPRAM test-and-set, the memory is set only upon passage of the test, and the value to set and the test condition are specified by the CPU. Here, the value to set can only be 1, but if 0 and 1 are considered the only valid values for the memory location, and "value is nonzero" is the only allowed test, then this equates to the case described for DPRAM hardware (or, more specifically, the DPRAM case reduces to this under these constraints). From that viewpoint, this can correctly be called "test-and-set" in the full conventional sense of the term. The essential point to note, which this software function does embody, is the general intent and principle of test-and-set: that a value both is tested and is set in one atomic operation such that no other program thread might cause the target memory location to change after it is tested but before it is set, which would violate the logic requiring that the location will only be set when it has a certain value. (That is, critically, as opposed to merely when it very recently <i>had</i> that value.)</p>
+
+<p>In the C programming language, the implementation would be like:</p><div dir="ltr" class="mw-geshi mw-code mw-content-ltr"> <div class="c source-c"> 
+
+<pre class="de1">
+#define LOCKED 1
+int TestAndSet(int* lockPtr) 
+{
+  int oldValue;
+  oldValue = SwapAtomic(lockPtr, LOCKED);
+  return oldValue == LOCKED;
+}
+</pre></div> </div>
+
+<p>where <i>SwapAtomic</i> atomically first reads the current value pointed to by <i>lockPtr</i> and then writes 1 to the location. Being atomic, <i>SwapAtomic</i> never uses cached values and always commits to the shared memory store (RAM).</p><p>The code also shows that TestAndSet is really two operations: an atomical swap and a test. Only the swap needs to be atomic. (This is true because delaying the value comparison itself by any amount of time will not change the result of the test, once the value to test has been obtained. Once the swap acquires the initial value, the result of the test has been determined, even if it has not been computed yet—e.g. in the C language example, by the == operator.)</p>
+
+<h1> <span class="mw-headline" id="Implementing_mutual_exclusion_with_test-and-set">Implementing mutual exclusion with test-and-set</span></h1><p>One way to implement mutual exclusion uses test-and-set in the following way:</p>
+
+<pre>
+boolean lock = false
+function Critical()
+{
+    while TestAndSet(lock) 
+        skip //spin until lock is acquired
+    critical section //only one process can be in this section at a time
+    lock = false //release lock when finished with the critical section
+}
+</pre>
+<p>In pseudo C it would be like:</p>
+<pre>
+volatile int lock = 0;
+
+void Critical() 
+{
+  while (TestAndSet(&amp;lock) == 1);
+  critical section //only one process can be in this section at a time
+  lock = 0 //release lock when finished with the critical section
+}
+</pre>
+<p>Note the <i>volatile</i> keyword. In absence of volatile, the compiler and/or the CPU(s) will quite certainly optimize access to lock and/or use cached values, thus rendering the above code erroneous.</p><p>Conversely, and unfortunately, the presence of <i>volatile</i> does <i>not</i> guarantee that reads and writes are committed to memory. Some compilers issue memory barriers to ensure that operations are committed to memory, but since the semantics of <i>volatile</i> in C/C++ is quite vague, not all compilers will do that. Consult your compiler's documentation to determine if it does.</p><p>This function can be called by multiple processes, but it is guaranteed that only one process will be in the critical section at a time.</p><p>Another way to implement Mutual exclusion, known as Test and Test-and-set, is more efficient than the above technique on multiprocessor machines. The "Test and Test-and-set" technique uses the same "test-and-set" instruction as the above technique, but has better cache coherence.</p><p>Both the above technique and "Test and Test-and-set" are examples of a spinlock: the while-loop spins waiting to acquire the lock.</p><h1> <span class="mw-headline" id="Hardware_implementation_of_test-and-set_2">Hardware implementation of test-and-set</span></h1> <div dir="ltr" class="mw-geshi mw-code mw-content-ltr"> <div class="asm source-asm"> <pre class="de1">enter_region:        ; A "jump to" tag; function entry point.
+ 
+  tsl reg, flag      ; Test and Set Lock; flag is the
+                     ; shared variable; it is copied
+                     ; into the register reg and flag
+                     ; then atomically set to 1.
+ 
+  cmp reg, #0        ; Was flag zero on entry_region?
+ 
+  jnz enter_region   ; Jump to enter_region if
+                     ; reg is non-zero; i.e.,
+                     ; flag was non-zero on entry.
+ 
+  ret                ; Exit; i.e., flag was zero on
+                     ; entry. If we get here, tsl
+                     ; will have set it non-zero; thus,
+                     ; we have claimed the resource as-
+                     ; sociated with flag.
+ 
+leave_region:
+  move flag, #0      ;store 0 in flag
+  ret                ;return to caller
+</pre></div> </div><p>We see that TSL tests a shared memory location (flag): It copies it to register reg, then it sets it to 1. TSL is atomic – it can't be interrupted. That is, all of its actions can be regarded as taking place at once. By using it with a spin lock (jnz enter_region), we repeatedly test if the resource is busy; when it is released (flag becomes zero) TSL will have reset it non-zero for us, and we will have claimed the resource because the spin lock testing reg will release, since reg has the previous value of flag, which was zero.</p>
+
+<h2> <span class="mw-headline" id="Implementing_semaphores_using_test-and-set">Implementing semaphores using test-and-set</span></h2>
+
+<p>It's possible to use the test-and-set instruction to implement semaphores. In uniprocessor systems this technique isn't needed (unless using multiple processes to access the same data); to use semaphores, it is sufficient to disable interrupts before accessing a semaphore. However, in multiprocessor systems, it is undesirable, if not impossible, to disable interrupts on all processors at the same time. Even with interrupts disabled, two or more processors could be attempting to access the same semaphore's memory at the same time. In this case, the test-and-set instruction may be used.</p><h2> <span class="mw-headline" id="See_also">See also</span></h2> <ul> <li>Fetch-and-add</li> <li>Test and Test-and-set</li> <li>Load-Link/Store-Conditional</li> <li>Compare-and-swap</li> </ul> <h2> <span class="mw-headline" id="References">References</span></h2> <ol class="references"> <li id="cite_note-1">^<span class="reference-text"><span class="citation journal">Herlihy, Maurice (January, 1991). "Wait-free synchronization". <i>ACM Trans. Program. Lang. Syst.</i> 13 (1): 124–149. doi:10.1145/114005.102808<span class="reference-accessdate">. Retrieved 2007-05-20</span>.</span><span title="ctx_ver=Z39.88-2004&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3ATest-and-set&amp;rft.atitle=Wait-free+synchronization&amp;rft.aufirst=Maurice&amp;rft.au=Herlihy%2C+Maurice&amp;rft.aulast=Herlihy&amp;rft.date=January%2C+1991&amp;rft.genre=article&amp;rft_id=http%3A%2F%2Fwww.cs.brown.edu%2F~mph%2FHerlihy91%2Fp124-herlihy.pdf&amp;rft_id=info%3Adoi%2F10.1145%2F114005.102808&amp;rft.issue=1&amp;rft.jtitle=ACM+Trans.+Program.+Lang.+Syst.&amp;rft.pages=124%E2%80%93149&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.volume=13" class="Z3988"><span>&nbsp;</span></span></span></li> </ol> <h2> <span class="mw-headline" id="External_links">External links</span></h2> <ul> <li>Description from Encyclopaedia of Delay-Insensitive Systems</li> <li>"Wait-free Test-and-Set" by Yehuda Afek</li> <li>int testandset(int *lock) - C-callable routine written in Sun Sparc assembly language</li> </ul> <!-- NewPP limit report Preprocessor visited node count: 171/1000000 Preprocessor generated node count: 1120/1500000 Post‐expand include size: 2277/2048000 bytes Template argument size: 168/2048000 bytes Highest expansion depth: 7/40 Expensive parser function count: 0/500 Lua time usage: 0.010s Lua memory usage: 578 KB --> <!-- Saved in parser cache with key enwiki:pcache:idhash:394099-0!*!0!!en!*!* and timestamp 20130428191108 --> </div>
+</body>
+</html>

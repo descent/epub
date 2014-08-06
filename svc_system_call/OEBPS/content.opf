@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="bookId" 
+   version="2.0">
+   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:dcterms="http://purl.org/dc/terms/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:opf="http://www.idpf.org/2007/opf">
+      <dc:title>Effective Use of ARM Cortex-M3 SVCall</dc:title>
+      <dc:language xsi:type="dcterms:RFC3066">en</dc:language>
+      <dc:identifier id="bookId" opf:scheme="URI">
+         http://www.grabmybooks.com/1380856383589_244620
+      </dc:identifier>
+      <dc:creator>http://www.coactionos.com/embedded-design/133-effective-use-of-arm-cortex-m3-svcall.html</dc:creator>
+      <dc:publisher>http://www.grabmybooks.com</dc:publisher>
+      <meta content="jpeg" name="imgType"/>
+   </metadata>
+   <manifest>
+      <item id="ncx"      href="toc.ncx" media-type="application/x-dtbncx+xml"/>                 
+      <item id="article0"      href="article0.xhtml" media-type="application/xhtml+xml"/>                 
+<item id="book-css"
+  href="css/book.css"
+ media-type="text/css"/>
+   </manifest>
+   <spine toc="ncx">
+      <itemref idref="article0" />
+   </spine>
+</package>

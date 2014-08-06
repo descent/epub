@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">第19集 setjmp與longjmp機制，很難與C++和睦相處：希賽網軟件工程頻道</h2>
+<p class="calibre2">在《第16集 C語言中一種更優雅的異常處理機制》中，就已經提到過，「setjmp和longjmp並不能很好地支持C++中面向對象的語義。因此在C++程序中，請使用C++提供的異常處理機制」。它在MSDN中的原文如下： </p>
+
+<p class="calibre2">　　setjmp and longjmp do not support C++ object semantics. In C++ programs, use the C++ exception-handling mechanism.</p>
+
+<p class="calibre2">　　這究竟是為什麼？大家知道，C++語言中是基本兼容C語言中的語義的。但是為什麼，在C++程序中，唯獨卻不能使用C語言中的異常處理機制？雖然大家都知道，在C++程序中，實際上是沒有必要這麼做，因為C++語言中提供了更完善的異常處理模型。但是，在許多種特殊情況下，C++語言來開發的應用程序系統中，可能採用了C語言中的異常處理機制。例如說，一個應用程序由於採用C++開發，它裡面使用了C++提供的異常處理機制；但是它可能需要調用其它已經由C語言實現的程序庫，而恰恰在這個被覆用的程序庫中，它也採用了異常處理機制。因此對於整個應用程序系統而言，它不可避免地出現了這種矛盾的局面。並且這種情況是非常多見的，也可能是非常危險的。因為畢竟，「setjmp and longjmp do not support C++ object semantics」。所以，我們非常有必要來瞭解它究竟為什麼不會兼容。</p>
+
+<p class="calibre2">　　在本篇文章中，主人公阿愚將和程序員朋友們一起，深入探討setjmp與longjmp機制，為什麼它很難與C++和睦相處？另外還有，如果C++語言來開發的應用程序系統中，不得不同時使用這兩種異常處理模型時，又如何來儘可能保證程序系統的安全？</p>
+
+<p class="calibre2"><b class="calibre3">C++語言中使用setjmp與longjmp</b> 　　閒話少說，還是看例程先吧！代碼如下：</p>
+
+<p class="calibre2">// 注意，這是一個C++程序。文件擴展名應該為.cpp或其它等。例如，c++setjmp.cpp<br class="calibre4"/>#include &lt;stdio.h&gt;<br class="calibre4"/>#include &lt;setjmp.h&gt;<br class="calibre4"/>#include &lt;stdlib.h&gt;</p>
+
+<p class="calibre2">//定義一個測試類<br class="calibre4"/>class MyTest<br class="calibre4"/>{<br class="calibre4"/>public:<br class="calibre4"/>MyTest ()<br class="calibre4"/>{<br class="calibre4"/>printf("構造一個MyTest類型的對象\n");<br class="calibre4"/>}</p>
+
+<p class="calibre2">virtual ~ MyTest () <br class="calibre4"/>{<br class="calibre4"/>printf("析構銷毀一個MyTest類型的對象\n");<br class="calibre4"/>}<br class="calibre4"/>};</p>
+
+<p class="calibre2">jmp_buf mark;</p>
+
+<p class="calibre2">void test1()<br class="calibre4"/>{<br class="calibre4"/>// 注意，這裡拋出異常<br class="calibre4"/>longjmp(mark, 1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">void test()<br class="calibre4"/>{<br class="calibre4"/>test1();<br class="calibre4"/>}</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">// 設置好異常出現時，程序的回溯點<br class="calibre4"/>jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>// 建立一個對像<br class="calibre4"/>MyTest myobj;</p>
+
+<p class="calibre2">test();<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常\n");<br class="calibre4"/>}<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　請編譯運行一下，程序的運行結果如下：<br class="calibre4"/>　　構造一個MyTest類型的對象<br class="calibre4"/>　　析構銷毀一個MyTest類型的對象<br class="calibre4"/>　　捕獲到一個異常</p>
+
+<p class="calibre2">　　上面的程序運行結果，那麼到底是不是合理的呢？阿愚感到有些納悶，這結果肯定是合乎情理的呀！從這個例程來看，setjmp和longjmp並不能破壞C++中面向對象的語義，它們之間融洽得很好呀！那麼為什麼會說，「setjmp and longjmp do not support C++ object semantics」。請不要著急，沉住氣！繼續看看其它的情況，代碼如下：</p>
+
+<p class="calibre2">#include &lt;stdio.h&gt;<br class="calibre4"/>#include &lt;setjmp.h&gt;<br class="calibre4"/>#include &lt;stdlib.h&gt;</p>
+
+<p class="calibre2">class MyTest<br class="calibre4"/>{<br class="calibre4"/>public:<br class="calibre4"/>MyTest ()<br class="calibre4"/>{<br class="calibre4"/>printf("構造一個MyTest類型的對象\n");<br class="calibre4"/>}</p>
+
+<p class="calibre2">virtual ~ MyTest () <br class="calibre4"/>{<br class="calibre4"/>printf("析構銷毀一個MyTest類型的對象\n");<br class="calibre4"/>}<br class="calibre4"/>};</p>
+
+<p class="calibre2">jmp_buf mark;</p>
+
+<p class="calibre2">void test1()<br class="calibre4"/>{<br class="calibre4"/>// 注意，這裡在上面程序的基礎上，進行了一點小小的改動<br class="calibre4"/>// 把對像的構造挪到這裡來<br class="calibre4"/>MyTest myobj;</p>
+
+<p class="calibre2">longjmp(mark, 1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">void test()<br class="calibre4"/>{<br class="calibre4"/>test1();<br class="calibre4"/>}</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>test();<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常\n");<br class="calibre4"/>}<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　同樣也編譯運行一下，看程序的運行結果，如下：<br class="calibre4"/>　　構造一個MyTest類型的對象<br class="calibre4"/>　　捕獲到一個異常</p>
+
+<p class="calibre2">　　呵呵！那個對像的構造建立過程只不過是被稍稍挪了一下位置，而且先後順序還沒有改變，都是在if( jmpret == 0 )語句之後，longjmp(mark, 1)之前。可為什麼程序運行的結果卻不同了呢？顯然，從這個例程的運行結果來看，setjmp和longjmp已經破壞C++中面向對象的語義，因為那個MyTest類型的對像只被構造了，但是它卻沒有被析構銷毀！這與大家所知道的面向對象的理論是相違背的。程序員朋友們，不要小看這個問題，有時這種錯誤將給應用程序系統帶來極大的災難（不僅僅是內存資源得不到釋放，更糟糕的是可能引發系統死鎖或程序崩潰）。</p>
+
+<p class="calibre2">　　由此可以看出，setjmp與longjmp機制，有時的確是不能夠與C++和睦相處。那麼，為什麼第1個例子中會安然無恙呢？它有什麼規律嗎？請繼續看另外的一個例子，代碼如下：</p>
+
+<p class="calibre2">#include &lt;stdio.h&gt;<br class="calibre4"/>#include &lt;setjmp.h&gt;<br class="calibre4"/>#include &lt;stdlib.h&gt;</p>
+
+<p class="calibre2">class MyTest<br class="calibre4"/>{<br class="calibre4"/>public:<br class="calibre4"/>MyTest ()<br class="calibre4"/>{<br class="calibre4"/>printf("構造一個MyTest類型的對象\n");<br class="calibre4"/>}</p>
+
+<p class="calibre2">virtual ~ MyTest () <br class="calibre4"/>{<br class="calibre4"/>printf("析構銷毀一個MyTest類型的對象\n");<br class="calibre4"/>}<br class="calibre4"/>};</p>
+
+<p class="calibre2">jmp_buf mark;</p>
+
+<p class="calibre2">void test1()<br class="calibre4"/>{<br class="calibre4"/>longjmp(mark, 1);<br class="calibre4"/>}</p>
+
+<p class="calibre2">void test()<br class="calibre4"/>{<br class="calibre4"/>/ // 注意，現在又把它挪到了這裡<br class="calibre4"/>MyTest myobj;</p>
+
+<p class="calibre2">test1();<br class="calibre4"/>}</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>test();<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常\n");<br class="calibre4"/>}<br class="calibre4"/>}</p>
+
+<p class="calibre2">　　請編譯運行一下，程序的運行結果如下：<br class="calibre4"/>　　構造一個MyTest類型的對象<br class="calibre4"/>　　析構銷毀一個MyTest類型的對象<br class="calibre4"/>　　捕獲到一個異常</p>
+
+<p class="calibre2">　　呵呵！這裡的運行結果也是對的。所以主人公阿愚總結出了一條結論，那就是，「在longjmp被調用執行的那個函數作用域中，絕對不能夠存在局部變量形式的對象（也即在堆棧中的對象，longjmp執行時還沒有被析構銷毀），否則這些對象將得不到析構的機會」。切忌切忌！又例如下面的例子同樣也會有問題，代碼如下：</p>
+
+<p class="calibre2">#include &lt;stdio.h&gt;<br class="calibre4"/>#include &lt;setjmp.h&gt;<br class="calibre4"/>#include &lt;stdlib.h&gt;</p>
+
+<p class="calibre2">class MyTest<br class="calibre4"/>{<br class="calibre4"/>public:<br class="calibre4"/>MyTest ()<br class="calibre4"/>{<br class="calibre4"/>printf("構造一個MyTest類型的對象\n");<br class="calibre4"/>}</p>
+
+<p class="calibre2">virtual ~ MyTest () <br class="calibre4"/>{<br class="calibre4"/>printf("析構銷毀一個MyTest類型的對象\n");<br class="calibre4"/>}<br class="calibre4"/>};</p>
+
+<p class="calibre2">jmp_buf mark;</p>
+
+<p class="calibre2">void main( void )<br class="calibre4"/>{<br class="calibre4"/>int jmpret;</p>
+
+<p class="calibre2">jmpret = setjmp( mark );<br class="calibre4"/>if( jmpret == 0 )<br class="calibre4"/>{<br class="calibre4"/>MyTest myobj;<br class="calibre4"/>longjmp(mark, 1);<br class="calibre4"/>}<br class="calibre4"/>else<br class="calibre4"/>{<br class="calibre4"/>printf("捕獲到一個異常\n");<br class="calibre4"/>}<br class="calibre4"/>}</p>
+
+<p class="calibre2"><b class="calibre3">總結</b> 　　 雖然說，setjmp與longjmp機制，很難與C++和睦相處。但是它並非那麼可怕，只要掌握了它的規律，整個應用程序系統的安全性仍掌握在你手心。而且，本文開頭提到的例子（採用C++開發的應用程序，它裡面調用了C語言實現的其它程序庫，並且庫代碼中使用了setjmp和longjmp機制），它並沒有任何的問題。因為這個C庫中，其中調用longjmp的函數域內，決不會有對象的構造定義。</p>
+
+<p class="calibre2">　　現在為止，對setjmp和longjmp的討論暫告一個段落。在「愛的秘密」篇中，會進一步闡述它的實現。下一篇文章將討論在C++中，如何兼容並支持C語言中提供的其它方式的異常處理機制（例如，C++中對goto語句的支持）。哈哈！ goto next！</p>
+</body>
+</html>

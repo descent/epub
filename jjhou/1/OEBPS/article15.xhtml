@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">Windows NT 面面觀</h2>
+<p class="calibre2">還沒揭開面紗的新娘總讓人充滿好奇，<br class="calibre3"/>可是 Windows NT 揭開面紗後賣的不算好。</p>
+
+<p class="calibre2">NT 是一個大傢伙，如果你在家裡供養一部這玩意兒，<br class="calibre3"/>以目前的硬體配備來看 ， <br class="calibre3"/>會不會覺得自己像在 10 坪客廳裝一部 20 噸的箱型冷氣 ? </p>
+
+<p class="calibre2">這一次我介紹三本 Windows NT 書籍。 </p>
+
+<p class="calibre2">NT 被預期是作業系統的先進指標，但賣的不算好，起碼比起它未推出之前的氣勢來看。在那個 NT 將推出而未推出，山雨欲來風滿樓的時代，一位朋友對我說:『現在什麼東西沾到 NT 都是寶，都可以賣錢』，興奮之情溢於言表，彷彿擁抱了金山銀礦。</p>
+
+<p class="calibre2">的確，還沒揭開面紗的新娘總讓人充滿好奇。</p>
+
+<p class="calibre2">NT 是一個大傢伙；它是一個具備網路能力，擁有強制性多線多工，保密防諜能力 (security)，可供多人使用的大傢伙。如果你在家裡供養一部這玩意兒，會不會覺得自己像是在 10 坪的客廳裝一部 20 噸的箱型冷氣機 ? 如果 NT 售價不貴倒也無妨 (反正它什麼都能跑: DOS 程式、Windows 3.x 程式、OS/2 程式、POSIX 程式 (UNIX 程式))，不過也別忘了它有凶悍的能力吃掉你花大把銀子買來的硬體資源。</p>
+
+<p class="calibre2">這一次我介紹三本 Windows NT 書籍。如果以在學校上作業系統這門課的角度和心情，Inside Windows NT 頗能符合；如果程式員煩惱如何把 16 位元Windows 程式移植到 32 位元 NT 環境，Moving Into Windows NT Programming 在這方面著墨多些；如果想要理論和程式兩頭並進 Windows NT (這最給人紮實感)，Advanced Windows NT 不錯。請注意，NT 的境界已遠遠地把 DOS 拋到後頭，對於不是科班出身的軟體人員而言，多工、多線、排程、虛擬空間等需要深厚理論基礎的主題要越雷池一步並不容易。非科班的人我想在軟體界是滿多的，侯捷就是一個。軟體業能夠吸引各種背景的人加入並且提供任何人築夢的機會，正是這一行業偉大的地方。</p>
+
+<p class="calibre2">進入書籍評介之前我想就幾個容易混淆不清的觀念先介紹一下:</p>
+
+<p class="calibre2">Win32 - 這是 32 位元 API。所謂 API 就是函式名稱、參數個數、參數型態、函式回返值等等「程式介面規格」。Microsoft 希望 Win32 能夠成為 32 位元API 的標準，做出來的 32 位元程式就是 Win32 程式；以檔案格式來說，它們是「PE (Portable Executable) 檔」。</p>
+
+<p class="calibre2">Windows NT - 這是一個可以跑 Win32 程式的作業系統，這只是 Win32 API 載台 (作業系統) 之一，但也是目前唯一的一個。</p>
+
+<p class="calibre2">Win32s - 最容易令人迷惑的名詞。它是一個「作業系統擴充部份」(如果使用英文我應該說 "Extension of Windows"，但中文說「擴充」比說「延伸」更好些；事實上 Extension 也有擴充之意)。早期的 Multimedia Extension for Windows 擴充了 Windows 3.0 的多媒體能力 (後來被整個含入 Windows 3.1)，現在這個 Win32s 擴充了Windows 3.1 執行 Win32 程式的能力。多媒體擴充部份由一些 DLLs 構成，Win32s 擴充部份也是由一些 DLLs，外加一些 VxDs、EXEs 構成，它們負責把 32 位元呼叫轉換為 16 位元，畢竟 Windows 3.1 中真正有的只是 16 位元函式。不是每一個 Win32 API 都可以被這些轉換層轉換為 Win16 API，所以從另一個角度來看，我們又把「能夠在 Win32s 這個環境下執行的 32 位元程式」所能夠呼叫的 Win32 API (那只佔全部 Win32 的一部份) 特別歸為一類，稱為Win32s API。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img38.jpeg" alt="img38.jpeg" class="calibre4"/></span> 等等，等等，這裡是 Win16 還是 Win32？是 Win32s 還是 Win32c？</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Moving into Windows NT Programming <br class="calibre3"/>作者 Jason Loveman<br class="calibre3"/>出版 SAMS<br class="calibre3"/>頁數 9 章，515 頁<br class="calibre3"/>售價 US$ 39.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">1. An Overview of Windows NT<br class="calibre3"/>2. NT Internals<br class="calibre3"/>3. Porting Programs to NT<br class="calibre3"/>4. A Port to WINIO<br class="calibre3"/>5. NT Multitasking<br class="calibre3"/>6. The NT is for New Technology<br class="calibre3"/>7. Win32s<br class="calibre3"/>8. Portability<br class="calibre3"/>9. Tools </p>
+
+<p class="calibre2">本書寫給任何已經熟悉 Windows 3.x 而欲了解Windows NT 者，作者假設你已經有 SDK 經驗。這本書花相當的篇幅介紹移植性，書名早就明白告訴你了。</p>
+
+<p class="calibre2">第一章是 Windows NT 概觀，講的卻並不是技術上的概觀，而是關於本書的概觀，包括全書範圍、作者經歷、Win32s 介紹 (一點點)、移植程式需多少時間等等。我們這位愛人同志有一個最高指導九原則 (很像報紙副刊上常玩的性向遊戲): 如果你如何如何，就加三天；如果你如何如何，再加五天...。</p>
+
+<p class="calibre2">第二章介紹 Windows NT 內部，開始談些作業系統的東西，只不過討論十分粗淺。本書著重在移植性，因此第三章第四章是重頭戲。作者在第三章一一列出幾個程式移植時值得注意的地方，例如利用 #ifdef(WIN32) 設計那些 16/32 位元間十分敏感的函式或參數。事實上移植性最大的問題並不在 API 的不相容，那很容易揪出來；有些 API 的困擾不是因為名稱或參數或動作有所改變，而是因為它們處理的資料可能在 Windows 3.1 和Windows NT 中有所不同，這稱為 "Unlisted API Changes"。最明顯的就是視窗類別和視窗兩個資料結構中的 words 和 longs 的改變，下面是個例子 :</p>
+
+<p class="calibre2"><small class="calibre9">#if defined (WIN32)<br class="calibre3"/>hInst=(HANDLE)GetWindowsLong(hwnd,GWL_HINSTANCE);<br class="calibre3"/>#else<br class="calibre3"/>hInst=GetWindowsWord(hwnd,GWW_HINSTANCE);<br class="calibre3"/>#endif</small> </p>
+
+<p class="calibre2">你記得這做什麼用吧，這是直接從視窗資料結構中取資料。甚至你可以定一個巨集如下:</p>
+
+<p class="calibre2"><small class="calibre9">#if defined (WIN32)<br class="calibre3"/>#define GetWindowsInstance(hwnd) \<br class="calibre3"/>((HMODULE)GetWindowsLong(hwnd,GWL_HINSTANCE))<br class="calibre3"/>#else<br class="calibre3"/>#define GetWindowsInstance(hwnd) \<br class="calibre3"/>((HMODULE)GetWindowsWord(hwnd,GWW_HINSTANCE))<br class="calibre3"/>#endif</small> </p>
+
+<p class="calibre2">然後我們就可以高枕無憂地這麼做 :</p>
+
+<p class="calibre2"><small class="calibre9">hInst= GetWindowsInstance(hwnd); </small> </p>
+
+<p class="calibre2">很幸運 Windowsx.h 定義了一些好用的巨集 (包括上述巨集)，這個檔在移植性方面扮演重要角色，如果忽略它，你自己可得多幹好些活兒。我建議把它印出來好好瞧瞧。Windows.h 我認為也該印出來好好瞧瞧。我常把這類 .H 檔以及 MSDN 光碟片中的文章印出來裝訂成冊，學校附近的影印店都有裝訂服務。(MSDN 光碟片上期介紹過)。</p>
+
+<p class="calibre2">在 Windows 3.1 中討生活的人都知道這個 16 位元作業環境在記憶體管理方面還有些限制。如果你曾經嘗試以 GlobalAlloc() 和 LocalInit() 組織一個SubSegment Allocation Scheme，這種架構並不適用於 NT，第一個原因是把數值放到 DS 這個動作在 Windows NT 中並不合法，第二個原因是 LocalInit() 已不復存在於 Windows NT 中。那怎麼辦呢 ? 啊哈，Windows NT 根本就不需要，NT 多了新的虛擬記憶體 API 以及新的 Heap API，足以解決這個問題。</p>
+
+<p class="calibre2">第四章介紹如何把 WINIO 移植到 Windows NT 上。想在 Windows 上繼續使用方便的 printf()，你可以選擇 MSC 7.0 的 QuickWin 或 Borland C++ 的 EasyWin，但這個好點子在更早之前就有人想過了，那就是 WINIO 函式庫。這個 WINIO 享有一些名聲，除了因為它的作者之一是知名的 Andrew Schulman，而且它三番兩次出現，最近的一次是 Schulman 以它做為 Undocumented Windows 書中範例程式的螢幕輸出工具。本章的移植工作大部份不在 API 的改變，而在訊息與參數的 32 位元化。這一章82 頁中倒有 61 頁程式碼 (包括 WINIO 和它的兩個呼叫範例)，如果你從不曾看過聽過 WINIO，顯然這一章難以下嚥，下面兩篇文章對 WINIO 的設計原理有詳細說明 :</p>
+
+<p class="calibre2">○ Call Standard C I/O Functions from Your Windows Code Using the WINIO Library (MSJ, 1991/07)</p>
+
+<p class="calibre2">○ Porting DOS Programs to Protected-Mode Windows with the WINDOS Library (MSJ，1991/09)</p>
+
+<p class="calibre2">其實 main()、printf()、gets() 等標準的 C 程式一樣可以在 Windows NT 中跑，它自動繼承一個 console，程式所有的 I/O 都將在這個 console 所控制的視窗中執行。這聽起來就像在 DOS Box 中執行 DOS 程式沒有兩樣，但這只是 Windows NT console I/O 的一小部份功能而已。Win32 有一組 Console API，提供開發所謂character-mode 程式的必要函式，我們既擁有類似 printf() 的方便，又做出不折不扣的 32 位元程式。</p>
+
+<p class="calibre2">好，那麼你會問有了 Console API 又何需把WINIO 移植到 NT 上 ? 一來這是作者的一個移植示範，二來不管 QuickWin 或 EasyWin 或 Console API，沒有一個適用於 Win32s 環境，獨獨 32 位元的 WINIO 可以，所以它還是有些實質用途的。關於 Console API，PC-Mag 有一篇 Exploring the Win32 Console API (Ray Duncan，1992.11.24) 也很好。</p>
+
+<p class="calibre2">說到這裡我又想補充一點，許多我們習慣的 Windows 程式寫法，特別是為我們帶來不解或不便的，像 MakeProcInstance()、GlobalLock()/GlobalUnlock()、Medium Model 神話、LibMain()/WEP()，在編譯器不斷演進的過程中其實已經成為天寶當年的老寫法了，已經沒有存在的必要。Windows 程式甚至可以不要 WinMain() 而以 main() 做為進入點。這些特質可能因編譯器的不同而互異，我剛剛說的是Microsoft 開發工具，有興趣的話你可以看 MSDN 的 The C/C++ Compiler Learns New Tricks 一文。(也許編譯器手冊上也有這些資訊，手冊太多了我不敢說我沒有漏看)。</p>
+
+<p class="calibre2">第五章涵蓋 Windows NT 的多工多線特徵，以及影響所及的程式寫法。Process 是一個可執行檔在記憶體中的映像 (image)，自己擁有一個獨立的位址空間；Thread 則是在該位址空間中的一個執行單位。強制性多工對於那種「在一個以上的 thread 中處理同一份資料 (變數)」的情況特別有深遠的影響。Windows 3.x 雖然沒有強制性多工 (如果我們把眼光放在System VM 中而不是 VM 與 VM 之間的話)，同樣的問題依然可能發生在 DLL，因為 DLL 可以提供 task (EXEs) 之間的共用資料。這也就是為什麼利用 DLL 供應共用性資料的作法並不被鼓勵，你得小心 !</p>
+
+<p class="calibre2">在強制性多工多線環境下，Scheduler 隨時會進來，全域變數很容易造成困擾。以這個例子來說 : </p>
+
+<p class="calibre2"><small class="calibre9">int count = 0;<br class="calibre3"/>DATABLK aData[MAXDAT];</small></p>
+
+<p class="calibre2">1 RETCODE MultiThreadFunction(DATABLK *pData)<br class="calibre3"/>2 {<br class="calibre3"/>3 if (count == MAXDAT) return(FULL);<br class="calibre3"/>4 aData[count] = *pData;<br class="calibre3"/>5 count++;<br class="calibre3"/>6 return OK;<br class="calibre3"/>7 } </p>
+
+<p class="calibre2">如果 thread 在 line4 執行後被切斷 (強制性多工環境下任何兩個指令間都有可能 被中斷)，會導至第二個 thread 把資料貯存在第一個 thread 的資料上。更糟的是(和上例無關) 如果第一個 thread 已經把陣列用光了，第二個 thread 可能會用到陣列以外的記憶體。指標亂指會造成什麼後果 ? 所有 C 程式員都知道其嚴重性。這些問題的發生都是因為全域變數被各 thread 共享，所以能夠避免使用全域變數就儘量避免；如果不能避免，Windows NT 提供數種 Synchronization objects: Events、Semaphore、Mutex、Critical Section。這些名詞意義以及技術會讓只具 DOS 基礎的人充滿挫折感。</p>
+
+<p class="calibre2">談到多工，IPC (行程通訊) 就不能不表。關於這部份本章有三個範例程式，一是 CALLIPC，使用 DLL shared data 做 IPC (只能針對靜態資料)；一是 MEMSHARE，使用 "shared memory-mapped file" 做 IPC (可以針對動態配置的記憶體)；一是 DDEIPC，使用 DDEML 做 IPC。程式都小小的，饒富趣味，針對每個程式你可以 (也只能) 執行兩個個體 (instance)，每個個體都會出現一個畫有格子狀的視窗；當你在個體 A 移動滑鼠，原本是應該在游標位置所在的格子中塗上黑色，現在卻是在個體 B 的對映格子中塗色。這種帶有視覺效果之 IPC 範例的教學效果和吸引力好極了。</p>
+
+<p class="calibre2">我總覺得，同樣是寫應用軟體，Windows 程式員對作業系統認知程度的多寡，所帶來在程式發展上的影響，遠比 DOS 程式員要來的重的多。所以國外雜誌常說Windows 程式員的薪水高，環境挑，想來不是沒有道理。程式寫到一個程度，沒有適度的作業系統基礎就難再進步，這也是為什麼我一再強調要注意 prcess、thread、memory management、virtual machine 等基礎知識。很抱歉我總是以DOS 程式員的心情來看學習歷程，懂 UNIX 或 X Window 的人應該已經有了這些知識。</p>
+
+<p class="calibre2">第六章介紹 Windows NT 的新事物，包括 Registry 和 SEH 和 VM，以及 GDI++，Memory-Mapped File I/O，Unicode、File System、Networking、Security。範圍這麼廣，總共 110 頁的這一章只能蜻蜓點水，在幾個點上稍做停留。若要做主題瀏覽，本章尚可，若要更深入些，就得看稍後介紹的下一本書了。</p>
+
+<p class="calibre2">System Registry 是 Windows 3.1 的 REG.DAT 的擴充，並不存在於 Win32s 中。原先 REG.DAT 只是為了貯存 OLE 的資訊，以及 ProgMan 和 FileMan 的副檔名相關資訊 (像是 .TXT 對映到 NotePad.EXE)；到了 NT，所有原放於 CONFIG.SYS，AUTOEXEC.BAT，WIN.INI，SYSTEM.INI 的資訊都被放在這具有層層階級的資料庫中了，甚至應用程式也被鼓勵把自己私有的執行環境描述在其中。關於這個主題，A Look at the Windows System Registry (PC-Mag，1993.01.12) 以及Exploring Windows System Registry Performance Data (PC-Mag，1993.01.26) 也是兩篇好文章，都是 Ray Duncan 的作品。</p>
+
+<p class="calibre2">你覺得介紹書又介紹文章有點兒畫蛇添足嗎 ? 文章精簡而且獨立性強，比較不會帶來壓迫感。雜誌專欄作家的文筆、思路結構、技術實力通常都非常好，本身也多有寫書經驗。我總喜歡先看文章再看書。</p>
+
+<p class="calibre2">第七章有 42 頁介紹 Win32s。任何關於 Win32s 的文章，一定會出現 <b class="calibre6">thunk</b> 這個字，但是你查不到這個字的意義。這個術語最初是發展編譯器的人用的，意思是</p>
+
+<p class="calibre2">"a piece of code，generated by the compiler，which evaluated an l-value or r-value of a parameter "</p>
+
+<p class="calibre2">而當 Windows 使用 thunk 這個字，它的意義是</p>
+
+<p class="calibre2">"an address that can be called by a process that refers to a system generated piece of code which does something, and then calls a real function address "</p>
+
+<p class="calibre2">thunk 的行為像在截取程式不同部位發出的函式呼叫動作，有時候用來決定位址，有時候用來轉換位址等等。Win32s 組成份子 (各 DLLs、EXEs) 中，最重要的部份我們就稱之為 "thunking layer"。關於Thunking，我看過最深入的一篇文章是 At Last-Write Bona Fide 32-bit Programs that Run on Windows 3.1 Using Win32s (Andrew Schulman，MSJ，1993/04)。在這篇文章中，作者解釋 32 位元的好處，以及 Win32s 的好處。<br class="calibre3"/>其實 Win32s 並不是第一個企圖進入 32 位元的 Windows 程式，第一個有此打算的是 Microsoft 的 WINMEM32.LIB (1991/03 的 MSJ 有一篇 Porting 32 bit AP to Windows 3.1 with the WINMEM32 Lib)。MetaWare 和 Rational Systems 兩家公司也有 32 位元的<br class="calibre3"/>Windows Extender (它對 Windows 的關係相當於 32 位元 DOS Extender 相對於 MS-DOS 的關係)。某些 32 位元產品如 Mathematica (Wolfram Research 出品) 也已經出現在市場上。</p>
+
+<p class="calibre2">但不同於這些已經建立的 32 位元 Windows 程式，Win32s 承諾的是<br class="calibre3"/>標準性，因為它使用與 Windows NT 相同的 Win32 API，並且，當然<br class="calibre3"/>也因為它來自於 Microsoft。事實上 Win32s 可以說是 Windows<br class="calibre3"/>作業系統在 32 位元的擴充部份，絕不只是一個補充過渡品。每一份<br class="calibre3"/>Windows 3.1 都已經知道了什麼是 Win32s : Windows 3.1 的 KRNL386<br class="calibre3"/>內含一個 ExecPE() 函式，只要使用者想在 Windows 3.1 中執行一個<br class="calibre3"/>Win32 PE (Portable Executable) 檔案，ExecPE() 就會搜尋並企圖<br class="calibre3"/>載入一個 W32SYS.DLL 檔案。此檔案是 Win32s 的組成份子，從這裡<br class="calibre3"/>開始引爆整個 Win32s 子系統的活動。</p>
+
+<p class="calibre2">下圖是這篇文章的附圖。此圖將 Win32s 子系統的組成份子以及它們之間<br class="calibre3"/>的關係表現的非常好。</p>
+
+<p class="calibre2">圖 MSJ 1993.04</p>
+
+<p class="calibre2">本網站略 </p>
+
+<p class="calibre2">如果曾經使用過或考慮過 DOS Extender，是否你想過這個問題 :「我原先的 DOS 程式內呼叫了買來的 LIB (沒有原始碼)，現在為了加入 DOS Extender，重新編譯的程式如何和這買來的 LIB 再次成功聯結」? 這問題同樣出現在 Win32s 身上，但這次有解答，Universal Thunks 可以完成使命。這也是唯一一個存在於 Win32s 而不存在於 Win32 的特質 (Win32 根本不需要什麼 thunking)。本章有一個小範例就是以 32 位元程式呼叫目前在 Win32s 中還沒有支援的 MCI (多媒體控制介面)，最終由 16 位元 MMSTSTEM.DLL 服務 (內含 MCI)。這個例子借助 Win32s API 中的 Universal Thunking Mechanism 提供的標準介面，在 32 位元應用程式與16 位元 DLL 之間搭起一座鵲橋。簡單地說，我們要為 32 位元程式製作一個32 位元的 "interface DLL"，它透過系統提供的 "stepdown thunk" 與另一端的 16 位元 "interface DLL" 搭上，再由 16 位元的 interface DLL 呼叫 16 位元 DLL 函式 :</p>
+
+<p class="calibre2">32 位元應用程式<br class="calibre3"/>↑<br class="calibre3"/>↓<br class="calibre3"/>32 位元 interface DLL (程式員負責完成)<br class="calibre3"/>↑<br class="calibre3"/>↓<br class="calibre3"/>stepdown thunk (系統內建)<br class="calibre3"/>↑<br class="calibre3"/>↓<br class="calibre3"/>16 位元 interface DLL (程式員負責完成)<br class="calibre3"/>↑<br class="calibre3"/>↓<br class="calibre3"/>16 位元 DLL</p>
+
+<p class="calibre2">MSJ 在 1993.11 有一篇文章 Mix 16-bit and 32-bit Code in Your Applications with the Win32s Universal Thunk 很深入，作者是 Walter Oney。懷疑 thunking 有什麼用嗎 ? 難說，視你依賴一個無原始碼之 DLL 的強烈程度而定。</p>
+
+<p class="calibre2">再回到書上來。第八章又對移植性耳提面命一番。其中有個小節提到 MFC (Microsoft Fundation Class)。說真的，要有跨平台的移植性，高效率的軟體生產力，MFC 應該是很好的投資；Borland 的 OWL 是同類級產品，應該也不錯。廠商廣告說的天花亂墜，讓人有「以 MFC 撰寫程式很簡單」的想法，再進而聯想到「任何生手都可以利用各種 Wizards (或 Experts) 輕輕鬆鬆寫 Windows 程式」，真是胡說，依我看 ClassLib 只能幫助有相當功力的 Windows 程式員。下個月我們好好談談 MFC。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Advanced Windows NT <small class="calibre9">(The Developer's Guide to<br class="calibre3"/>the Win32 Application Programming Interface)</small> 作者 Jeffrey Richter<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 11 章，700 頁<br class="calibre3"/>售價 US$ 39.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">Introduction<br class="calibre3"/>1. Processes and Threads<br class="calibre3"/>2. Memory Management with Heaps<br class="calibre3"/>3. Virtual Memory Management<br class="calibre3"/>4. Memory-Mapped Files<br class="calibre3"/>5. Thread Synchronization<br class="calibre3"/>6. The Win32 SubSystem Environment<br class="calibre3"/>7. Dynamic-Link Libraries<br class="calibre3"/>8. Thread-Local Storage<br class="calibre3"/>9. File Systems and File I/O<br class="calibre3"/>10. Structured Exception Handling<br class="calibre3"/>11. Unicode<br class="calibre3"/>Appendix : Message Crackers </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img39.jpeg" alt="img39.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">本書基本上以作業系統觀念為主，輔以範例驗證之。從章名可以發現，都是作業系統的大題目。Richter 另有一本Windows 3.1 : A Developer's Guide，在我心目中與經典作Programming Windows 3.1 等量齊觀；他設計範例程式的點子和技巧都是一流的。</p>
+
+<p class="calibre2">別忽略最前面的 Introduction，這裡有名詞解釋，解釋的是 Win32，Win32s 和 Windows NT (許多人不能夠十分清楚它們的關係與異同)。本書讀者群設定在具備 16 位元 Windows 程式經驗者，範例程式以 C 寫成。Richter 說他自己發展大計劃時用的是 C++，但他不願意喪失最大的客戶群。老實說我也很想知道臺灣有多少人真正在工作上應用 C++ 語言。這裡也提到全書程式的發展和測試環境，以及磁片的安裝方式。</p>
+
+<p class="calibre2">第一章 Processes and Threads，介紹應用於 process 和 thread 建立與維護的各種 API 函式。作者以某些關鍵性 API 函式參數的詳細說明，幫助我們更了解作業系統。光 CreateProcess() 的 10 個參數就足足用掉 13 頁。</p>
+
+<p class="calibre2">在 16 位元 Windows 中要做到多工，必須不斷呼叫 PeekMessage()，而在耗時甚久的檔案動作中，偏偏 PeekMessage() 又只在讀檔 (或寫檔) 動作之間才發生效用，所以常常發生的一種情況是，使用者由於沒有立即看見反應而拼命按[Cancel] 鈕，每一次按鈕都被 Windows 記錄下來；當軟體真的處理了第一個按鈕動作，剩餘的左鍵 click 動作就作用在當時螢幕上的位置。會不會因而引起檔案未貯存就離開的這種斷腸情況呢 ? 誰知道 !! 看你被記錄下來的 click 動作到底落在螢幕上的哪裡囉。如果你將耗時的程式碼集中放在某個 thread 執行，UI 碼放在 primary thread 執行，那麼 [Cancel] 按鈕永遠有最高優先權，可以即時反應。我們再不需要把PeekMessage() 撒落的滿地都是了。</p>
+
+<p class="calibre2">如果你把印表工作放在某個 thread，允許使用者在primary thread 中繼續它的編輯排版工作，那麼 primary thread 更改的資料在 printing thread 中該當如何 ? 解決方法是把檔案拷貝一份到暫時檔中供應給 printing thread，而讓 primary thread 在原檔案工作。這類問題前面我也說了好幾次，都是強制性多工多線環境帶來的副作用，它可是兩面刀呢。</p>
+
+<p class="calibre2">Win32 允許應用程式設定 thread 的執行優先權，從 1 (最低) 到 31 (最高)。如果優先權高的 thread 有 event 等待處理，優先權低的 thread 永遠只能等待。那麼優先權 1 的 thread 豈不永無翻身之日 ? 別擔心，絕大部份的 threads 都把它們分得的 CPU 時間拿來睡覺，所以，低優先權的 thread 仍有可為。</p>
+
+<p class="calibre2">這一章描述 process 的生命週期以及 NT 如何管理它，同時也敘述了 NT 的Object Manager (process 也是一種 object)。本章也討論了 process 對 thread 的管理。科班出身的你認為這都是作業系統課程裡的基本東西，有什麼好再強調的 ? 可是軟體人力中有許多並非資訊背景的工程師，我在工研院機械所的同事(開發 DOS 環境下的 CAD/CAM 軟體) 有數學、工工、土木、機械、教育背景、就是沒有一個人是資訊本科。數量龐大的 PC 軟體人員需要更多關於多工作業的觀念與經驗。這些高階性能過去處在一個遙遠的國度中，在空調潔淨一塵不染的大型主機上；現在 Windows NT (以及即將來臨的 Windows 4.0 ) 帶它們破窗而入到我們凌亂而生活化的書房裡。</p>
+
+<p class="calibre2">第二章介紹 NT 新的 Heap 記憶體管理。16 位元 Windows 的記憶體管理大致分為 Global Heap 和 Local Heap 兩種，各有其使用時機以及優缺點，Richter 建議如果程式不考慮回溯相容於 16 位元 Windows 的話，就直接使用新的 Heap API。有一個範例是在 C++ object 中設計 new 和 delete 兩個運算子的overloading 函式，那麼就可以在配置記憶體和釋放記憶體時用到 Heap API 的好處。</p>
+
+<p class="calibre2">第三章介紹虛擬記憶體。這份能力在 Windows 3.x 加強模式已有，Win32 提供讓程式員能夠直接參與其事的能力。這章介紹的是 Windows NT 記憶體管理的基石，上一章的 Heap manager 係架構在本章的 VM manager 之上。</p>
+
+<p class="calibre2">第四章介紹 Memory-Mapped Files。這是一個非常重要的技術，是 NT 管理 App 和 DLL 的重要基石。基本想法是你可以在打開檔案後取得一個映射到檔案的指標，然後就可以把檔案內容當做在記憶體中一樣地運作，不必困擾應該先配置多少記憶體以及如何把內容分段讀進來分段處理等 "buffering" 瑣事。NT 本身利用這技術做三件事情 :</p>
+
+<p class="calibre2">o. NT 利用此技術載入並執行 EXEs 或 DLLs，系統會注意所有關於 paging、buffering、caching 事情。</p>
+
+<p class="calibre2">o. NT 以此技術存取記憶體中的資料 (把它視為檔案)，應用程式不必自己做buffering。</p>
+
+<p class="calibre2">o. 這是 Windows NT 唯一用來在 processes 之間共享資料的方法。兩個 processes 使用同名的 Memory-Mapped Files 就可以共享其中資料。我們熟知的在Windows 3.1 中使用於 DDE 或 DDEML 的「GMEM_DDESHARE 記憶體」現已不復能用，因為NT 中每一個 process 都有自己的位址空間。</p>
+
+<p class="calibre2">第五章有 115 頁討論 Thread Synchronization。在強制性多工環境中當多個 threads 同時進行時，有時難免要令某個 thread 等一等，直到符合某種情況再繼續進行。如何使各個 thread 的活動同步化，不至於失去控制，成為強制性多工非常重要的課題。本章討論的是 NT 提供的 Synchronization object 中的四種 : critical section、mutexes，semaphores，events。</p>
+
+<p class="calibre2">第六章介紹 Win32 SubSystem。前面我曾說作者在設計範例程式時有很好的點子和技術，在這一章中表露無遺。NT 在輸入系統方面有一個很大的改進 : 每一個 thread 自有一個 local input state，本章討論為什麼 Microsoft 要加上它，以及應用程式如何從中獲利。</p>
+
+<p class="calibre2">第七章介紹 DLL。DLL 地位最大的改變是，在 16 位元 Windows 中它被視為作業系統的一部份，一旦載入，任何程式都可以呼叫它提供的 API 函式；在 32 位元 Windows NT 中 DLL 載入後卻只屬於某個process 所有，換句話說別的 process 想呼叫它是不能夠的。但這並不意味 NT 可能載入兩份完全相同的 DLL，如果兩個 process 使用同一個 DLL，實際的一份碼會以 memory mapped file 的方式映射到兩個 process 各自擁有的虛擬位址空間中，每一個 process 維護自己對該 DLL 的使用次數。現在可以體會memory mapped file 以及虛擬位址空間的重要了吧，不弄懂那些東西你就不知道我現在說些什麼。</p>
+
+<p class="calibre2">想以 DLL 做為資料交換場所嗎 ? 16 位元 Windows 中的確有這種作法，藉 DLL 的全域變數或 LocalAlloc() 空間做為共享區域。但這在 NT 行不通，原因很明顯 : DLL 載入之後屬於 process 所有，而不同的 process 有自己的位址空間。</p>
+
+<p class="calibre2">DLL 的撰寫方式也有重大變革。以前必須聯結 LibEntry.OBJ，這是組合語言完成的碼；NT 既然宣稱跨平台，組合語言的必要性就應該降到最低；在 Win32 中你的 DLL 只要像 EXE 一樣地聯結就好，不要什麼特殊手續。LibMain() 和 WEP() 已不需要，取而代之的是 DllEntryPoint() :</p>
+
+<p class="calibre2"><small class="calibre9">BOOL WINAPI DllEntryPoint(<br class="calibre3"/>HINSTANCE hinstDLL,<br class="calibre3"/>DWORD fdwReason,<br class="calibre3"/>LPVOID lpvReserved)<br class="calibre3"/>{</small> </p>
+
+<p class="calibre2"><small class="calibre9">switch (fdwReason) {<br class="calibre3"/>case DLL_PROCESS_ATTACH:<br class="calibre3"/>// DLL 被映射到 process<br class="calibre3"/>// 位址空間<br class="calibre3"/>break;<br class="calibre3"/>case DLL_THREAD_ATTACH:<br class="calibre3"/>// 一個 thread 產生了<br class="calibre3"/>break;<br class="calibre3"/>case DLL_PROCESS_DETACH:<br class="calibre3"/>// 一個 thread 結束了<br class="calibre3"/>break;<br class="calibre3"/>case DLL_THREAD_DETACH:<br class="calibre3"/>// DLL 被解除映射<br class="calibre3"/>break;<br class="calibre3"/>}<br class="calibre3"/>return(TRUE); </small> </p>
+
+<p class="calibre2"><small class="calibre9">}</small> </p>
+
+<p class="calibre2">如果你看到別人的 DLL 進入點是 DllMain() 而不是 DllEntryPoint()，那是為了 C runtime 函式庫而又做的一點小設計，書中有說明。</p>
+
+<p class="calibre2">有一件事值得在此披露。當一個 DLL 呼叫 GlobalAlloc() 時，獲得之記憶體空間的擁有者是當時呼叫 DLL 的那個 task，而不是 DLL 本身。更進一步說，如果這個 DLL 被移出系統之外 (例如 task 呼叫了 FreeLibrary())，而該 task 依然活著，那麼這塊空間仍然存在沒有被摧毀。想想這情況 :</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img40.jpeg" alt="img40.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">其中 blockA 屬於 taskA 擁有。當 taskA 結束，blockA 也被系統收回，此時如果 taskB 仍然呼叫 DLL 函式去處理 blockA (別忘了 taskA 和taskB 的程式碼相同)，可能導至當機。但是如果配置記憶體時指定 GMEM_SHARE 呢 ? 情況就大不相同，blockA 將因此屬於 DLL 而不是 taskA，所以 taskB 可以安心享用。如果一塊 GMEM_SHARE block 不是透過 DLL 配置而是 task 自行配置，它將屬於 module 所有。</p>
+
+<p class="calibre2">以上這些情況是 16 位元 Windows 中很重要的觀念。至於 Windows NT，由於 DLL 附屬於每個 process 的私有位址空間中，所以記憶體不論如何配置、由誰配置，都只屬於 process 擁有；GMEM_SHARE 不復存在於 Windows NT 中。第七章的最後一節講的就是這些。</p>
+
+<p class="calibre2">第八章介紹 Thread-Local Storage (TLS)，這又是 multithreading 帶來的副作用。想想看標準的 C runtime 函式庫 strtok()，通常這函式的用法是先呼叫一次，取得第一個單元 (token) 的起始位址，然後再持續呼叫 (參數是 NULL) 以取得下一個單元的起始位址 :</p>
+
+<p class="calibre2"><small class="calibre9">1. char *ptr;<br class="calibre3"/>2. ptr = strtok("FEB.01,1994",".,");<br class="calibre3"/>3. while(ptr != NULL)<br class="calibre3"/>4. {<br class="calibre3"/>5. printf("ptr = %s \n",ptr);<br class="calibre3"/>6. ptr = strtok(NULL,".,");<br class="calibre3"/>7. }</small> </p>
+
+<p class="calibre2">如果我們把第一次得到的位址放在 static 變數中，卻沒想到在進入 while() 之前第二個 thread 插進來又呼叫了第二行的 strtok()，資料就被蓋掉了。解決之道是 C 的 runtime 函式庫必須改寫 (使用 TLS) 以順應multithreading (這是 Microsoft 或 Borland 或 Watcom 的事，和我們無關)，而程式員也要注意儘量少用全域變數 (這一點已經三令五申過)。本章介紹的TLS 技術對 DLL 尤其重要，因為 DLL 往往不知道自己將來是如何被聯結使用，因此以 TLS 貯存資料確保安全非常有必要。</p>
+
+<p class="calibre2">第九章討論應用程式如何操作 Windows NT 支援的四種檔案系統 : FAT，CDFS，HPFS 和 NTFS。細部動作包括對磁碟目錄結構的產生和刪除，對檔案的開與關，對資料的讀與寫等等。可惜沒有一張搔到癢處的檔案系統架構圖 --- 像描述 DOS FAT 層層結構一目了然的那種。</p>
+
+<p class="calibre2">第十章的 SEH 是個嶄新玩意兒。支援 Win32 的 C 編譯器有三個新的關鍵字 try、except、finally，用以實現"termination handling" 和 "exception handling"。所謂的 exception 就是一個你並不預期的事件，例如動用到一個不合法的記憶體位址或是把數值除以 0。exception handling 允許應用程式捕捉硬體或軟體的 exception，使應用程式本身更穩健些；termination handling 則保證程式的清除善後工作(cleanup) 即使在發生了 exception 情況下也一定會執行。Win32 的 SEH 並不是 C++ 語言的 Exceptions Handling，關於後者你可以參考 PC Magazine 在 1993.12.21 的 Making Exceptions With C++ (Kaare Christian) 一文，而前者你可以參考 MSJ 在 1994.01 的 Clearer, More Comprehensive Error Processing with Win32 Structured Exception Handling 一文。如果使用過 C 語言的 setjump()、longjump() 函式，以及 Windows API 中的catch()、throw() 函式，你應該比較能消化這一章。</p>
+
+<p class="calibre2">十一章的 Unicode 算是全書技術中最簡單的了。為分辨 Wide Char 或 ANSI Char，我們可以大量使用巨集，這技倆很像為了讓程式在不同編譯器之下過關而使用巨集一樣。作者把全書程式為 Unicode 而重新改寫，花了四個小時，不算多，顯示事情似乎頗為單純。關於 Unidcode，PC-Magazine 的 [Environment] 專欄 (Charles Petzold 主持) 也有三篇深入的文章 :</p>
+
+<p class="calibre2">⊙ 1993.10.26 Move over, ASCII! Unicode is here.</p>
+
+<p class="calibre2">⊙ 1993.11.09 Unicode, Wide Characters, and C.</p>
+
+<p class="calibre2">⊙ 1993.11.23 Viewing a Unicode TrueType Font Under Windows NT.</p>
+
+<p class="calibre2">這些文章的技術性與本章無分軒輊，但 Petzold 的廣泛度更能帶我們翱翔知識的領域。他在第一篇一開始先以輕鬆的筆調告訴我們編碼語言，世界各語系特色，然後才導入到 Unicode 標準，以及 Windows NT 的支援；文章一開始先給個楔子: "A great concept deserves a great name, and that name is Unicode". 氣勢磅礡，沛然欲出。我總認為技術性文章仍然比的出文筆高下，拿這兩份資料一比，Petzold 比 Richter 高明些。</p>
+
+<p class="calibre2">我想所謂幽默絕不是幾首四不像打油詩加幾句流行歌詞，再加幾句街頭俚語；幽默應該是像這種由文字帶來的內心莞爾，你不見得會笑，但就是有輕鬆愉快的感覺。我所喜歡的幽默，是能使我發笑五秒鐘而沉思十分鐘的那一種。</p>
+
+<p class="calibre2">Richter 的文筆其實也不惡，第十章一開始他說:『閉上眼睛想像一下，有沒有可能你的程式完全不會失敗 ? 當然，如果永遠有足夠的記憶體，沒有人丟給你不合法的指標，並且你要的檔案總是存在的話。如果我們能這麼假設我們的環境，寫程式可多麼賞心悅目，程式很容易被寫，被讀，被了解，再不需庸人自擾的這裡放一個if 那裡擺一個 goto，你的程式一根腸子通到底』。如果他直接了當這麼寫 : 『Microsoft 在 Windows NT 中實作出 SEH 的主要動機是為了使作業系統的開發更容易，應用程式更穩健 ...』，顯然我們少了些閱讀樂趣。我想你應該能了解我想強調什麼，能遇著一位有文采而且知識淵博的作家，帶領我們遨遊知識瀚海，真是快意不過。有句話說 : 五岳歸來不看山，黃山歸來不看岳，當你讀過這種文字，其他人的作品味同嚼蠟，索然無趣。</p>
+
+<p class="calibre2">Richter 在 MSJ 發表過下列文章，這些內容都被收錄在本書中 :</p>
+
+<p class="calibre2">⊙ 1993/10 Coordinate Win32 Threads Using Manual-Reset and Auto-Reset Events</p>
+
+<p class="calibre2">⊙ 1993/08 Synchronizing Win32 Threads Using Critical Sections, Semaphores, and Mutexes.</p>
+
+<p class="calibre2">⊙ 1993/07 Creating, Managing, and Destroying Processes and Threads under Windows NT</p>
+
+<p class="calibre2">⊙ 1993/04 Memory-Mapped Files in Windows NT Simplify File Manipulation and Data Sharing</p>
+
+<p class="calibre2">⊙ 1993/03 An Introduction to Win32 Heap and Virtual Memory Management Routines</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Inside Windows NT <br class="calibre3"/>作者 Helen Custer<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 9 章，385 頁<br class="calibre3"/>售價 US$ 24.95<br class="calibre3"/>磁片 No.</p>
+
+<p class="calibre2">1. The Mission<br class="calibre3"/>2. System Overview<br class="calibre3"/>3. The Object Manager and Object Security<br class="calibre3"/>4. Processes and Threads<br class="calibre3"/>5. Windows And the Protected Subsystems<br class="calibre3"/>6. The Virtual Memory Manager<br class="calibre3"/>7. The Kernel<br class="calibre3"/>8. The I/O System<br class="calibre3"/>9. Networking </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img41.jpeg" alt="img41.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">NRP 出版社有一本同名的書，講的是使用層面，我介紹的這本是 Microsoft Press 出版，請注意。稍早時候，本書可說是 Windows NT 系統觀念的最佳書籍，書店有缺貨現象。本書出版日期更在 Windows NT 上市之前，作者花了相當多的時間與 NT 小組成員溝通，封面並有 NT 小組領導人David N.Cutler 的「背書」，以及他的序言。Cutler 在序中說 :『雖然 NT 是我們的設計，Helen 卻是能夠捕捉其精華本質並且使它更容易被了解的人。關於此點，我們欠她一份情』。</p>
+
+<p class="calibre2">Helen 這本書的目的並不是要教導作業系統原理，也不是要給作業系統工程師看的，她設定的讀者是一般大眾的我們，是「對電腦有些認識，希望了解這個系統的內部設計以便寫出更好的應用軟體，或希望因此降低黑盒子如作業系統者所帶來的神祕」。這本書學不到如何寫 Win32 程式。</p>
+
+<p class="calibre2">本書的整體性評論是 : 有許多好圖，學習 Windows NT 的系統架構應該從這本書開始。對於不是那麼想深入這領域而只是希望 keep 住新技術的人，這本書夠了。</p>
+
+<p class="calibre2">從 Windows 3.1 到 NT，夠我們用功好些時間。可是我們還有的要奮鬥的呢，OLE2、Chicago、Cairo 接踵而來。我真的希望如果你想趕上時代，及早行動時猶未晚。我週遭朋友談的都是 Windows，看的都是 Windows，寫的都是 Windows，雜誌的問卷調查卻發現臺灣的 DOS 與 Windows 使用比例相差十分懸殊，這份結果從電腦書籍的銷售比例上也得到驗證。有時我真懷疑難道我生活在象牙塔裡嗎 ? 誰告訴我這個答案 ?</p>
+
+<p class="calibre2">也許你會奇怪侯捷竟然把 OLE2 和上述作業系統相提並論，那是因為 OLE2 已經快接近半個作業系統的難度和大小了。下個月我為你介紹 Inside OLE2 和Inside Visual C++ 兩本書。 </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img42.jpeg" alt="img42.jpeg" class="calibre4"/></span> 蓬萊此去無多路，不知老侯平安否</p>
+</body>
+</html>

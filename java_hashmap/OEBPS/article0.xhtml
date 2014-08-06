@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">疫苗：Java HashMap的死循環 | 酷殼 - CoolShell.cn</h2>
+<p class="calibre2"><span class="imgBig"><img src="img/img0.jpeg" alt="img0.jpeg" class="calibre3"/></span>在淘寶內網裡看到同事發了貼說了一個CPU被100%的線上故障，並且這個事發生了很多次，原因是在Java語言在並發情況下使用HashMap造成Race Condition，從而導致死循環。這個事情我4、5年前也經歷過，本來覺得沒什麼好寫的，因為Java的HashMap是非線程安全的，所以在並發下必然出現問題。但是，我發現近幾年，很多人都經歷過這個事（在網上查「HashMap Infinite Loop」可以看到很多人都在說這個事）所以，覺得這個是個普遍問題，需要寫篇疫苗文章說一下這個事，並且給大家看看一個完美的「Race Condition」是怎麼形成的。</p>
+
+<p class="calibre2"><b class="calibre4">問題的症狀</b></p>
+
+<p class="calibre2">從前我們的Java代碼因為一些原因使用了HashMap這個東西，但是當時的程序是單線程的，一切都沒有問題。後來，我們的程序性能有問題，所以需要變成多線程的，於是，變成多線程後到了線上，發現程序經常佔了100%的CPU，查看堆棧，你會發現程序都Hang在了HashMap.get()這個方法上了，重啟程序後問題消失。但是過段時間又會來。而且，這個問題在測試環境裡可能很難重現。</p>
+
+<p class="calibre2">我們簡單的看一下我們自己的代碼，我們就知道HashMap被多個線程操作。而Java的文檔說HashMap是非線程安全的，應該用ConcurrentHashMap。</p>
+
+<p class="calibre2">但是在這裡我們可以來研究一下原因。</p>
+
+<p class="calibre2"><b class="calibre4">Hash表數據結構</b></p>
+
+<p class="calibre2">我需要簡單地說一下HashMap這個經典的數據結構。</p>
+
+<p class="calibre2">HashMap通常會用一個指針數組（假設為table[]）來做分散所有的key，當一個key被加入時，會通過Hash算法通過key算出這個數組的下標i，然後就把這個&lt;key, value&gt;插到table[i]中，如果有兩個不同的key被算在了同一個i，那麼就叫衝突，又叫碰撞，這樣會在table[i]上形成一個鏈表。</p>
+
+<p class="calibre2">我們知道，如果table[]的尺寸很小，比如只有2個，如果要放進10個keys的話，那麼碰撞非常頻繁，於是一個O(1)的查找算法，就變成了鏈表遍歷，性能變成了O(n)，這是Hash表的缺陷（可參看《<a href="http://coolshell.cn/articles/6424.html" target="_blank" class="calibre5">Hash Collision DoS 問題</a> 》）。</p>
+
+<p class="calibre2">所以，Hash表的尺寸和容量非常的重要。一般來說，Hash表這個容器當有數據要插入時，都會檢查容量有沒有超過設定的thredhold，如果超過，需要增大Hash表的尺寸，但是這樣一來，整個Hash表裡的無素都需要被重算一遍。這叫rehash，這個成本相當的大。</p>
+
+<p class="calibre2">相信大家對這個基礎知識已經很熟悉了。</p>
+
+<p class="calibre2"><b class="calibre4">HashMap的rehash源代碼</b></p>
+
+<p class="calibre2">下面，我們來看一下Java的HashMap的源代碼。</p>
+
+<p class="calibre2">Put一個Key,Value對到Hash表中：</p>
+
+<pre style="white-space: pre-wrap;  font-family: serif;">
+<b> 1</b> public V put(K key, V value)
+<b> 2</b> {
+<b> 3</b>     ......
+<b> 4</b>     //算Hash值
+<b> 5</b>     int hash = hash(key.hashCode());
+<b> 6</b>     int i = indexFor(hash, table.length);
+<b> 7</b>     //如果该key已被插入，则替换掉旧的value （链接操作）
+<b> 8</b>     for (Entry&lt;K,V&gt; e = table[i]; e != null; e = e.next) {
+<b> 9</b>         Object k;
+<b>10</b>         if (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) {
+<b>11</b>             V oldValue = e.value;
+<b>12</b>             e.value = value;
+<b>13</b>             e.recordAccess(this);
+<b>14</b>             return oldValue;
+<b>15</b>         }
+<b>16</b>     }
+<b>17</b>     modCount++;
+<b>18</b>     //该key不存在，需要增加一个结点
+<b>19</b>     addEntry(hash, key, value, i);
+<b>20</b>     return null;
+<b>21</b> }
+</pre>
+
+<p class="calibre2">檢查容量是否超標</p>
+
+
+<pre style="white-space: pre-wrap;  font-family: serif;">
+<b> 1</b> void addEntry(int hash, K key, V value, int bucketIndex)
+<b> 2</b> {
+<b> 3</b>     Entry&lt;K,V&gt; e = table[bucketIndex];
+<b> 4</b>     table[bucketIndex] = new Entry&lt;K,V&gt;(hash, key, value, e);
+<b> 5</b>     //查看当前的size是否超过了我们设定的阈值threshold，如果超过，需要resize
+<b> 6</b>     if (size++ &gt;= threshold)
+<b> 7</b>         resize(2 * table.length);
+<b> 8</b> }
+</pre>
+
+<p class="calibre2">新建一個更大尺寸的hash表，然後把數據從老的Hash表中遷移到新的Hash表中。</p>
+
+<pre style="white-space: pre-wrap;  font-family: serif;">
+<b>11</b> void resize(int newCapacity)
+<b>12</b> {
+<b>13</b>     Entry[] oldTable = table;
+<b>14</b>     int oldCapacity = oldTable.length;
+<b>15</b>     ......
+<b>16</b>     //创建一个新的Hash Table
+<b>17</b>     Entry[] newTable = new Entry[newCapacity];
+<b>18</b>     //将Old Hash Table上的数据迁移到New Hash Table上
+<b>19</b>     transfer(newTable);
+<b>20</b>     table = newTable;
+<b>21</b>     threshold = (int)(newCapacity * loadFactor);
+<b>22</b> }
+</pre>
+
+<p class="calibre2">遷移的源代碼，注意高亮處：</p>
+
+<pre style="white-space: pre-wrap;  font-family: serif;">
+<b>24</b> void transfer(Entry[] newTable)
+<b>25</b> {
+<b>26</b>   Entry[] src = table;
+<b>27</b>   int newCapacity = newTable.length;
+<b>28</b>   //下面这段代码的意思是：
+<b>29</b>   //  从OldTable里摘一个元素出来，然后放到NewTable中
+<b>30</b>   for (int j = 0; j &lt; src.length; j++) {
+<b>31</b>     Entry&lt;K,V&gt; e = src[j];
+<b>32</b>     if (e != null) {
+<b>33</b>       src[j] = null;
+<b>34</b>       do {
+<b>35</b>         Entry&lt;K,V&gt; next = e.next;
+<b>36</b>         int i = indexFor(e.hash, newCapacity);
+<b>37</b>         e.next = newTable[i];
+<b>38</b>         newTable[i] = e;
+<b>39</b>         e = next;
+<b>40</b>       } while (e != null);
+<b>41</b>     }
+<b>42</b>   }
+<b>43</b> }
+</pre>
+
+<p class="calibre2">好了，這個代碼算是比較正常的。而且沒有什麼問題。</p>
+
+<p class="calibre2"><b class="calibre4">正常的ReHash的過程</b></p>
+
+<p class="calibre2">畫了個圖做了個演示。</p>
+
+<p class="calibre2">我假設了我們的hash算法就是簡單的用key mod 一下表的大小（也就是數組的長度）。</p>
+
+<p class="calibre2">最上面的是old hash 表，其中的Hash表的size=2, 所以key = 3, 7, 5，在mod 2以後都衝突在table[1]這裡了。</p>
+
+<p class="calibre2">接下來的三個步驟是Hash表 resize成4，然後所有的&lt;key,value&gt; 重新rehash的過程</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img1.jpeg" alt="img1.jpeg" class="calibre3"/></span></p>
+
+<p class="calibre2"><b class="calibre4">並發下的Rehash</b></p>
+
+<p class="calibre2"><b class="calibre4">1）假設我們有兩個線程。</b> 我用紅色和淺藍色標註了一下。</p>
+
+<p class="calibre2">我們再回頭看一下我們的 transfer代碼中的這個細節：</p>
+
+<pre style="white-space: pre-wrap;  font-family: serif;">
+<b>1</b> do {
+<b>2</b>     Entry&lt;K,V&gt; next = e.next; // &lt;--假设线程一执行到这里就被调度挂起了
+<b>3</b>     int i = indexFor(e.hash, newCapacity);
+<b>4</b>     e.next = newTable[i];
+<b>5</b>     newTable[i] = e;
+<b>6</b>     e = next;
+<b>7</b> } while (e != null);
+</pre>
+
+<p class="calibre2">而我們的線程二執行完成了。於是我們有下面的這個樣子。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre3"/></span></p>
+
+<p class="calibre2">注意，<b class="calibre4">因為Thread1的 e 指向了key(3)，而next指向了key(7)，其在線程二rehash後，指向了線程二重組後的鏈表</b> 。我們可以看到鏈表的順序被反轉後。</p>
+
+<p class="calibre2"><b class="calibre4">2）線程一被調度回來執行。</b> </p>
+
+<p class="calibre2"><b class="calibre4">先是執行 newTalbe[i] = e;</b> <b class="calibre4">然後是e = next，導致了e指向了key(7)，</b> <b class="calibre4">而下一次循環的next = e.next導致了next指向了key(3)</b> </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img3.jpeg" alt="img3.jpeg" class="calibre3"/></span></p>
+
+<p class="calibre2"><b class="calibre4">3）一切安好。</b> </p>
+
+<p class="calibre2">線程一接著工作。<b class="calibre4">把key(7)摘下來，放到newTable[i]的第一個，然後把e和next往下移</b> 。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img4.jpeg" alt="img4.jpeg" class="calibre3"/></span></p>
+
+<p class="calibre2"><b class="calibre4">4）環形鏈接出現。</b> </p>
+
+<p class="calibre2"><b class="calibre4">e.next = newTable[i] 導致  key(3).next 指向了 key(7)</b> </p>
+
+<p class="calibre2"><b class="calibre4">注意：此時的key(7).next 已經指向了key(3)， 環形鏈表就這樣出現了。</b> </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img5.jpeg" alt="img5.jpeg" class="calibre3"/></span></p>
+
+<p class="calibre2"><b class="calibre4">於是，當我們的線程一調用到，HashTable.get(11)時，悲劇就出現了——Infinite Loop。</b> </p>
+
+<p class="calibre2"><b class="calibre4">其它</b></p>
+
+<p class="calibre2">有人把這個問題報給了Sun，不過Sun不認為這個是一個問題。因為HashMap本來就不支持並發。要並發就用ConcurrentHashmap</p>
+
+<p class="calibre2"><a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6423457" target="_blank" class="calibre5">http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6423457</a> </p>
+
+<p class="calibre2">我在這裡把這個事情記錄下來，只是為了讓大家瞭解並體會一下並發環境下的危險。</p>
+
+<p class="calibre2">參考：<a href="http://mailinator.blogspot.com/2009/06/beautiful-race-condition.html" target="_blank" class="calibre5">http://mailinator.blogspot.com/2009/06/beautiful-race-condition.html</a> </p>
+
+<p class="calibre2">（全文完） </p>
+
+<p class="calibre2"><b class="calibre4">（轉載本站文章請註明作者和出處 <a href="http://coolshell.cn/" target="_blank" class="calibre5">酷殼 – CoolShell.cn</a> ，請勿用於任何商業用途）</b> </p>
+
+<p class="calibre2">——===  44<b class="calibre4">訪問 <a href="http://coolshell.cn/404/" target="_blank" class="calibre5">酷殼404頁面</a> 尋找遺失兒童。</b> ===—— </p>
+</body>
+</html>

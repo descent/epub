@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">推動視窗的手－驅動程式</h2>
+<p class="calibre2">今天我們看看比較冷門的主題，<br class="calibre3"/>關於 Windows 的驅動程式。<br class="calibre3"/>這種題目非常稀少，找得到就該偷笑了。<br class="calibre3"/>由於撰寫驅動程式都是以組合語言為之，<br class="calibre3"/>所以我順便談一談組合語言。 </p>
+
+<p class="calibre2">F301 鬧熱滾滾，立法院也是鬧熱滾滾。你有沒有注意到，新的著作權法生效後，出國帶兩本一樣的書回來竟然要鋃鐺入獄，而且不因沒有犯意而免其罰。花錢消費也犯法我真是搞不懂。不過不管這次立法合宜與否，注重智慧財產權應該已經是全民共識，尤其身受高級教育的高級知識份子，自己所從事的也是智慧財產的工作，理當感同身受，身體力行。可是許多次向朋友或學生介紹好書的時候，他們的反應竟然是 : 我可不可以向你借來 copy ? 媽媽咪呀，這不單是你觸了法，我也有罪的你知道嗎 ? 雖然天地你我之外不會再有人知道，但對著也好舞筆弄文的我而言，這樣的請求實在是讓我很難堪。許多法人機構或略具規模的公司有自己的圖書館，也有專人負責的影列室，常就做這代客拷備之情事，「嗨 Miss 王，請幫我部門拷十本」。</p>
+
+<p class="calibre2">希望藉著這個小園地呼籲我的讀者，書的確是不便宜沒有錯，但酒肉穿腸過書香留心中，一本對你有幫助的書，它的價值難道不比二場電影一客牛排嗎 ? 聽說國人每人每年平均花的買書錢是 120 新臺票，實在是有點兒...呵呵。經濟能力範圍之內我們還是慢慢地養成不要 ㄎㄠ 的習慣吧。這種事勉強不來，但是，慢慢養成吧。請以行動支持你喜歡的作者，你喜歡的雜誌，你喜歡的出版社。如果他們熬不下去消失了，大家都損失對不對 ?</p>
+
+<p class="calibre2">閒話就此打住，今天我想為各位談一談比較冷門的主題，關於 Windows 的驅動程式。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Writing Windows Device Drivers <br class="calibre3"/>作者 Daniel A. Norton<br class="calibre3"/>出版 Addison Wesley<br class="calibre3"/>頁數 6 章，434 頁<br class="calibre3"/>售價 US$ 29.95<br class="calibre3"/>磁片 No</p>
+
+<p class="calibre2">1. Introduction<br class="calibre3"/>2. Windows Operating Modes<br class="calibre3"/>3. GDI-The Graphics Device Interface<br class="calibre3"/>4. Printer and Plotter Drivers<br class="calibre3"/>5. Display Drivers<br class="calibre3"/>6. System Drivers<br class="calibre3"/>7. Virtual Device Drivers<br class="calibre3"/>8. Virtual Driver Services<br class="calibre3"/>9. System Virtual Drivers<br class="calibre3"/>10. Nonstandard Device Drivers<br class="calibre3"/>11. Driver Installation<br class="calibre3"/>Appendix A GDI Structures<br class="calibre3"/>Appendix B GDI Driver Entry Points<br class="calibre3"/>Appendix C Device Driver Support Functions<br class="calibre3"/>Appendix D Standard Mode Grabber Functions<br class="calibre3"/>Appendix E System Driver Entry Points<br class="calibre3"/>Appendix F VxD Services<br class="calibre3"/>Appendix G Japanese Printer Escapes<br class="calibre3"/>Appendix H Recommended Reading </p>
+
+<p class="calibre2">從書名上要找一本關於 Windows 驅動程式設計的書，大概這是絕無僅有的了。(Addison Wesley 另有 Writing DOS Device Driver 和 Writing UNIX Device Driver)。其實這本書並不容易閱讀，文字多圖片少，程式例更是幾乎沒有，內容又偏冷澀。不過寡佔市場下什麼都得忍著點，找得到這種主題的書就該偷笑了。</p>
+
+<p class="calibre2">本書第一章是概括介紹。Windows 之所以成功的理由之一是它的標準化，由於標準化，應用程式可以從 Windows 獲得許多高級精巧的特質。雖然 DOS 也提供INT 21h 標準介面，但是照顧面不夠廣，例如 DOS 沒有標準的鍵盤掃描碼，沒有標準的序列埠介面，DOS 也沒有圖形模式下的標準繪圖介面(Microsoft C 提供一套圖形函式庫，Borland C 另有一套；如果你要用標準 BIOS 介面，肯定這個軟體不能賣，速度太慢了)。Windows 對這些硬體都有完整的應用程式介面 (API)。</p>
+
+<p class="calibre2">Windows 另一個成功因素是封裝化 (encapsulation)，再具體一點就是應用程式與硬體的隔離相當徹底。應用程式不必在意安裝在系統上的是哪一型態的硬體，於是程式中也就沒有關於某特定硬體的碼，因而可以在不同的週邊硬體上執行。舉例來說應用程式要畫一個四方形，它不必在意執行對象是 EGA 或是 VGA 或是SuperVGA，或甚至是點矩陣印表機 (雷射印表機也行)，用的是同一個函式 Rectangle() :</p>
+
+<p class="calibre2"><small class="calibre9">hDC = GetDC(...); // 輸出到螢幕<br class="calibre3"/>// 或 hDC = GreateDC(...); 輸出到印表機</small></p>
+
+<p class="calibre2">Rectangle(hDC,...); 關鍵在於 DC (Device Context)，這是一個描述裝置特性的資料結構，它的內部由該裝置的驅動程式填滿。</p>
+
+<p class="calibre2">作者把 Windows 的驅動程式分為四類 :</p>
+
+<p class="calibre2">■ System Driver : 這是完全與 Windows 系統整合在一起的驅動程式，像 display，network，keyboard, COM port、LPT port，mouse，sound 等，也就是你在安裝 Windows 時畫面上為你偵測的週邊設備。這些系統驅動程式所支援的硬體幾乎不管什麼環境都會用的上。</p>
+
+<p class="calibre2">■ Printer Driver : Windows 印表機驅動程式的責任是把 bitmap 和 font 資料轉換為合適的型式送到所附屬的印表機上。送到 HP LaserJet III 的命令碼和送到 Epson FX-85 上的命令碼並不相同。這些驅動程式應該由印表機製造廠商提供給客戶。應用程式完全不管什麼驅動程式，只要依 API 取得DC 即可。回應 API 而提供適當之 DC 內容，正是驅動程式的責任。</p>
+
+<p class="calibre2">■ Virtual Device Driver : 這是與各種真實的驅動程式都不相同的程式與觀念。這種 32 位元 Flat Model 程式並不是要為一個實際存在的硬體提供程式介面，而是要以軟體模擬一個硬體。為什麼要這麼做 ? 為的是 Intel 80386 提供虛擬機器(VM) 能力 (Windows 386 加強模式可以將之實作出來)，而虛擬裝置驅動程式可以為每一個虛擬機器模擬一個專屬的週邊硬體。</p>
+
+<p class="calibre2">■ NonStandard Driver : Microsoft 的驅動程式發展工具 (DDK) 描述的只有上述的所謂標準驅動程式，如果是特殊週邊硬體，就屬於這種非標準型的驅動程式。</p>
+
+<p class="calibre2">應用程式與硬體隔離最明顯的例子就是人機介面 (User Interface) 的設計。Windows 應用程式不需關心實際執行時處於哪一種繪圖模式，就可以做出外貌一致(功能當然也是一致) 的功能表單、對話盒。我自己曾在 DOS 環境下開發一個事件驅動 (event driven) 的繪圖模式功能表單推動引擎，你知道有多麻煩嗎 ? 要針對不同的螢幕解析度計算功能表單的寬高，選用不同的字形(1024x768 模式下使用 16x16 字形會讓客戶罹患眼睛屈光異常 --- 也就是近視啦)，要針對不同的 C 編譯器使用不同名稱的繪圖函式 (所幸 Microsoft C 和 Borland C 的圖形函式庫以及參數大致一一對應，利用 #define 就可解決)；謝天謝地這些 C 編譯器廠商提供的圖形函式庫已有自動偵測顯示卡硬體的能力，而且也提供各種繪圖模式的驅動程式，否則應用程式可有的寫了。這還沒完，為了應付高解析度畫面貯存引發對記憶體無底洞似的索求，程式員得有三頭六臂去取 Extended 記憶體、Expanded 記憶體、或磁碟空間 (有一些軟體公司已設計這一方面的函式庫出售，不過合不合你用得試試才知道)。於是我們看到程式員彷彿千手千足觀音，而這時候根本還沒進入應用程式的主旨呢! 我對 GUI 系統有這麼深刻的愛戀，良有以也，良有以也。</p>
+
+<p class="calibre2">第二章 Windows Operating Modes 介紹很基礎而重要的保護模式定址方式，也介紹了線性位址與實體位址的定義與彼此的關係，以及 Windows 的三種執行模式。這個主題在討論保護模式的書籍中幾乎都會提到，無責任書評第四期介紹的Entending DOS 一書就有很多相關內容。</p>
+
+<p class="calibre2">第三章介紹圖形介面 GDI (Graphic Device Interface)。GDI 使得應用程式在描述圖形資訊以及發出繪圖命令時不必在意底層的硬體。GDI 可應用在 display 和 printer 兩種驅動程式上，本章所談的 GDI 是這兩種驅動程式的共同部份，至於不同的部份分列於四、五兩章。display 驅動程式直接處理硬體，而 printer 驅動程式則是利用 "GDI call" 執行輸出，不直接控制硬體。printer 驅動程式甚至於呼叫 display 驅動程式提供的 dmBitBlt 以完成它自己的 BitBlt()。</p>
+
+<p class="calibre2">為了能夠將應用程式的 GDI 呼叫翻譯為裝置驅動程式認識的碼，Windows 必須擁有該裝置的某些資訊，這資訊就放在 GDIINFO 結構中。你可以利用 GetDeviceCaps() 獲得此結構的各欄位資訊。</p>
+
+<p class="calibre2">第四章介紹 printer 驅動程式。篇幅很少，除了獲知 GDIINFO 結構中與printer 相關的欄位說明，以及 Windows 的 Printer Manager 扮演的角色，再就是一個 printer 驅動程式所必須提供的 24 個函式 (程式介面)。</p>
+
+<p class="calibre2">第五章介紹 display 驅動程式。這是 Windows 最重要的驅動程式，因為它影響Windows 的整體效率至鉅。printer 驅動程式緩慢猶可為 (你可以利用午餐或是午夜印表)，display 驅動程式緩慢則簡直不可活。它怎麼會這麼忙碌呢 ? 看看下面的說明。每當應用程式呼叫 GDI 函式，Windows 就至少呼叫display 驅動程式一次 (即使是 non-GDI 函式，Windows 也可能呼叫它)；就連滑鼠移動，display 驅動程式也要工作 (不然螢幕上的游標怎麼會移動 ?)；有時候甚至於整個系統都停頓了，display 驅動程式還不得閒，因為編輯器中的位置指示器 (caret) 一直得閃個不停。</p>
+
+<p class="calibre2">由於 display 驅動程式關係到 Windows 的效率，所以程式員通常無所不用其極地以各種奇險怪招來寫它。除了程式碼，display 驅動程式比較奇特的是它還內含resource，包括十三個各式各樣視窗元件 bitmap (可以 LoadBitmap() 獲得)；十一個標準的 cursor (可以 LoadCursor() 獲得)；五個標準的icon (可以 LoadIcon() 獲得)；一組 display 的預設狀態資訊(可以 GetSystemMetrics() 獲得)；一組顏色表格資訊，其中的顏色在 SDK 手冊中的SetSystemColor() 有說明；一組系統庫存字形的資訊，包括所謂的 IBM PC-8 字形、Courier 字形和 sans-serif 字形。</p>
+
+<p class="calibre2">上述的最後三種 resource 是所謂的 "raw data resource"。這一章有一小段文字教我們如何製作 "raw data resource" (也就是所謂的 customize resource)，可以應用在一般程式以解決記憶體不足的問題。步驟如下 :</p>
+
+<p class="calibre2">1) 以組合語言撰寫一個僅有一個資料節區的程式，資料內容就是 customize resource 的二進位碼。</p>
+
+<p class="calibre2">2) 組譯、聯結獲得一個 EXE 檔。</p>
+
+<p class="calibre2">3) 使用 EXE2BIN 將此 EXE 檔的表頭去除，獲得 BIN 檔。</p>
+
+<p class="calibre2">4) 在應用程式的 RC 檔中以下列語法描述此 resource :</p>
+
+<p class="calibre2"><small class="calibre9">nameID OEMBIN [load-option] [mem-option] filename</small> 此一技巧應用到一般程式上頭，對於具有大型 look-up 表格的應用程式，可以樽節不少 AUTO 節區 (64KB) 空間，因為資料空間從 AUTO 節區的static 區域搬移到 resource 節區去了。實例可以參考 Microsoft Systems Journal 在 1991/01 由 Paul Yao 發表的文章 : Improve Windows Application Memory Use with Subsegment Allocation and Custom Resources。Yao 在文章中將 0-90 度的正弦值放入一個 ASM 程式的資料節區中並聯結為 EXE 檔，再轉換為 BIN 檔 (上述步驟中的 1,2,3) :</p>
+
+<p class="calibre2"><small class="calibre9">; file : sinedata.asm<br class="calibre3"/>; masm sinedata.asm;<br class="calibre3"/>; link sinedata;<br class="calibre3"/>; exe2bin sinedata.exe<br class="calibre3"/>SINDATA segment public<br class="calibre3"/>DW 0, 175, 349, 523, 698, 872, 1045, 1219<br class="calibre3"/>DW ...<br class="calibre3"/>SINDATA ends<br class="calibre3"/>END</small> 獲得 sinedata.bin 後在應用程式的 RC 檔中描述 :</p>
+
+<p class="calibre2"><small class="calibre9">#define TABLE 100</small></p>
+
+<p class="calibre2">SIN TABLE DISCARDABLE sinedata.bin 並且在應用程式中這麼使用 :</p>
+
+<p class="calibre2"><small class="calibre9">HANDLE hRes, hresSinData;<br class="calibre3"/>int FAR *fpSin;</small></p>
+
+<p class="calibre2">hRes=FindResource(hInst,<br class="calibre3"/>MAKEINTRESOURCE(SIN),<br class="calibre3"/>MAKEINTRESOURCE(TABLE));<br class="calibre3"/>hresSinData = LoadResource(hInst,hRes);<br class="calibre3"/>fpSin=(int FAR *)LockResource(hresSinData);</p>
+
+<p class="calibre2">// 現在 fpSin 指向 resource 第一筆資料。</p>
+
+<p class="calibre2">UnlockResource(hresSinData);<br class="calibre3"/>FreeResource(hresSinData); Yao 實在是個想像力和創造力非常豐富的人！</p>
+
+<p class="calibre2">具有調色盤經驗的程式員一定知道，雖然你選擇的繪圖模式可同時顯現256 個顏色，應用程式卻只能使用其中的 236 顏色，有 20 個顏色是保留給系統的。GDIINFO 結構中的 dpPalReserved 欄位值指的就是保留多少顏色作為Windows 系統顏色。這必須是偶數，最少是 20，其中一半放在硬體調色盤的最低記錄內，另一半放在硬體調色盤的最高記錄內。20 個保留顏色值在本章有一個列表。</p>
+
+<p class="calibre2">和 display 驅動程式搭配的 grabber，肯定許多人不知道是什麼東東。當 Windows 切換至 DOS Session 或是從 DOS Session 切換至 Windows 時，grabber 就用來協助貯存 DOS Session 的視訊模式。它的功能像是一個動態聯結函式庫，提供許多常式給 non-Windows 應用程式使用，使虛擬機器 (意指 DOS Box) 的螢幕格式成為 Windows display 驅動程式的 bitmap 格式。所以你能夠在 Windows 環境中看到 DOS Box 實在是 grabber 的貢獻。上述所說的 non-Windows 程式指的是 WINOLDAP.MOD，因為所有 non-Windows 應用程式都由 WINOLDAP.MOD 呼叫Shell device 後執行起來。</p>
+
+<p class="calibre2">Grabber 分為 286 和 386 兩種，前者的附屬名是 GR2，後者是 GR3。(但在 Windows 3.1 中前者附屬檔名卻是 2GR，後者是 3GR。你瞧 Microsoft 搞的 !)。GR2 的格式像 COM 程式，只在 CPU 真實模式中執行，用於 Windows 真實模式和標準模式中； GR3 的結構像是 Windows 的動態聯結函式庫，在 CPU 保護模式中執行，用於 Windows 386 加強模式中。務請記住，如果你設計一個 display 驅動程式，也要設計一個對應的 grabber。Microsoft DDK 手冊中的 Virtual Device Adaptation Guide 第十八章對 grabber 也有不錯的敘述。</p>
+
+<p class="calibre2">本章只涉及 Windows 與 display 驅動程式之間的通訊，列出 display 驅動程式應具備的 export 函式以及 grabber 應具備的函式，但絕口沒提像 line drawing 或是pattern fill、font design 等與裝置相關的重要設計主題。</p>
+
+<p class="calibre2">第六章介紹 system 驅動程式，這指的是 keyboard, mouse, COM, LPT, sound, local area network 等驅動程式。這些驅動程式都有自己獨一無二的Windows 介面，很難以一般性的方式統一討論它們。</p>
+
+<p class="calibre2">第七章介紹 VxD (虛擬裝置驅動程式)，也就是 .386 程式。大多數寫 DOS 驅動程式的軟體人員就是在這裡觸礁。自從 Intel 80386 問世之後才有所謂的虛擬機器 (Virtual Machine, VM)，而自從 Windows 3.x 以及 OS/2 2.0 之後才把虛擬機器完整的實作出來 (過去 GUI 系統的 DOS Box 是以軟體模擬完成，並非使用V86 模式)。本章介紹許多重要的觀念像 VM、Flat model，不只做為寫 VxD 的基礎知識，在了解整個 Windows 作業系統乃至於保護模式都很重要。不過我感覺解釋的未臻理想，我的意思是文字敘述有點兒重點整理的味道，換句話說你得有底子才看得懂。</p>
+
+<p class="calibre2">本章雖然也介紹 VxD 的程式寫法，但全是文字描述。一望無際的文字、文字... 很是令人心浮氣燥。哪有人全以文字描述的方式來教寫程式的 ? 我一直認為任何書籍的作者都應該知道自己的讀者是什麼層次，難道一個初學Windows 的人會看這本書嗎 ? 讀者是資深 (senior) 工程師的話就不必廢話連篇冗言處處，一小段程式碼再加註一些說明，最好再有線條箭頭標出各函式、節區、變數的來龍去脈，簡單明遼又暢快。真要學習 VxD 程式設計，DDK 手冊中的 Virtual Device Adaptation Guide 以及稍後要介紹的 Windows 3.1 Developer's Workshop 表現好很多。</p>
+
+<p class="calibre2">關於讀者的定位，我另外還有一些意見。不知道大家會不會對中文電腦書籍中的某些中文名詞有著某種程度的意義上的隔閡 ? 我想中文書籍不見得一定要全是中文字嘛，一些尚未達成共識的名詞就用原文不是頂好 ?! 當然其多寡與安排是必須拿捏的，這有賴作者的文字功力，否則太多中英文夾雜，閱讀起來也不會很順。好作者就是能夠讓你看硬梆梆的技術文字而不覺佶屈聱牙，舌頭打結。我這篇文章的英文名詞就太多了些。</p>
+
+<p class="calibre2">上星期我操作 CWindows 3.1 Beta 版的 OLE 功能，表單拉下來遲遲無法下手，因為上面文字的意義對我很陌生。極富意識型態的讀者不必寫信來扣我民族意識的大帽，我只是指出事實 (當場感覺陌生的人可不只我一個)，該怎麼解決我也沒有案子。上次在雜誌上看到兩幫人馬筆戰 Windows 可能造成的軟體侵略，最後又扯到民族意識，怪可怕的。</p>
+
+<p class="calibre2">再回到主題上。第七章介紹的是 VxD 程式的靜態結構，第八章介紹的則是 Windows 核心部份之 VxD 提供的 service，這些 service 集中在WIN386.EXE中，包括 Scheduler、Memory Management、VM Trapping、VM Control、Virtual Interrupt、User Shell、Debugging、Miscellaneous 等等。VxD 發展者不但要熟悉欲模擬之硬體性質，也應該要熟悉手上可應用的工具，本章介紹的這些由系統提供的 service 就是各式各樣的工具。這些 service 依參數傳遞的方式分為兩大類 : 藉堆疊傳遞以及藉暫存器傳遞。前者也就是所謂的 32 位元 C 語言呼叫慣例，其 service 名稱以底線開頭，如 _Allocate_Global_V86_Data_Area；後者則直接以英文字母開頭，如 Get_Cur_VM_Handle。我為什麼不把 service 直接說是「服務」或是「函式」呢 ? 因為 service 有它特別的意義 : 給 VxD 呼叫的常式碼稱為 service (另一種給一般應用程式呼叫的函式稱為 API)。</p>
+
+<p class="calibre2">雖然 service 是給 VxD 呼叫，API 才是給一般應用程式呼叫，但總是有一些天才會想出一些很正點的歪點子。Andrew Schulman 在 MSJ 1993/02 就以一篇Call VxD Functions and VMM Services Easily Using Our Generic VxD 向世人昭告他是點子族的個中翹楚。這篇文章提供一個 VxD.386，允許你在 C 程式中直接呼叫由 VMM 提供的 service，這些 service 可不是那種頭上長角的奇怪程式才用的著。如果你有新鮮構想，恰恰又有 VMM 的 service 可以支援你，做出來的軟體將是非常不一樣。你可曾希望從 Windows 程式中傳送鍵盤按鍵 (keystroke) 到一個 DOS box ? 利用 PostMessage() 送 WM_CHAR 或 WM_KEYDOWN 到 DOS box 的視窗 handle 可以勉一為之；但如果 DOS box 是全螢幕而非視窗型式，這就行不通。這時候呼叫 DDK 的 VKD_Force_Keys 可以解決。你想要真正享受 Windows 的強制性 (preemptive) 多工嗎 ? SDK 對此完全沒有描述，但在 DDK 中相關 service 塞滿一牛車，如 Schedule_VM_Event、Begin_Nest_Exec、Exec_Int、Simulate_Far_Call，這些都是 Windows 程式在與其他 VM 溝通時所需要的。</p>
+
+<p class="calibre2">前述 Schulman 設計的 Generic VxD 提供了一個 API，能夠讓「在 Windows 386 加強模式中執行的程式 (包括 MD-DOS box 中的程式)」呼叫任何一個 VMM service。應用程式只要指定要呼叫的函式名稱以及參數即可。使用這個 API 就像使用 C 函式庫的 int86x() 函式一樣。設計上的第一個問題是如何能夠明確告訴 Generic VxD 我們要呼叫哪一個函式。幸運的是每一個 VMM service 都有一個相關的識別碼 (是個 DWORD) 以及相關的函式編號，所以這問題不難解決。接下來呼叫者需要一個方法來指定參數以及放在暫存器中的回返值。Generic VxD 製造一個暫存器影像 (register image，你想像是個暫存器的副本好了)，這和使用於 int86x() 的 REGS 和 SREGS 結構有異曲同工之妙。但並不是每一個 VxD 都期望參數放在 32 位元暫存器中，許多 service 是從堆疊中取參數，並使用 C 的呼叫慣例(calling convention)。這一點必須考慮在內。</p>
+
+<p class="calibre2">程式呼叫 Generic VxD 時只要傳遞函式號碼，(例如 0x010001L 代表 Get_Cur_VM_Handle，0x0D0007L 代表 VKD_Force_Keys)，這號碼會被轉換為真正的 service 名稱。如果你詳細看看 DDK 的 VMM.INC 中的 VxDCall 巨集定義，你將發現事實上 VxDCall 是一個 INT20h，後面跟著一個 DWORD (放 service 號碼)。所以 "VxDCall VKD_Force_Keys" 只不過是 "INT20h 0D0007h" 比較漂亮的表達方式而已。這就是 Generic VxD 的設計與運作，它只是模擬組譯時期的 VxDCall 巨集，讓它在 run-time 執行而已。Generic VxD 只不過是個轉換機制。</p>
+
+<p class="calibre2">Andrew Schulman 實在是個想像力極為豐富的人，他也曾設計一個名為 WINIO 的函式庫，把一般的 C 程式轉換為 Windows 程式，這在無責任書評第三篇介紹<a href="http://jjhou.boolan.com/review1-8.htm" target="_blank" class="calibre5">Undocumented Windows</a> 一書時提過。</p>
+
+<p class="calibre2">第九章介紹系統所屬的虛擬裝置驅動程式。考慮一個 VxD 應該從兩個觀點，它既是service 的供應者也可能是 service 的呼叫者。所以如果你要自行設計一個 VxD 取代現存的 VxD，一定要顧慮到這兩點，務必讓介面保持原封不動，以免影響相容性。本章介紹的三個 VxD 是 VDD、VKD 和 VCD (分別是顯示器、鍵盤和通訊)。</p>
+
+<p class="calibre2">第十章介紹非標準的裝置驅動程式，像數位筆、掃描器。DDK 並沒有提供這一類程式例，所以做起來自我摸索就辛苦一些。這種驅動程式可以以下列數種型式呈現 :</p>
+
+<p class="calibre2">■ 標準的 DOS 驅動程式。</p>
+
+<p class="calibre2">■ DOS 常駐程式。</p>
+
+<p class="calibre2">■ Windows 應用程式。</p>
+
+<p class="calibre2">■ Windows 動態聯結函式庫。這麼做的好處是呼叫時不需要切換到 CPU 真實模式(286 保護模式要切換到真實模式，必須 Reset，那是很慢很慢的動作。386 保護模式無此困擾)。</p>
+
+<p class="calibre2">■ Windows 虛擬裝置驅動程式。缺點是它所提供的介面不夠高級，應用程式獲得的是以 INT 2Fh 得到的 entry point (相當於函式指標)，而不能夠直接呼叫函式名稱並傳遞參數。</p>
+
+<p class="calibre2">到底選哪一種，要看使用此驅動程式之應用程式的型態，以及它所期望的介面。</p>
+
+<p class="calibre2">總括來說，本書的內容令人有踩在雲端的感覺，都是政策性的宣示而沒有政務性的實作。雖然探討系統內部的觀念頗為難得，但對於想從中學習 Windows 驅動程式實際寫作的人而言，目的地距離出發點恐怕很遙遠。一本書之受到注意，有三個因素 : 一是主題選得好 (要不很熱門，要不很稀有)，二是作者很有名氣 (書的品質有一定口碑)，三是書籍內容的整理、編排、文筆都下過一番功夫。本書只能歸為第一類。譬如介紹 32 位元程式的虛擬裝置驅動程式，第一個閃過我腦子的念頭是我該用哪一種工具製作它 ? 本書沒有在適當時機解我疑惑，縱觀全文也只說需要一個 80386 組譯器 (這可不是白說嗎 ?)。全書的組織架構不能算是佳作。不過當你愈來愈深入到系統內部，會發現自己愈是高處不勝寒，想買書嘛沒書買，想找人討論也不知良人何處。不過單就主題而言，我個人仍覺得這是一本難得的書。</p>
+
+<p class="calibre2">作者在書本一開始的致謝部份謝謝所有在 CompuServe 的 Forum (論壇) 上向他發問並鼓勵他找出答案的人，以及在論壇中回答他的問題的人。同時也提到本書實際上並沒有關於裝置驅動程式的程式設計方法，要發展真正驅動程式的軟體人員應該上論壇去多與人請教討論。我不知道國內上 CompuServe 的公司或個人有多少，這真的是個大大的資源，值得好好利用，不過別玩昏頭了。我的朋友每天花半個上班天看信回信，這會上癮的。當然，你想想看與全世界同好在網路上溝通，還不興奮嗎 ?! (編按 : 關於 CompuServe 及國際網路，請參考附錄 A)</p>
+
+<p class="calibre2">我過去介紹書籍從不曾把附錄列出來過 (其實附錄也有可觀之處)，這本書特別列出來實在是因為附錄 A 從 191 頁就開始了 (全書 434 頁) ，整個附錄佔篇幅的 1/2 強，不能不表。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Windows 3.1 Developer's Workshop <br class="calibre3"/>作者 Dr. John Bulter,<br class="calibre3"/>Bob Chiverton,<br class="calibre3"/>John Clark Craig,<br class="calibre3"/>William S. Hall,<br class="calibre3"/>Ray Patch,<br class="calibre3"/>Alok Sinha<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 6 章，322 頁<br class="calibre3"/>售價 US$ 34.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">1. Internationalizing Windows Software<br class="calibre3"/>2. Zooming, Coordinate Spaces, and Transformations : From Win16 to Win32<br class="calibre3"/>3. Programming Windows for Pen Computing<br class="calibre3"/>4. NetBIOS Programming<br class="calibre3"/>5. Developing Virtual Device Drivers<br class="calibre3"/>6. Visual Basic as a Professional Tool </p>
+
+<p class="calibre2">這本書有點兒論文集的味道，六位作者各自負責一個主題。我要特別介紹的是第五個單元 : Developing Virtual Device Drivers 。作者 Ray Patch 的組織能力相當不錯，看下來的感覺是「兩岸猿聲啼不住，輕舟已過萬重山」，爽快。你覺得一本書最重要的是什麼 ? 組織能力或是文筆。我比較注重前者。當然如果再搭配一支生花妙筆肯定會是暢銷書。不過在技術性書籍而言那也不一定，還得看主題是什麼。不信你就寫一本，嗯...Macintosh 程式設計，看看在臺灣賣幾本。</p>
+
+<p class="calibre2">這個單元所敘述的 VxD 程式設計，明顯比上一本 Writing Windows Device Driver 第七章實在的多，對於 VxD 的宣告部份、每一個宣告參數所構成的 DDB 結構 (關係到 VxD 的介面)、以及 VxD 程式進入點中處理的訊息和處理方式、乃至於 VxD 與應用程式之間的參數傳遞橋樑 CRS (Client Register Structure，由 ebp 所指的一塊區域)，都介紹得十分清楚。對於 VxD 中的 Service 或是 API 的寫法，也都有實例解說。當然，如何呼叫 VxD (不管是 API 或是 service) 也是重要題目，這些都以十分簡潔有力的方式描述，毫不拖泥帶水。本單元最後並附一個程式骨幹，有 VxD 程式的完整格式，只是尚缺乏 API 的設計。Microsoft Systems Journal 在 1992/10 有一篇 Go Anywhere and Do Anything with 32-bit Virtual Device Drivers for Windows，其中有一個小程式 CR3.386，恰恰與本章相反，只有 API 設計而無 service。兩者天殘地缺互相搭配，perfect !</p>
+
+<p class="calibre2">依我的看法，要教讀者 VxD 程式寫法，最佳方式莫過先給一個所謂的程式樣板 (template)，讓讀者先大致了解這種程式的架構空殼 (VxD 有固定的格式)，腦袋中有了整體概念，再開始細項介紹，才最是理想。這就好像程式設計中的 top-down 方式。然而絕大多數的書籍，都是採用落伍的 button-up，讓你管中窺豹胡兜半天，才兜起一個程式。我不認為這是好方法。也許對付這種寫法的書籍，就是先翻到後面看看實際的程式。但這是不一樣的，我說的是把整個精髓保留下來的程式「骨幹」，不是要看一個長達數百行的完整程式。一個好作者，應該能夠設身處地為讀者想 : 現在，他要的是什麼。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Power Programming with Microsoft Macro Assembler <br class="calibre3"/>作者 Ray Duncan<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 14 章，370 頁<br class="calibre3"/>售價 US$ 39.95<br class="calibre3"/>磁片 Yes</p>
+
+<p class="calibre2">1. Thoroughly Modular MASM<br class="calibre3"/>2. Processing Command Lines<br class="calibre3"/>3. Using the Environment<br class="calibre3"/>4. Converting Numbers for Input and Output<br class="calibre3"/>5. Manipulating Strings<br class="calibre3"/>6. Times and Dates<br class="calibre3"/>7. Sorting Numbers and Strings<br class="calibre3"/>8. Using the MS-DOS File System<br class="calibre3"/>9. Sequential Files<br class="calibre3"/>10. Random Access Files<br class="calibre3"/>11. Heaps, Lists, and Binary Trees<br class="calibre3"/>12. Multiple-Precision Integer Arithmetic<br class="calibre3"/>13. Using the Intel Numeric Coprocessors<br class="calibre3"/>14. Optimizing Assembly-language Programs</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img20.jpeg" alt="img20.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">上一期無責任書評最後一頁有一個 sidebar (與正文有關的花邊新聞) (編按) : 組合語言細說從頭，以半頁篇幅介紹三本組合語言書籍。本書就是其中之一。由於撰寫驅動程式都是以組合語言為之，所以我順便來談一談這本書。(編按: 侯捷指的是微電腦傳真雜誌上的 sidebar)。</p>
+
+<p class="calibre2">作者 Ray Duncan 在 PC Magazine 主持一個 [Power Programming] 專欄，本書的幾個主題是他在專欄中發表的內容收錄集合下來的。這不是一本組合語言入門書，關於組合語言的指令以及 MASM 組譯器的基礎介紹並不多。只有第一章對於檔案模組與程式節區之間的關係，以及程式節區與節區暫存器之間的關係有一些描述，再就是針對 Microsoft MASM 新版本的新特性 (如資料結構，高階語言介面，新的 directive) 做一介紹。第二章開始是以應用實例為導向，分別介紹如何處理命令列參數、環境變數、文數字與數值之間的轉換、字串的處理 (如字串比較、字串併合、尋找特定字元 ...)、時間與日期的處理 (ASCII 字串與真正二進位時間日期數值的轉換)、字串與數值的排序、基本檔案操作、循序檔的操作，隨機檔的操作、記憶體 (heap) 配置，資料結構中的串列 (link-list) 與二元樹的實作、倍精度整數運算、浮點數運算。最後一章是作者浸淫組合語言的心得力作 : 如何將組合語言程式最佳化，包括大小與速度。</p>
+
+<p class="calibre2">書中所有程式碼都放在隨書所附的磁片中。這些函式雖然不錯，不過在 C 函式庫的效率也相當好的今天，它們的實用性就沒有那麼重要了。我看了一下定價，臺幣 1200.0，委實太貴。是因為作者的名氣嗎 ?</p>
+
+<p class="calibre2">我曾半開玩笑說寫組合語言的人是稀有動物，也有朋友半開玩笑表示抗議。不知道抗議緣由為何，物以稀為貴不好嗎 ? 組合語言的重要性我就套用該 sidebar 上的一小段文字好了 :「在圖形介面充斥的今天，組合語言仍有其相當地位。佔程式總體比例不高，但是地位關鍵；攸關性能好壞，是了解電腦的基礎；可以與晶片並肩合作，是控制電腦的最佳方式 」。</p>
+
+<p class="calibre2">不過即使你手上有一把好鎚子，也不必看到什麼就想要釘下去。笨重的大鎚一釘子下去雖然入木三分，舞起來卻辛苦得緊。組合語言用起來委實吃力些。</p>
+</body>
+</html>

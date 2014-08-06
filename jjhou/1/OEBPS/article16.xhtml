@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">具有革命精神的 MFC 和 OLE2</h2>
+<p class="calibre2">Application Framework 和 OLE2 <br class="calibre3"/>的的確確在軟體界稱的上具有革命精神。</p>
+
+<p class="calibre2">Application Framework 提升軟體生產力，<br class="calibre3"/>OLE2 促成軟體合作時代的來臨，<br class="calibre3"/>同時也是物件導向作業系統的基礎。</p>
+
+<p class="calibre2">今天我為大家介紹 Visual C++ 和 OLE2 方面兩本不錯的書。 </p>
+
+<p class="calibre2">演化 (evolution) 永遠在進行，這個世界卻不是每天都有革命性 (revolution) 的事物發生。動不動宣稱自己 (或自己的產品) 是劃時代的革命性的，帶來的影響就像時下滿街跑的大師一樣使我們漸漸無動於衷 (大師不可能滿街跑) ! 但是 Application Framework 和 OLE2 的的確確在我們軟體界稱的上具有革命精神。</p>
+
+<p class="calibre2">什麼是 Application Framework ? Framework 有組織、框架、體制的意思，Application Framework (這名稱太長了，以下我以 Framework 代表之) 不僅僅是一般性的泛稱，它其實還是物件導向 (Object Oriented) 領域中的一個專有名詞。</p>
+
+<p class="calibre2">基本上你可以說Framework 是一個完整的程式模型，具備標準應用軟體所需的一切基本功能，像是檔案功能、列印功能、資料交換功能 (在 Windows 中指的是 Clipboard) ...，以及這些功能的使用介面 (在 Windows 中這是 toolbar、status bar、menu 以及相關的 dialogs)。如果更以術語來說，Framework 就是由一整組合作無間的objects 架構起來的大模型。喔不，這個時期它還只是有形無體，所以應該說是一組合作無間的 classes 架構起來的大模型。</p>
+
+<p class="calibre2">這帶來什麼好處呢 ? 程式員只要帶個購物袋到「Classes 超級市場」採買，隨你要買 MDI 或 OLE 或 ODBC 或Printing Preview，回家後就可以輕易拼湊出一個色香味俱全的大餐。</p>
+
+<p class="calibre2">「Classes 超級市場」就是 ClassLib，以產品而言在 Microsoft 是 MFC，在 Borland 是 OWL。這組 ClassLib 不只是函式庫而已。傳統的函式庫 (C Runtime Lib 或 Windows API DLL) 提供的是生鮮超市中的一條魚一支蔥一顆大白菜，彼此之間沒有什麼關聯，主掌中饋的你必須自己選材自己調理。能夠稱的上 Framework 的ClassLib 提供的則是火鍋拼盤 (不知道 ?! 大男人應該陪陪老婆買菜了)，依你要的是白菜火鍋魚頭火鍋或是麻辣火鍋，菜色帶調理包都給你配好。當然這樣的火鍋拼盤是不能夠就地吃的，你得給它加點能量。放把火燒它吧，這火就是所謂的 Application Object (在 MFC 程式中就是衍生自 CWinApp 的一個global object)。是這個 App Object 引起的連鎖反應，使每一個形 (class) 有了真正的體 (object)，把整個 Framework 帶動起來。一切因緣全由是起。</p>
+
+<p class="calibre2">Framework 帶來的革命精神是，程式模型已經存在，程式員只要依個人需求加料就好 (也就是改寫 Derived Class 的 virtual function，或在Derived Class 中加上 member function)，這很像你在火鍋拼盤中依個人口味加鹽添醋。由於這個緣故，整體性的軟體開發工具 (像 Visual C++ 或 Borland C++) 就很容易誕生了，因為程式碼的初期規模十分一致 --- 什麼樣風格的程式應該含入什麼 Class 是一成不變的；而修改程式以符合私人需要的動作過程也很一致，不外乎是改寫 Class 的 virtual function 或增加 data member 或增加 member function。你動不了 Framework 的大架構，也不需要動，這是福利不是約束。在 Visual C++ 中製作初期程式碼的工作 (也就是讓你開採買單) 由 AppWizard 負責， ClassWizard 負責的工作是讓你方便修改零件，加鹽添醋。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img43.jpeg" alt="img43.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">應用程式碼一致化的結果，使優良的軟體開發工具 (code generator、CASE tool) 容易開發出來。由於你的程式碼大架構掌握在 Framework 設計者的手上，小猴子怎麼也翻不出如來佛手掌心，Framework 設計者於是就有能力製作出整體開發工具了。</p>
+
+<p class="calibre2">有人說工學院中唯一保有人文氣息的只剩建築系，我總覺得資訊系也勉強可以算上。帶藝術氣息的軟體創作行為 (我一直是這麼認為的) 將在 Framework 出現後逐漸成為工匠技術，而我們都將只是軟體 IC 裝配廠裡的男工女工。其實也沒什麼好顧影自憐，功成名就的冠冕從來也不曾落在程式員頭上；我們可能像紐約街頭的普普 (POP) 工作者(註 )，自認為藝術家，可別人怎麼看呢 ? 不得而知 ! 話說回來，把開發軟體這件事情從藝術降格到工技，對人類只有好沒有壞。不是亨利福特，我們又如何能夠享受大眾化的汽車 ? 或許以後會出現「純手工精製」的軟體(有誰感興趣不得而知，我自己從來不嫌機器饅頭難吃)。</p>
+
+<p class="calibre2">(註 : 普普藝術是 1950-1960 年代盛行於歐美的一種新藝術運動。將俗不可耐的海報、看板、招牌、漫畫、照片等大眾傳播的圖形，大膽引用於繪畫，是對現代文明庸俗性的抗議)</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img44.jpeg" alt="img44.jpeg" class="calibre4"/></span> 達達（DATA）與普普（POP）</p>
+
+<p class="calibre2">如果要三言兩語點出 Framework 的特質，我會這麼說 : 我們取用別人早寫好的一整個程式 (MFC 或 OWL) 之中的一部份，給個引子 (Application object) 使它具象化動起來，並被允許修改其中某些零件使這程式更符合私人需求，如是而已。</p>
+
+<p class="calibre2">那麼 OLE 的革命精神又在哪裡呢 ? 從有電腦以來所有坐在顯示器前面的人想像他的工作是 : 我用什麼軟體，載入什麼檔案，進行什麼步驟。為了讓成果 (所謂 Document) 得以完成，我因此必須選擇功能強大到足夠應付這 Document 每一項需求的軟體。如果 Document 希望表現文字、動畫、影像、語音，我的選擇必定是一隻大雷龍。換個方向出發 : 我有一份 Document 要完成，誰完成其中的小元件 (文字動畫影像語音) 我不在意，如果有各個專精工具完成這些小元件，那麼我希望有一個容器 (container) 可以容納它們，並且做點佈局管理貯存之事。這些元件都稱為 object (和 C++ 所說的 object 意義不盡相同)。軟體使用者想對各元件做細部動作時 (例如編輯或播放)，容器必須有能力啟動元件的原主人 (server)。這些 objects 可能分散在各個檔案(.TXT，.BMP, .AVI, .WAV)，與容器 (即 Document) 之間只以指標相連，這種情況稱為物件聯結 (Object Linking)；也可能各個 object 都複製一份放到 Document 中，這情況稱為物件內嵌 (Object Embedding)。</p>
+
+<p class="calibre2">上述思維把我們從原先以軟體為中心 (Application Center) 的觀念轉變到以產品為中心 (Document Center)。如果能夠定義出一種協定 (protocol)，遵循這協定的軟體可以做物件聯結與內嵌，那麼應用軟體的開發觀念就由龐雜通吃轉變為小巧精美，使用者也因此可以以調配的方式完成 Document 而受益。</p>
+
+<p class="calibre2">這樣的協定在 OLE 1 已經完成。但是軟體使用者在製作 Document 過程中，看見不同的 server 隨著各個 object 的編輯 (或播放) 需求而出現、而運作、而消失回到container，使用者仍然沒有辦法感受到「只需面對而一份 Document 而不需面對不同的 Application」! 於是 OLE2 又發展出所謂的即地動作 (In-Place Activation，也稱為 Visual Editing)，使 Document Center 的觀念更具說服力，更落實在用戶手上。藉由 OLE 協定，軟體竟然可以操作它不了解、甚至目前還未誕生的資訊型態，從此達到無國界的狀態。</p>
+
+<p class="calibre2">Framework 提升軟體生產力，OLE 促成軟體合作時代的來臨，同時也是物件導向作業系統的基礎。 Chicago 的用戶已經可以不必考慮使用應用軟體或載入檔案之事，他們想到的是如何管理 Document，這正因為有 OLE2 做為Chicago 的脊椎骨。這一期我就為大家介紹 Visual C++ 和 OLE2 方面兩本不錯的書籍。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Inside Visual C++ <br class="calibre3"/>作者 David J.Kruglinski<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 26 章，598 頁<br class="calibre3"/>售價 US$ 39.95 (含磁片)</p>
+
+<p class="calibre2">Part I Windows, Visual C++, and Application Framework Fundamentals<br class="calibre3"/>1. Microsoft Windows and Visual C++<br class="calibre3"/>2. The Microsoft Foundation Class Library Application Framework</p>
+
+<p class="calibre2">Part II The Class Library View Class<br class="calibre3"/>3. Getting Started with AppWizard - "Hello, world"<br class="calibre3"/>4. Basic Event Handling - Using ClassWizard<br class="calibre3"/>5. The Graphics Device Interface (GDI)<br class="calibre3"/>6. The Modal Dialog<br class="calibre3"/>7. The Modeless Dialog and the COMMDLG Dialog Classes<br class="calibre3"/>8. Visual Basic Controls<br class="calibre3"/>9. Windows Memory Management - Just Say "New"<br class="calibre3"/>10. Bitmaps<br class="calibre3"/>11. Bitmap Buttons, The Timer, and On-Idle Processing</p>
+
+<p class="calibre2">Part III The Document-View Architecture<br class="calibre3"/>12. Menus and Keyboard Accelerators<br class="calibre3"/>13. Toolbars and Status Bars<br class="calibre3"/>14. A Reusable Base Class<br class="calibre3"/>15. Separating the Document from its View<br class="calibre3"/>16. Reading and Writing Documents - SDI<br class="calibre3"/>17. Reading and Writing Documents - MDI<br class="calibre3"/>18. Printing and Print Preview<br class="calibre3"/>19. Splitter Windows and Multiple Views<br class="calibre3"/>20. Context-Sensitive Help<br class="calibre3"/>21. A Practical Windows-Based Application</p>
+
+<p class="calibre2">Part IV Advanced Topics<br class="calibre3"/>22. Microsoft Foundation Class Library Version 2.0 Programs Without Documents or Views<br class="calibre3"/>23. Storing Bitmaps in a Document - DIBs and the Clipboard<br class="calibre3"/>24. Database Management with Microsoft ODBC<br class="calibre3"/>25. Object Linking and Embedding (OLE)<br class="calibre3"/>26. Dynamic Link Libraries (DLLs)</p>
+
+<p class="calibre2">Appendix A. A Personal View of the C++ Language<br class="calibre3"/>Appendix B. Message Map Functions in the<br class="calibre3"/>Microsoft Foundation Class Library<br class="calibre3"/>Appendix C. Microsoft Windows Functions Used in This Book<br class="calibre3"/>Appendix D. Visual C++, Windows NT Edition </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img45.jpeg" alt="img45.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">各家廠商包括 Microsoft、Borland、Symantec 等等都有 Framework 產品。重量級產品的捉對廝殺往往具有「一棒擊沉」的威力，廠商無不卯盡全力吹噓自己、打擊對手。近幾個月來在重要技術期刊如 MSJ、DDJ 的每一期封面裡頁廣告上我們都會看到迷人的夏威夷海灘照，Symantec 公司為其客戶準備了一個特殊的旅遊折價卷 (雙人的喲)，意思是如果你使用了他的產品，就有剩餘的時間來一個愉快的夏威夷假期。Framework 產品肉搏戰之激烈可想而知。</p>
+
+<p class="calibre2">身為名門之後，Visual C++ 比其他廠牌的Framework 接受更多的目光與評論。國際論壇對 Visual C++ 有十分熱烈的反應，1993.03 推出之後，網路消息一下子大幅增加。反應分為兩派，一派認為 Visual C++ 不過是另一套 ClassLib，沒有什麼值得大書特書；另一派把 Visual C++ 捧上天。有一封網路消息說，Visual C++ 好的如此令人驚喜，不知道下一次 Microsoft 的 C/C++ 9.0 是不是要帶來具備虛擬實景 (Virtual Reality) 的工具 ?! (註 : 不論 VC++ 1.0 或是 VC++ 1.5，其編譯器版本都是 C/C++ 8.0)</p>
+
+<p class="calibre2">Visual C++ 這套 Framework 的核心正是 MFC，本書為我們解釋MFC 2.0 架構、最基礎的數個 Classes、使用這些 Classes 的方式、以及 VC++ 中的軟體開發工具。閱讀時最好把 VC++ 所附的 MFC Class 架構圖放在手邊，隨時參閱，這張架構圖熟記於心是學習 MFC 的頭一件必要情事。本書封面沒有說明VC++ 版本，那是因為出書時 VC++ 才剛開始 1.0 版，作者對於 Microsoft 在1.0 推出後的九個月快速推出 1.5 版想必也感吃不消。你無法從本書得到VC++ 1.5 最重要的兩項補強技術 : ODBC 和 OLE2。但是已經擁有 VC++ 1.5 的你也不必擔心本書是否落伍，兩個版本的其餘一切都相容。(好消息，臺灣微軟已於二月開始出貨 VC++ 1.5，沒收到的快去催)。</p>
+
+<p class="calibre2">作者毫不隱藏他對 MFC 的熱愛，說這是他等了十年才盼到的軟體開發環境。十年有點跨張，但功能強大卻是不假。這本書明確劃分為四大部份。第一部份介紹 Framework 的觀念以及 Visual C++ 套件的各項成份。第二部份真正進入 MFC 程式設計，但侷限在CView (Framework 的主要 Class 之一)。在這裡作者嘗試以 C++ 和 MFC 完成一些功能簡單的程式，像是簡易繪圖、圖形捲動、Truetype 字形輸出、對話盒製作、利用 GRID VBX 製作簡易試算表等等。由於 VC++ 的三個wizards 有「程式產生器」的能力，程式員可以省掉許多苦役，這是廠商集中火力宣揚之處。</p>
+
+<p class="calibre2">第三部份才真正進入 MFC 2.0 的核心，也就是 Document-View 架構。這裡的 Document 和前面所提的 OLE Document 有點關聯卻又不是完全相同，暫時不要把它們視為一物。Document-View 架構是 MFC 2.0 不同於 MFC 1.0 的最大特質。當你學會如何使用 Document 並且把它和 View 連接起來後，你會非常驚訝資料的檔案動作和印表動作 (包括預視) 是多麼的容易。我在前面提過，MFC 這個 Framework 早把一切設計好了，如果你的資料能套用 MFC 的 Class (例如以 CObList 表達你的串列)，自然而然也就享有這些功能。從十三章開始，讀者開始接觸 MFC 2.0 新提供的圖形使用介面，包括toolbars、status bars、splitter frames、context-sensitive help。這些漂亮寶貝誕生過程之簡易正是當初深深吸引我對 VC++ 興趣的最主要原因。</p>
+
+<p class="calibre2">第四部份是雜燴，讀者可以學習完全不需 Document-View 架構的程式寫法 (可是我不認為這實用)，以及 ODBC、OLE、DLL 等高級主題。ODBC 超過了 VC++ 1.0 的能力範圍，如果你要實作第二十四章程式，另需要 ODBC SDK。二十五章介紹的不是 OLE2 而是 OLE 1，這也必須特別注意一下。</p>
+
+<p class="calibre2">本書定位為 MFC 的入門書，每一章的範例程式都只示範些小動作，如果拿來和 Charles Pezold 的 Programmer Windows 3.1 以及 Jeffrey M.Richter 的 Windows 3.1 : A Developer's Guide 相比，本書比較像前者。(註 : 前者的程式都小小的，示範特定動作；後者的程式都大大的，功能度以及漂亮度與市面商業軟體遑不多讓)。</p>
+
+<p class="calibre2">開始閱讀本書之前如果沒有 C++ 基礎，或是早就看過但很久沒摸了，心中忐忑不安，那麼不妨先到附錄 A 熱身一下。附錄 A 是一篇為已經看過 C++ 課本但又覺得資料太豐 (要五毛給一塊 ?) 的人準備的小品，31 頁，是作者自己的 C++ 私房話。目前關於 MFC 或 OWL 書籍的一個習慣作法就是在書中加一小章 C++ 基礎觀念，為的是 C++ 嚷了很久，C 程式員的數量還是佔極大優勢。關於這一點稍後我另有看法。</p>
+
+<p class="calibre2">傳統對於程式的編譯聯結程序是以 makefile 說明，本書並不這麼做。MFC 程式並非沒有 TEXT 格式的 makefile，但十分龐大而且很難看懂 (還有多少人懂那些奇奇怪怪的 $ @ &lt;&lt; 符號呢)。本書配合 Visual Workbench 的畫面，以這些畫面取代 makefile。換句話說在 VC++ 中你學習「製造」程式的方法是 : 「先在 AppWizard 上選這個按那個，然後你會得到這個和這個；再進入 ClassWizard， 按下這個和那個，它會跳到一個編輯器，游標一閃一閃出現在這裡，你就開始打...」，我有一種被物化的惆悵感覺。</p>
+
+<p class="calibre2">本書磁片內含不少程式 (45 個)，安裝軟體非常令人失望，一點也配不上「Visual」的氣勢。沒有「百分比棒」告訴我們安裝到什麼程度了，也沒有自動為我們產生 group 並添加可執行檔的 icon --- 這都只不過是 Windows 程式安裝過程中的起碼要求。事實上，本書的 INSTALL.EXE 根本是個 DOS EXE。安裝後的 921 個檔案總共需要 2.4M 硬碟空間，其間沒有可執行檔，你必須一個一個自行編譯聯結。雖說VC++ 建立可執行檔的過程很簡單，時間卻得花不少，這一點 Precompile Header 幫不上忙，因為你是在不同的 project 中工作。所有的 EXE 產生後，磁碟空間需求量暴漲兩倍以上。編譯聯結一個 MFC 程式需要相當時間 (最主要原因是各個 afx_.h 檔都得編譯)，第三章最後面提出將時間儘量縮短的作法，值得參考。</p>
+
+<p class="calibre2">VC++ 安裝後你可以在其 group 中找到一個 "Tech Note" icon，其中有 35 篇十分深入的文章，值得全部印出裝訂成冊。本書在講到相關資訊時，會告訴我們從哪一篇 Tech Note 中獲得更多資訊，這一點很有價值。VC++ 套件中有 23 個 MFC 範例程式，做為本書之後的深造對象不錯。此外 VC++ 本身附的手冊 Programmer's Guide 也是一本很不錯的書，內有三個部份 :</p>
+
+<p class="calibre2">○ C++ Tutorial - 介紹 C++ 語言基礎。</p>
+
+<p class="calibre2">○ Class Library User's Guide - 以 MFC 範例程式 Scribble 為例，詳細解釋 步驟一至步驟五的程式化過程。最終可以獲得一個 MDI 風格的應用程式，以 滑鼠為輸入裝置，允許在視窗上自由畫圖，資料可以貯存在檔案中，可以輸出 到印表機，也可以在列印之前先預視。這個範例幾乎示範了一般應用軟體寫作 過程中所需的各種代表性 Classes。</p>
+
+<p class="calibre2">○ Programming Techniques - 討論 precompiled header、C/C++ 程式中的 記憶體管理、Prolog/Epilog 碼、QuickWin、移植性等主題。</p>
+
+<p class="calibre2">把這些資料 K 完，你應該是 VC++ 的專家了。還想再深入些 ?! MSVC\MFC\SRC 中有 MFC 原始碼大刑伺候，123 個檔案，1.4M 大小，夠嗆的了。</p>
+
+<p class="calibre2">MFC 有許多優點，可是我得提醒你，十分鐘選選按按獲得一個程式雖然很有速食文化的精神，玩具程式終究要修修改改才拿的出去。不把 C++、SDK 的底子紮深一些，對那些由 AppWizard 產生出來十分精簡的碼鐵定無下箸處 。如果有人光以程式碼的多寡比較不同程式方法 (C/SDK 與 C++/MFC) 之間的優劣，這種人頂好去看無字天書。</p>
+
+<p class="calibre2">想進入 Windows 程式設計領域的人，總有不知從何開始的猶豫與困惑。當入門愈來愈困難愈來愈複雜，我們的猶豫愈來愈多困惑愈來愈深。SDK 給人的印象是起碼六個月的學習 (我個人並不這麼認為)，各家 Framework 廣告卻一再強調輕輕鬆鬆快快樂樂。我的天，沒有含淚播種哪來含笑收割 ? 本書作者 Kruglinski 的論點是，不論你從SDK 開始或從 MFC 開始，反正都需要很長的學習曲線，那麼何不從 MFC 開始 ? 關於此點我持懷疑態度，基本上學習 MFC 的速度得視你的 SDK 以及 C++ 程度而定。如果具備這兩種基礎的高手說『學習 MFC 程式設計不怎麼難嘛』，你得當心，唸完博士學位的人總是說 :『博士沒什麼啦，孵也孵出一個』；考上研究所的人則是:『考前三個月我才開始 K』，或者是『準備預官考時我就順便準備了一下』。</p>
+
+<p class="calibre2">對於已經有 SDK 經驗的人，我的建議是 ，你要弄清楚為什麼在 MFC 程式中看不到WinMain()、WndProc() ? 為什麼沒有 RegisterClass() 也沒有 CreateWindow() ? 為什麼沒有 Message Loop、沒有 switch-case 卻跑出個什麼 BEGIN_MESSAGE_MAP()、END_MESSAGE_MAP() ? 為什麼所有熟悉的東東都不見了 ? 你因為對訊息流向的掌握而弄清楚了 SDK 程式設計，你也將因為把隱藏在 CWinApp、CFrameWnd、以及所謂Message Map 背後的來龍去脈一一映射到 SDK 而因此對 MFC 程式設計雲霽風清豁然開朗。可惜，本書不談這些，而我也沒看到哪一本書談論它們。在這樣的書問世之前，你得自己去查 MFC source code（VC++ 磁片上有）。</p>
+
+<p class="calibre2">學習物件導向程式設計，有識之士都說要完全捨棄傳統的程式方法，要直接以物件導向的方式來思考，最好這個人一開始接觸的語言就是 C++（或 Smalltalk, Objective C...）。是啊是啊，但理想如果不向實際做點妥協，理想就會歸於塵土。中華民國還得需十次革命，物件導向怎能把一切傳統都拋開？對於為數眾多的 SDK guy，我認為唯有讓你看到你已經很習慣而且也認為很理所當然的 WinMain()、WndProc() 被MFC 如何包裝，你才能夠紮紮實實沒有疑慮地成為一個 MFC guy，大步向 OO Windows programming 邁進。</p>
+
+<p class="calibre2">關於 C++，我自己開 Windows 課程時很感興趣座中來自各軟體公司的菁英到底有多少人使用 C++。每次這問題提出來課堂就瀰漫一股緊張氣氛，學員眼神中有著驚恐，手舉的半高不高表示已開始學習...但似乎...還不夠實在。每個程式員都擔心自己是還沒有擁抱 C++ 歌頌 C++ 的最後一人。四面八方的資訊告訴我們，全世界軟體公司都已經移轉到 C++，或在 C++ 移轉過程之中，或至少正在移轉計劃的最後階段。連你八十歲的老阿媽都知道要提醒你快快從 C 進入 C++。於是，C++、OOP 成為軟體人員「必須背負」的責任。洋洋得意的同儕，排山倒海的資訊，C 程式員四面楚歌! 結果是，每位 C 先生桌上都擺有一本 (至少一本) C++。OO 大纛愈舉愈高，終至沒有人看得清楚上面寫些什麼，大家只一勁兒搖旗吶喊 OO 和 ++。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img46.jpeg" alt="img46.jpeg" class="calibre4"/></span> OO 大纛愈舉愈高，終至沒有人看得清楚上面寫些什麼，<br class="calibre3"/>大家只一勁兒搖旗吶喊 OO 和 ++ </p>
+
+<p class="calibre2">其實最好的態度是找一個最適合而不是最時髦的語言與工具。有人天生就是不適合 data flow 而對 function flow 甘之如飴。但話說回來，即便只為了MFC，也值得學習 C++。你犯不著把自己弄的緊張兮兮，不妨把 C++ 學到一個基本程度，有能力以 MFC 架建你的程式大架構 (MDI、OLE、各種 UI)，然後在其中仍然以 SDK API 寫程式，光是這樣使用 VC++ 就已經值回票價了。慢慢經驗多了信心建立起來了，下一個 project 再開始全盤「歐」化。</p>
+
+<p class="calibre2">人的學習沒有 version control，我其實已經很難想像如果沒有 SDK 經驗並且沒有把 SDK 與 MFC 的內部關係弄懂的話，自己是否進得了 MFC 殿堂。我所認識的每一位使用MFC 的朋友都有 SDK 基礎。這裡倒有一個難得的臨床實驗 : 我的朋友小曾的朋友沒有 SDK 經驗卻想學習 Windows 程式設計，小曾介紹這本 Inside Visual C++ 給他，花了一個月看完，他說懂是懂但沒有感覺；於是小曾再推薦 Charles Petzold 的 <a href="http://jjhou.boolan.com/review1-6.htm" target="_blank" class="calibre5">Programming Windows 3.1</a> 給他，這回又花了一個月，他說有感覺了，可以動手了。</p>
+
+<p class="calibre2">使用 Framework，我想大概再不能夠拎著我那 20MB 硬碟的單色陽春小手提到梅園一邊野餐一邊寫程式了。我的隱憂是程式寫作因為太倚重整合環境，程式員因此被綁在辦公室動彈不得，離開辦公室後就像魚離了水。即使我的小手提擴充到 200MB，我也不知道如何常保兩個環境的一致性。</p>
+
+<p class="calibre2">笑話一則。貓在老鼠洞口張牙舞爪，老鼠嚇的不敢動彈。未幾忽聞汪汪聲，老鼠大喜，自忖狗來貓躲，於是從容出洞，卻被貓一掌攫住。鼠問貓為何未逃，貓曰 : 這年頭不會兩種語言還想混飯吃嗎 ? 基本上我同意貓的說法。如果你想在 C 之外學第二種語言，我的建議一是 Visual Basic，一是 C++。</p>
+
+<p class="calibre2">最後一段閒話 : 你有沒有看 83/02/27 的新聞橋 ? 那一天的主題是:「標題必須與內容吻合，不能刻意誤導或模糊讀者觀感」。如果甲男和乙女一起夜遊的傳聞已經證實為誤，記者就不應該以「甲男和乙女傳出緋聞 ?」為題，意欲吸引讀者卻又以斗大的問號為自己脫罪。如果你看到一本封面有斗大Visual C++ 字樣，內容卻只是 C++ 語言甚而只是 C 語言的書，你會不會在心中暗罵 *&amp;#%@! ?!。司馬昭之心路人皆知，這不過是想沾 VC++ 的風采。語言書使用哪一種編譯工具當然要交待清楚，這種情況下 Visual C++ 只宜放為副標甚至小標。你同意我的看法嗎 ? 電腦書不像 PlayBoy 用塑膠套包的像肉粽，所以你還是可以驗明正身，可咱心裡頭就是不爽。這樣的中文書有好幾本，客倌照子放亮一點。</p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img47.jpeg" alt="img47.jpeg" class="calibre4"/></span> 老侯夫婦也走了…好像每個人都在進化，只有我們例外。</p>
+
+<p class="calibre2"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre8"/></span></p>
+
+<p class="calibre2">背景資料 :<br class="calibre3"/>書名 Inside OLE2 <br class="calibre3"/>作者 Kraig Brockschmidt<br class="calibre3"/>出版 Microsoft Press<br class="calibre3"/>頁數 16 章，977 頁<br class="calibre3"/>售價 US$ 49.95 (含磁片兩片)</p>
+
+<p class="calibre2">Section I Windows Objects<br class="calibre3"/>1. An Overview of OLE2<br class="calibre3"/>2. Conventions, C++, and Sample Code<br class="calibre3"/>3. Objects and Interfaces<br class="calibre3"/>4. Component Objects</p>
+
+<p class="calibre2">Section II Object Oriented System Features : Files and Data Transfer<br class="calibre3"/>5. Structured Storage and Compound Files<br class="calibre3"/>6. Uniform Data Transfer Using Data Objects<br class="calibre3"/>7. Clipboard Transfers Using Data Objects<br class="calibre3"/>8. Drag-and-Drop Operations Using Data Objects</p>
+
+<p class="calibre2">Section III Compound Documents : OLE<br class="calibre3"/>9. Compound Documents and Embedded Containers<br class="calibre3"/>10. Compound Documents and Embedded Object Servers (EXEs)<br class="calibre3"/>11. In-Process Object Handlers and Servers<br class="calibre3"/>12. Monikers and Linking Containers<br class="calibre3"/>13. Moniker Binding and Link Sources<br class="calibre3"/>14. Conversion, Emulation, and Compatibility with OLE 1</p>
+
+<p class="calibre2">Section IV Compound Documents : In-Place Activation<br class="calibre3"/>15. Visual Editing : In-Place Activation and In-Place Containers<br class="calibre3"/>16. In-Place Activation for Compound Document Objects </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img48.jpeg" alt="img48.jpeg" class="calibre4"/></span></p>
+
+<p class="calibre2">一個偉大的觀念得配上一個偉大好唸的名字，這名字就是 OLE (抱歉，Petzold 先生，借用你的句型)。「臺灣女孩都像妳這樣年輕漂亮嗎...」，沒錯，就這個發音，重音擺在後面，歐累!。</p>
+
+<p class="calibre2">目前書壇關於 OLE2 的書不多，這本是最深入的了。這時段懂 OLE2 技術的人仍屬罕見，<a href="http://jjhou.boolan.com/review1-14.htm" target="_blank" class="calibre5">Windows/DOS Developer's Journal</a> 原計劃的 1994/03 OLE 主題竟因為沒有稿件而腰斬，主編說他不知道大家是對此題目興趣缺缺呢，還是每一個了解 OLE 的人都忙著寫程式忙到沒有時間做任何其他事情 (那表示程式很難寫)。本書作者 Brockschmidt 在 Microsoft 任職，有機會碰觸 OLE 的原始碼，他的現身說法十分深入 (他說自己已經達到了OLE 的涅槃境界)。作者在 MSJ 上有三篇文章 :</p>
+
+<p class="calibre2">○ Introducing OLE 2.0, Part I : Windows Objects and the Component Object Model (1993/08)</p>
+
+<p class="calibre2">○ OLE 2.0, Part II : Implementing a Simple Windows Object Using Either C or C++ (1993/09)</p>
+
+<p class="calibre2">○ Implementing OLE 2.0, Part III : Uniform Data Transfer with Data Objects (1993/12)</p>
+
+<p class="calibre2">如果你有該雜誌，我建議先看文章再看書，壓力會小一點，畢竟這是 1000 頁巨著。如果你還想了解 OLE 建築師 Tony Williams 的心路歷程，MSJ 也有一篇深入的訪談報導 :</p>
+
+<p class="calibre2">○ An MSJ Interview with Microsoft's Chief Architect of of OLE, Tony Williams (1993/10)</p>
+
+<p class="calibre2">這本書最重要的是第一章，對 OLE 整體架構做個介紹。圖一摘自書中最重要的一張圖，對照章名之後你會發現本書目的就是要把圖一的每一個模組介紹給你。由於 OLE 工程是如此浩大，觀念是如此新穎，入門之際把幾個重要的關鍵性名詞弄清楚是頂重要的事。尤其 OLE 的許多名詞和一般定義不盡相同 (比方說 Interface 和 Object)，如果你掉以輕心就要糟糕。把自己想像是老師，對著學生做這些名詞解釋，不能用想的，要用說的，說到自己覺得滿意，神功練就。我常常這麼訓練自己。</p>
+
+<p class="calibre2">圖一 OLE2 架構 (摘自 Inside OLE2) </p>
+
+<p class="calibre2">本網站略 </p>
+
+<p class="calibre2">根據我的觀察，幾本常看的軟體技術期刊中最常出現的名詞排行是 : Windows、Microsoft、OLE (object 這種字眼不算在內)。從 OLE1 以來不斷轟炸的結果，大概我們腦中對 OLE 這個字的直覺等號就是Compound Document，但 OLE2 遠比這多的多，直逼半個作業系統的複雜度。OLE2 已經建立起一個在 Windows 之下的物件導向程式設計的巨大系統，這個系統包含了記憶體配置、檔案管理、資料傳輸...，Compound Document 只不過是其中集大成的一部份而已。事實上一個人可以不需要接觸 Compound Document 而使用OLE2 的其他技術，舉個例子，未來版本的 Windows 檔案系統將百分之百相容於OLE2 的 Compound File。</p>
+
+<p class="calibre2">我想分別就內容、文字以及磁片三方面評論本書。在內容上這並不是一本教導如何撰寫 OLE 程式的書籍，本書更深一些，探討背景理論、架構模型。我並不是說你從中學習不到如何寫 OLE 程式，事實上本書的範例程式非常豐富，這些程式除了三個 DLL (分別負責 toolbar、status bar) 之外，都是以 C++ 完成，但並不架構在 MFC 之上，而是使用作者自己的ClassLib (本書出版更在 VC++ 1.5 之前，根本沒有 MFC 2.5 (支援 OLE2) 可用)。這個 ClassLib 的規模當然遠比正規的 Framework 小的多 (只提供 12 個 Classes)，因此我們依然可見熟悉的 WinMain() 和 WndProc()。所以懂 SDK 以及 C++ 但還沒學習 MFC 的人可以略鬆口氣，不過對已經移轉到 MFC 的人是大利空。</p>
+
+<p class="calibre2">本書以兩個程式 (一個 client 一個 server) 由一般應用程式成長為 OLE2 程式的過程來說明各項 OLE2 性質以及實作方式。這兩個程式是真正的「全由輪子造起」，基礎部份 (包括 ClassLib 以及前面提到負責漂亮 UI 的三個 DLL) 和 OLE2 無關，但如果你感興趣的話其實對物件導向技術頗有助益。作者在第三章甚至示範分別以 C 語言和 C++ 語言做出兩版 Windows Object，我把 OLE1 的程式方法 (許多VTBL、許多 callback 函式的那一套) 和這兩個版本比較，頗有一些啟發。</p>
+
+<p class="calibre2">文字方面，本書長句子很多，並不是本容易閱讀的書，至少我看的很辛苦。作者常常旁徵博引一些不知道是不是名人的話，如果你真的博學，應該可以增加不少讀書趣味。我只認識莎士比亞、達爾文、蕭伯納，其他就一概不知了。據聞書商有意將此書中文化，我對之充滿期待。除了對技術的期待，也好奇譯者怎麼處理這些技術以外的文字。如果這些有趣的東西都跳過不譯，那就太可惜了。一位譯者最怕的就是原作者太博學，大仲馬把他一輩子的見聞與揮霍通通放到基度山恩仇記裡去，可苦了全世界的譯者。</p>
+
+<p class="calibre2">關於磁片，我只能給 59 分，事實上它使我七竅生煙。本書附磁片兩張，全是壓縮過的，安裝起來需 6MB 硬碟空間。更嚇人的是，6MB 之中沒有可執行檔。如果你製造 debug 版，全部做出來需要 80MB (乖乖)，如果是 retail 版，好一點，50MB「而已」。安裝過程和 Inside Visual C++ 一樣差勁，前面我已經罵過了。執行 MAKEALL.BAT 之前，一定一定要把第二章最後面Sample Code 那一節看一遍，因為你得修改 PATH 以及其他環境變數 (為什麼作者不加一個 batch 檔呢，技術上很簡單的嘛)。如果你想反正本書不使用 MFC，用 VC++ 1.0 編譯看看，錯 ! 除了基礎程式 (DLL 以及二、三章)，其他程式都需要 OLE2 SDK。沒有多少人知道這玩意兒在哪裡以及裡面是什麼，MSDN Level 2 光碟片 (請看二月份無責任書評) 上有，Visual C++ 1.5 光碟片上也有。VC++ 1.5 安裝時會把下列檔案拷貝到你的 \Windows\System 目錄 :</p>
+
+<p class="calibre2">COMPOBJ.DLL (Component Objects) <br class="calibre3"/>STORAGE.DLL (Compound Files) <br class="calibre3"/>OLE2.DLL <br class="calibre3"/>OLE2CONV.DLL <br class="calibre3"/>OLE2DISP.DLL <br class="calibre3"/>OLE2NLS.DLL <br class="calibre3"/>OLE2PROX.DLL <br class="calibre3"/>TYPELIB.DLL <br class="calibre3"/>OLECLI.DLL (OLE Client API，原本就有) <br class="calibre3"/>OLESVR.DLL (OLE Server API，原本就有)</p>
+
+<p class="calibre2">於是你的 Windows 3.1 就可以執行 OLE2 了；軟體開發過程中的 .H 以及 .LIB 則放在 \MSVC\LIB 和 \MSVC\INCLUDE 中。</p>
+
+<p class="calibre2">你可以在磁片安裝後的根目錄 \INOLE2 中執行 MAKEALL.BAT，作出所有 EXE 程式。makefile 寫的很糟糕，編譯聯結過程中常常就給來一個 "file not found" 訊息，弄的人提心吊膽，生怕前功盡棄。全部完成需至少 50M，誰會閒著這麼大的硬碟空間呢 ? (墨菲定律說不論硬碟有多大，你永遠只剩 10% 可用)。一種作法是以MAKEALL 完成前三章程式，然後以 CTRL-C 中斷之，將贅餘檔案清理清理 (好多贅餘檔案，這是 makefile 寫的不好的又一個明證)，然後隨你喜歡進入某個子目錄(例如 INOLE2\CHAP07) 再執行其 makefile。問題是，螢幕沒有顯示 MAKEALL 進行到哪一章，何時 CTRL-C 只好自己拿捏 (怎麼拿捏 ?!)。如果你因某些失誤以致必須重新執行 MAKEALL，你將發現全部檔案竟然重新來過，完全沒有發揮 makefile 的功效。</p>
+
+<p class="calibre2">作者說最好選在午餐時間 MAKEALL，那麼我想你將因此有時間享用一頓豐盛的午餐。由於得使用 VC++ 1.5 編譯聯結，而幾乎每個人是以 Minimum Installation 方式來灌VC++ 1.5 (註)，許多檔案仍在光碟上，結果是整個 MAKEALL 過程中我又吃了晚餐。(註 : 這種作法佔用 12MB 空間。如果是 Typical Installation，需 52MB 空間)</p>
+
+<p class="calibre2">經歷這麼多不順遂之後，下面這個消息也就不會太震憾了 : 15 章程式有誤，OleUIAddVerbMenu() 應該有九個參數，PAGE.CPP 檔以及書上 544 頁的說明都只有八個參數。我很難相信這種事會疏忽發生，可能是 OLE2 規格改變所致。</p>
+
+<p class="calibre2">Microsoft Press 另有兩本書在你上路時候用的著 : OLE 2 Programmer's Reference，分為兩冊，上冊主講OLE2 API (960 頁，US$ 29.95)，下冊主講 Automation (368 頁，US$ 24.95，註 )。這兩本書我還沒有看過，書商剛到貨，我想你看到這篇文章時書店架上應該已有了。VC++ 1.5 的光碟書中也有這兩本 (我對能夠在電腦螢幕前看電子書的人至感欽佩，我自己看書時手上一定得有一支筆)。VC++ 1.5 已經在 MFC 2.5 中增加了 OLE2 的 Classes，並提供一本小冊 : OLE 2 Classes，如果你想學習以 MFC 2.5 寫 OLE2 程式，就這本了。可惜這套編譯器因採 CD-ROM 版本，書籍需另購，而且糟的是如果你不想花三千多元買與 VC++ 1.0 大部份雷同的手冊，而只是想要其中的 OLE2 或 ODBC 兩本新書，不能夠。</p>
+
+<p class="calibre2">註 : Automation 也是 OLE2 的一支技術，但與 OLE2 的任何其他部份都沒有關聯。此一技術已超出了 Inside OLE2 的範圍。Automation 的終極目標是要使「系統巨集程式工具」的誕生成為可能。遵循它，你不再需要為自己的軟體開發專屬的巨集語言給用戶使用。用戶的利益則是以單一工具 (巨集語言) 即可行遍天下，暢行所有 Automation 軟體。Microsoft 選擇 Visual Basic 為此一巨集語言。這世界快要被 Microsoft 統一了我看 !!) </p>
+
+<p class="calibre2">我引用作者在本書第一章的開場白希望引起你對 OLE2 的重視 :</p>
+
+<p class="calibre2">許多年之後，電腦界的達爾文可能會回顧並驚訝 Windows 如何地由一個API 作業系統演化為物件導向作業系統。OLE2 是這個演化的濫觴，它將改變你寫 Windows 程式的方法，甚至改變你如何使用 Windows。 </p>
+
+<p class="calibre2">不過，這實在是一本難讀的書。革命尚未成功，同志仍需努力 !! </p>
+</body></html>

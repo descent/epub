@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="../styles/dotepub.css" type="text/css" />
+  <title>Dotepub.com</title>
+</head>
+
+<body>
+	<div class="" id="post-312"> <h1>SSL 憑證</h1> <div class="post-bodycopy clearfix"><p>開頭就先不說廢話，<br /><span class="filler"></span>把相關的憑證列在這裡：<br /><span class="filler"></span>根憑證&nbsp;(通常只要信任這個憑證並正確設定就可以了) <br /><span class="filler"></span>網域伺服器憑證 (需要存取 tinlans.org 上的 SSL/TLS services 才用得到) <br /><span class="filler"></span>各項服務共通的伺服器憑證 (存取 *.tinlans.org 的所有 services 都是用它，包括這個 blog)</p><p>讀這裡的網頁應該常常看到這種警告訊息：<br /><span class="filler"></span><br /><span class="filler"></span><br /><span class="filler"></span>
+
+<img width="550" src="../img/sslwarning.jpg" />
+<br/>
+<img width="550" src="../img/sslwarning2.jpg" />
+
+
+其實不管是 IE 還是 Firefox 的警告訊息，<br /><span class="filler"></span>都只有講對一件事。<br /><span class="filler"></span>那就是這個網站所使用的憑證並非由受信任的憑證授權單位發行的。<br /><span class="filler"></span>除非這個網站是花錢請有公信力的單位簽發伺服器憑證 (我不可能一年花 300 美金在這種無聊事上)，<br /><span class="filler"></span>不然對所有的 browser 而言它都不是由受信任的單位發行的，<br /><span class="filler"></span>所以在手動讓 browser 信任這個伺服器憑證之前。<br /><span class="filler"></span>假造伺服器或是攔截封包偽造資料等等的安全風險是無從判斷的，<br /><span class="filler"></span>在不會要求輸入私人訊息、密碼或安裝 ActiveX 等可執行元件的狀況下一般都可以忽略。</p><p>簽發伺服器憑證需要先找到一個憑證中心，<br /><span class="filler"></span>通常不想被 Thawte、VeriSign 等憑證中心賺一筆的人都會自己開一個。<br /><span class="filler"></span>設立憑證中心首先需要一把沒有密碼就無法使用的私密金鑰 (private key)；<br /><span class="filler"></span>而憑證中心就是靠這把私密金鑰去簽發各個憑證 (certification)。<br /><span class="filler"></span>一開始一定會先用它來簽發一個根憑證 (root certification)，<br /><span class="filler"></span>只要使用根憑證就可以去驗證其它憑證是由該把私密金鑰所簽發的。<br /><span class="filler"></span>這個概念主要是來自非對稱加密原理，<br /><span class="filler"></span>這個原理定義了公開金鑰 (public key) 及私密金鑰 (private key)。<br /><span class="filler"></span>私密金鑰由個人上密碼並妥善保管，<br /><span class="filler"></span>公開金鑰則盡可能的散佈出去讓每個人都能有一份，<br /><span class="filler"></span>一般所謂的憑證就是內含了這種公開金鑰。</p><p>私密金鑰可以做的事情主要就是進行簽章 (sign)，<br /><span class="filler"></span>由私密金鑰簽署出來的資料可以使用公開金鑰驗證 (verify)。<br /><span class="filler"></span>因為簽章和驗證是由相當高複雜度的數學模型建立而成，<br /><span class="filler"></span>如果將簽章過的資料竄改後再交給其它人驗證基本上是不可能會通過的，<br /><span class="filler"></span>所以簽章的動作除了表示負責外也代表了資料來源是沒被竄改過的。<br /><span class="filler"></span>公開金鑰可以做的事情主要就是加密 (encrypt)，<br /><span class="filler"></span>而這些加密過的訊息只有私密金鑰可以解密 (decrypt)。<br /><span class="filler"></span>因為公開金鑰是四處散佈的，<br /><span class="filler"></span>所以幾乎任何人都可以使用公開金鑰傳送加密訊息給私密金鑰的擁有者。<br /><span class="filler"></span>總之只要雙方各有一組公開 / 私密金鑰對 (key pair) 並將公開金鑰交給對方，<br /><span class="filler"></span>這樣就能進行相當安全可靠的資料交換。<br /><span class="filler"></span>不過因為這類演算法其實還蠻耗時的，<br /><span class="filler"></span>一般傳輸資料時只是利用非對稱加密法來傳輸 session key (就是傳統對稱加密用的 secret key)，<br /><span class="filler"></span>然後雙方就共用這把 session key 來同時做加解密的動作。<br /><span class="filler"></span>這時使用的加密演算法就是比較快速且適合長時間執行的 (如 DES 或 AES 等)，<br /><span class="filler"></span>為了防止 session key 使用了一段時間遭到破解，<br /><span class="filler"></span>也可以每隔一段時間重新用非對稱式加密重新傳送一把新的 session key。</p><p>換句話說，<br /><span class="filler"></span>一開始互相交換 public key 的管道是相當重要的。<br /><span class="filler"></span>面交當然是最王道又安全可靠的方法，<br /><span class="filler"></span>但是網路世界這麼廣闊怎麼可能誰都跟你面交，<br /><span class="filler"></span>所以需要一些可信任的憑證中心。<br /><span class="filler"></span>由該憑證中心妥善保管的 private key 去「簽」發憑證給其它機構，<br /><span class="filler"></span>而憑證中心擁有的「根憑證」就是它們的 public key。<br /><span class="filler"></span>這些根憑證一般都被預設安裝在各大知名的 browser 當中 (當然也是預設就被信任的)。<br /><span class="filler"></span>所以當一個網站正在使用某個受信任的憑證中心所簽發出來的伺服器憑證，<br /><span class="filler"></span>browser 就可以透過內建的根憑證去「驗證」那個伺服器憑證的簽章。<br /><span class="filler"></span>如果那個簽章真的是由受信任的憑證機構所簽署的，<br /><span class="filler"></span>就可以確信這個網站交給你的 public key (也就是伺服器憑證) 是可靠的。<br /><span class="filler"></span>接下來再經過一連串 key 的交換之後 (事實上伺服器本身也有一把沒設密碼的 private key)，<br /><span class="filler"></span>就可以和這個網站進行安全可靠的連線。<br /><span class="filler"></span>
+
+
+換言之這樣的效果才是使用&nbsp;https 及其它 SSL/TLS 服務的真正重點所在：<br />
+
+
+<img width="550" src="../img/sslinfo.jpg" />
+<br/>
+<img width="550" src="../img/sslinfo2.jpg" />
+
+<span class="filler"></span><br /><span class="filler"></span></p><p>最前面那兩張圖裡所說的假造和欺騙，<br /><span class="filler"></span>就是原本明明已經信任了某家憑證中心簽署的根憑證，<br /><span class="filler"></span>平常連的某個特定網站使用的憑證也是使用這家憑證中心所簽發的，<br /><span class="filler"></span>結果突然有一天連過去跳出這種警告訊息，<br /><span class="filler"></span>那就真的需要稍微注意一下了。<br /><span class="filler"></span>比較一般的例子就很單純是憑證過期、根憑證因為某些因素更新等等，<br /><span class="filler"></span>這種就沒什麼危險性，<br /><span class="filler"></span>但也不能總是當成是這麼一回事就疏於防範。<br /><span class="filler"></span>另一種例子就是網路釣魚，<br /><span class="filler"></span>不過這種釣魚法比其它方式高竿了一點，<br /><span class="filler"></span>因為每個網域都需要定期付費來延續使用權；<br /><span class="filler"></span>而什麼時候會過期都可以用 WHOIS 查到，<br /><span class="filler"></span>所以只要哪家公司忘記去把網域做續約就可以把它搶下來。<br /><span class="filler"></span>這時網址跟網站內容可以偽造得幾乎十全十美，<br /><span class="filler"></span>但是它無法使用原本的 key pair (就算有真的 public key，也沒有 private key 能解開你加密給他的訊息)，<br /><span class="filler"></span>所以只能用一組新的 key pair (所以伺服器憑證當然也會不同)；<br /><span class="filler"></span>而這種突然把人家網域註冊走又跑去知名的憑證發行中心要求簽發新憑證通常有困難，<br /><span class="filler"></span>因為基本的徵信就很難通過了 (比方說明明在別家知名憑證中心就有尚未過期的憑證等等)，<br /><span class="filler"></span>自然而然的只能去不知道哪裡隨便生出一對 key pair 來騙人。<br /><span class="filler"></span>這種狀況可以說幾乎是 100% 會讓 browser 發出這種警告。<br /><span class="filler"></span>另一個極端例子是封包竄改，<br /><span class="filler"></span>在勾心鬥角嚴重的機構或部門裡工作才可能遇到。<br /><span class="filler"></span>比方說有人串通網管把你和別人的連線攔截下來並加工後才送給你和對方，<br /><span class="filler"></span>或是說製造出某個朋友在自己網頁上不停說自己壞話的假象等等。<br /><span class="filler"></span>這種卑鄙無恥的勾當真的要幹的話其實也沒有想像中的費工，<br /><span class="filler"></span>要拿來分裂一些單純的人其實也還蠻好用的。<br /><span class="filler"></span>當然要用這招送出偽造網站來騙密碼什麼的也是會有，<br /><span class="filler"></span>不過這類極端例子其實在日常生活中並不多見，<br /><span class="filler"></span>沒有必要每次都疑神疑鬼。</p><p>綜合上述說明，<br /><span class="filler"></span>應該很多人發現只要讓 browser 信任根憑證，<br /><span class="filler"></span>其它的伺服器憑證就能很自然的經由一連串自動化機制驗證完畢。<br /><span class="filler"></span>
+不過 IE7 在安裝根憑證這方面有一個小 bug：<br />
+
+<img width="550" src="../img/ietrustrootca.jpg"/>
+
+<span class="filler"></span><br /><span class="filler"></span>以前在 IE6 的時候選自動就可以安裝到根憑證區了。<br /><span class="filler"></span>但是現在如果不自己指定的話，<br /><span class="filler"></span>它會裝在「信任的根憑證授權」以外的地方。<br /><span class="filler"></span>Firefox 在匯入根憑證的時候有一些選項可以選 (IE7 也能透過編輯憑證設定更多選項)，<br /><span class="filler"></span>對這個 blog 的根憑證只要像圖中這樣勾選就可以了 (我也不會沒事寫什麼 ActiveX 要人家下載安裝並執行)：<br />
+
+
+<img width="550" src="../img/firefoxrootcatrustprocess.jpg" />
+<span class="filler"></span><br /><span class="filler"></span>這樣設定完之後 browser 就不會每進來一次哭一次了。</p><p>另外，<br /><span class="filler"></span>如果在這個 blog 遇上的是這種 bad cert domain 的話：<br />
+<img width="550" src="../img/snifailed.jpg" />
+
+<span class="filler"></span><br /><span class="filler"></span><strike>要不就是因為你的 browser 並沒有辦法很好的支援 SNI&nbsp;+ TLS，<br /><span class="filler"></span>要不就是目前這台 web server 所安裝的&nbsp;mod_gnutls 還有一些 bug。<br /><span class="filler"></span>目前 apache 並沒有能力支援 SSL-enabled name-based virtual hosts，<br /><span class="filler"></span>所以必須加掛 mod_gnutls 這個模組才行 (幾年前這種需求一直都是無解)，<br /><span class="filler"></span>遺憾的是 mod_gnutls 目前還在實驗階段，<br /><span class="filler"></span>所以會遇上奇怪的 bug 也是理所當然的。<br /><span class="filler"></span>如果對這種 server 的設定有興趣的話可以讀讀這篇或查查 Google。</strike><br /><span class="filler"></span>是因為你的 browser 並沒有辦法很好的支援 SNI + TLS。<br /><span class="filler"></span>如果對這種 server 的設定有興趣的話可以讀讀這篇或查查 Google。</p><p>話說回來，<br /><span class="filler"></span>清大的根憑證到底在哪裡啊？<br /><span class="filler"></span>每次存取不同 server 都要單獨信任個別的伺服器憑證實在很煩，<br /><span class="filler"></span>匯入一個根憑證就搞定不是很好嗎？</p></div> </div>
+</body>
+</html>

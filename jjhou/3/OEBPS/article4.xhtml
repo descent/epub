@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>
+  <link href="../stylesheet.css" type="text/css" rel="stylesheet"/><style type="text/css">
+@page {
+    margin-bottom: 5pt;
+    margin-top: 5pt
+    }
+@font-face {
+    font-family: "DroidSans", serif, sans-serif;
+    src: url(res:///ebook/fonts/DroidSansFallback.ttf)
+    }
+</style></head>
+  <body class="calibre">
+<h2 class="calibre1">MFC 四大天王</h2>
+<p class="calibre2">關於 MFC 這一主題, <br class="calibre8"/>在「滄海書訊」版上曾經被討論過的書籍有四本, <br class="calibre8"/>正是我所列出的這四大天王。<br class="calibre8"/>看來我心目中的好書頗能吻合市場的反應。 </p>
+
+<p class="calibre2">我還記得, 無責任書評是在四年前 (1993) 開春時和大家第一次見面。雖然不是每個月都出貨, 但斷斷續續總保持著訊息。在明確宣佈的情況下這個專欄曾經停過兩次, 第一次停了三個月, 於 1994 年開春復工; 第二次停了十五個月, 於 1997 年開春的今天, 重新與各位說哈囉。</p>
+
+<p class="calibre2">休息整整一個年頭又三個月, 寫作上的疲倦固然是因素之一, 另外也是因為這個專欄直接間接引起的讓人意興闌珊的俗人俗務。讀者寫信來說, 『總把無責任書評當成休閒散文看。或許您可以考慮寫些休閒小品, 定會暢銷』, 是呀, 我正構思把因這個專欄而獲得的人生經驗寫成一本「現形記」。可是不知道手上「正當」工作什麼時間才能告一段落, 寫起我的小說。也不知道什麼樣的出版社有興趣侯捷寫的小說。</p>
+
+<p class="calibre2">倦勤與無奈過去了, 滿腔讀書心得沛然欲發。所以, 我又拿起筆「無責任」了。感覺有點陌生, 但是回顧讀者們這一年寫來的上百封信, 讓我意氣昂揚。這個月我談的是 Visual C++ 與 MFC。此題目我已提過兩次。一來它十分重要, 演化的過程也十分快速而明顯, 二來這個領域又有一些重量級書籍出現, 所以我必須再談一次。</p>
+
+<p class="calibre2">另外, 我還是得再強調, 侯捷的專長領域有限, 離我火力太遠的書我只能遠觀不敢近玩。這個專欄用在拋磚引玉, 讓談書成為一種風氣。Windows Developer's Journal (WDJ) 的 Books in Brief 專欄原先也是主持人 Ron Burk 唱獨角戲, 後來 (現在) 就有了許多讀者的互動。我也希望這樣的事情在這裡發生。</p>
+
+<p class="calibre2">●必也正名乎 </p>
+
+<p class="calibre2">常在 BBS 的程式設計相關版面上看到, 許多人把 Visual C++ 和 C++ 混淆不清, 另則是把 Visual C++ 和 MFC 混為一談, 實在有必要做個釐清。C++ 是語言, Visual C++ 是產品。『我們學校開了一門 Visual C++ 的課程』這種說法就有點奇怪, 實際意義是『我們學校開了一門 C++ 課程, 以 Visual C++ 為軟體開發環境』。『我會寫 Visual C++ 程式』這種說法也很怪, 因為Visual C++ 是 C/C++ 編譯器, 你可以在這套整合開發環境中使用 C 語言或 C++ 語言寫出 DOS 程式或 Windows 程式; 如果是 Windows 程式, 還可以分為 Windows API programming 或MFC programming。所以「我會寫 Visual C++ 程式」表達不出你真正的程度和意思。</p>
+
+<p class="calibre2">Visual C++ 是一套 C/C++ 編譯器產品, 內含一套整合開發環境 (Integrated Development Environment, IDE) , 也就是 AppWizard、ClassWizard、編譯器、聯結器、資源編輯器等工具的大集合。你知道, 真正的 C++ 程式 (而不是披著 C++ 外衣的C 程式) 是以一個個類別 (class) 堆砌起來的, 為了節省程式員的負擔, 幾乎每一家編譯器廠商都會提供一套現成的類別庫 (class libraries) , 讓程式員站在這個基礎開發應用軟體。MFC 就是這樣一套類別庫。如果以物件導向的嚴格眼光來看, MFC 是比類別庫更高一級的所謂 application framework。PC 上另兩套與 MFC 同等地位的產品是 Borland 的 OWL 和IBM 的 OpenClass, 前者搭配的開發環境是 Borland C++, 後者搭配的是 VisualAge C++。其他的 C++ 編譯器大廠如Watcom 和 Symantec 和 Metaware, 並沒有開發自己的類別庫, 他們向微軟取得 MFC 的使用授權, 提供 MFC 的原始碼、含入檔、相容的編譯器和聯結器。噢是的, 他們要求授權的對象是 MFC, 而不是 OWL, 這就多少說明了 MFC 和 OWL 的市場佔有率。</p>
+
+<table border="1" class="calibre4"> <tr class="row"> <td class="calibre5">產品名稱 </td> <td class="calibre5">廠商 </td> <td class="calibre5">application framework </td> </tr> <tr class="row"> <td class="calibre5">Visual C++ </td> <td class="calibre5">Microsoft </td> <td class="calibre5">MFC </td> </tr> <tr class="row"> <td class="calibre5">Borland C++ </td> <td class="calibre5">Borland </td> <td class="calibre5">OWL (最新版據說也提供 MFC)  </td> </tr> <tr class="row"> <td class="calibre5">VisualAge C++ </td> <td class="calibre5">IBM </td> <td class="calibre5">OpenClass </td> </tr> <tr class="row"> <td class="calibre5">Symantec C++ </td> <td class="calibre5">Symantec </td> <td class="calibre5">MFC </td> </tr> </table>
+
+<p class="calibre2">●滄海書訊 </p>
+
+<p class="calibre2">清大 BBS 站台 (楓橋驛站, IP 位址為 140.114.87.5) , 在「分類討論區」的「電腦與資訊」區之下, 有一個「滄海書訊」版, 對電腦書籍有興趣的朋友可以去看看。這裡並沒有 (還沒有) 類似正規書評之類的文章出現, 比較多的是讀者們對於坊間書籍的閱後感, 以及新鮮讀者的求助函 (找某一主題的好書啦、誰要賣書啦、誰要買書啦等等) 。</p>
+
+<p class="calibre2">關於 MFC 這一主題, 在滄海書訊版上曾經被討論過的書籍有四本, 正是我所列出的這四大天王。看來我心目中的好書頗能吻合市場反應。這四本書各有特點, 色彩鮮明, 統統值得收藏。</p>
+
+<p class="calibre2">●四大天王 </p>
+
+<p class="calibre2">一本書能夠有被收藏的價值, 可不簡單唷, 我不能亂說嘴。諸君, 看看我列的理由吧。這四大天王是: </p>
+
+<p class="calibre2">◎Inside Visual C++ 4.0 </p>
+
+<p class="calibre2">在四大天王中本書名列老大哥, 我這麼排名和天王的「色藝」無關, 敬老尊賢的成份多一些。它已是同一本書的第三版, 所以才會在書名冠上軟體版本號碼 (上一版名為 Inside Visual C++ 1.5) 。書名冠上軟體版本號碼的另一個因素是, 本書在教導我們開發程式時, 是 "tool-oriented" (以工具為導向) , 你會看到像「先按下這個鈕, 然後填寫這一小段碼, 然後在清單中選擇這一項, 再回到右邊的視窗上...」這樣的文字說明, 所以 Visual C++ 的版本更迭攸關全書內容。</p>
+
+<p class="calibre2">這就引出了本書在程式誘導方面的一個特徵: 工具的使用佔了相當吃重的角色。工具的使用難度不高, 但非常繁多 (從 Visual C++ 新鮮人的眼光看可能是...呃...非常雜亂) 。又要學習 MFC, 又要配合工具的使用, 對初學者而言是雙倍負擔。我曾經在 BBS 上看到一封信, 抱怨 Inside Visual C++ 雖是名著, 他卻完全看不懂。呵, 我完全能夠了解 -- 我不是那種自己懂了之後就忘記痛苦的人。</p>
+
+<p class="calibre2">入選原因: 老字號, 範例程式內容豐富, 220 頁的 OLE 和 110 頁的 Database 是本地唯有的大獨家, 別處找不到。</p>
+
+<p class="calibre2">◎Programming Windows 95 with MFC </p>
+
+<p class="calibre2">Ray Duncan (侯捷極為尊敬的一位老牌作家, 近年似乎淡出, 沒有什麼新作品) 曾經說, 這本書是 "the Petzold for MFC programming", 儼然有 Petzold (註 ) 接班人之勢。從其主題的安排, 甚至從書籍封面的安排, 在在顯示「接班人」的訊息。而它的內容可以證明Ray Duncan 的推薦並不虛佞。</p>
+
+<p class="calibre2">註 : Charles Petzold 是 "Programming Windows 95" 一書的作者。該書是SDK 程式設計寶典。這本書近來沒有那麼轟動以及人手一冊了, 因為 MFC 或 OWL 這類 framework 產品不斷精進, Delphi、C++Builder 這類快速程式開發工具 (Rapid Application Development, RAD) 不斷進逼, SDK 程式設計的角色有點像組合語言了。不過我告訴你, 學會它, 絕對讓你層次不同 -- 不只在程式設計的層次, 還在對作業系統的了解層次。</p>
+
+<p class="calibre2">這本書在程式設計的誘導方面, 與 Inside Visual C++ 一書有極大的作法差異。本書沒有任何一個程式以 Wizards 完成 (我想作者必然曾經借重工具, 只是最後再清理一遍) , 所以你不會看到像 //{{ 和 }}// 這樣的奇怪符號, 以及一堆 #ifdef、#undef、#endif。「程式碼是我們自己一行一行寫出來」的這種印象, 可能對於消除初學者的焦灼有點幫助。</p>
+
+<p class="calibre2">入選原因: 文字簡易, 觀念清楚。從章節目錄上你看不到非常特殊的主題, 但隱含在各個小節之中有不少珠玉之言。平實穩健。對 MFC 核心觀念如 Document/View、Message Map 的討論雖然淺嚐即止, 但表現不俗。</p>
+
+<p class="calibre2">◎MFC Internals </p>
+
+<p class="calibre2">這是四大天王之中唯一不以教導 MFC 程式設計為目的的書。它的目的是挖掘 MFC 的黑箱作業內容, 從而讓讀者對application framework 有透徹的認識。這樣的認識對於 MFC 的應用面其實也是有幫助的, 而且不小。<br class="calibre8"/>這本書挖掘 MFC 的原始碼至深至多, 最後還在附錄Ａ列出MFC 原始碼的搜尋導引。由於解釋 MFC 的內部運作原理, 少不得就有一長串的「誰呼叫誰, 誰又呼叫誰」的敘述。這種敘述是安眠藥的最佳藥引, 所幸作者大多能夠適時地補上一張流程圖, 對於讀者的意識恢復有莫大幫助。</p>
+
+<p class="calibre2">入選原因: 獨特而唯一。雖然並非初學者乃至中級程度者所能一窺堂奧, <br class="calibre8"/>卻是所有資深的 MFC 程式員應該嘗試讀一讀的書籍。</p>
+
+<p class="calibre2">◎Dissecting MFC </p>
+
+<p class="calibre2">這本書是應用面 (各種 MFC classes 之應用) 和核心面 (隱藏在 MFC 內的各種奇妙機制) 的巧妙混合。前一半篇幅為讀者紮基礎, 包括 Win32、C++、MFC 程式的基礎技術環節。後一半篇幅以著名的 Scribble 程式 (隨附於 Visual C++ 之中) 為例, 從應用面出發, 卻以深掘原理的核心技術面收場。看不到豐富絢麗的各種應用技巧, 著重在厚植讀者對於 MFC 核心技術的基礎。</p>
+
+<p class="calibre2">入選原因: 本書挖掘的 Runtime Class、Dynamic Creation、Message Mapping、Command Routing、Persistence 等主題, 解說詳實圖片精采, 擁有世界級水準。SDK 程式員如果想進入 MFC 領域, 這本書是最佳選擇。看過 Inside Visual C++ 和 Programming Windows 95 with MFC 的讀者, 這本書會讓你更上層樓, 「知其然並知其所以然」。</p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">■<b class="calibre6">Inside Visual C++ <small class="calibre11">4.0 </small> </b> 作者: David J. Kruglinski<br class="calibre8"/>出版公司: Microsoft Press<br class="calibre8"/>出版日期: 1996 年初<br class="calibre8"/>頁數: 29 章, 896 頁<br class="calibre8"/>售價: US$ 45.00。含光碟一片。</p>
+
+<p class="calibre2">PartI: Windows、Visual C++、and Application Framework Foundamentals<br class="calibre8"/>1. Microsoft Windows and Visual C++<br class="calibre8"/>2. The MFC Application Framework<br class="calibre8"/>PartII: The MFC Library View Class<br class="calibre8"/>3. Getting Started wwwith AppWizard - Hello World!<br class="calibre8"/>4. Basic Event Handling, Mapping Modes, and a Scrolling View<br class="calibre8"/>5. The Graphics Device Interface (GDI), Colors, and Fonts<br class="calibre8"/>6. The Modal Dialog and Windows 95 Common Controls<br class="calibre8"/>7. The Modeless Dialog and Windows 95 Common Dialogs<br class="calibre8"/>8. Using OLE Controls (OCXs)<br class="calibre8"/>9. Win32 Memory Management<br class="calibre8"/>10. Bitmaps<br class="calibre8"/>11. Windows Message Processing and Multithreaded Programming<br class="calibre8"/>PartIII: The Document-View Architecture<br class="calibre8"/>12. Menus, Keyborad Accelerators, the Rich Edit Control, and Property Sheets<br class="calibre8"/>13. Toolbars and Status Bars<br class="calibre8"/>14. A Reusable Frame Window Base Class<br class="calibre8"/>15. Separating the Document from Its View<br class="calibre8"/>16. Reading and Writing Documents - SDI<br class="calibre8"/>17. Reading and Writing Documents - MDI<br class="calibre8"/>18. Printing and Print Preview<br class="calibre8"/>19. Splitter Windows and Multiple Views<br class="calibre8"/>20. Context-Senssitive Help<br class="calibre8"/>21. Dynamic LInk Libraries (DLLs)<br class="calibre8"/>22. MFC Programs Without Document or View Classes<br class="calibre8"/>PartIV: OLE<br class="calibre8"/>23. The OLE Component Object Model (COM)<br class="calibre8"/>24. OLE Automation<br class="calibre8"/>25. OLE Uniform Data Transfer - Clipboard Transfer and Drag and Drop<br class="calibre8"/>26. OLE Structure Storage<br class="calibre8"/>27. OLE Embedded Servers and Containers<br class="calibre8"/>PartIV: Database Management<br class="calibre8"/>28. Database Management with Microsoft ODBC<br class="calibre8"/>29. Database Management with Microsoft Data Access Object (DAO)<br class="calibre8"/>Appendix A: A Crash Course in the C++ Language<br class="calibre8"/>Appendix B: Message Map Functions in MFC<br class="calibre8"/>Appendix C: MFC Library Runtime Class Identification and Dynamic Object Creation </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img67.jpeg" alt="img67.jpeg" class="calibre12"/></span></p>
+
+<p class="calibre2">自從 application framework 興起, 在 raw API 程式設計之外, Windows 程式員又找到了一條新的途徑。MFC「系出名門, 血統純正」, 比之其他的 application framework 產品自然是聲勢浩大, MFC 書籍也就因此比其他同等級產品的書籍來得多得多。</p>
+
+<p class="calibre2">群雄並起之勢維持沒有太久, 真正的好東西很快就頭角崢嶸了。Inside Visual C++ 是最早出線的一本。此書至今已是第三版, 前兩版分別針對 MFC 2.0 (Visual C++ 1.0) 和 MFC 2.5  (Visual C++ 1.5) 撰寫。已有評論把此書與 Programming Windows 並提, 稱之為 MFC/C++ 中的 Petzold 書籍 (聽起來猶如錶界中的勞斯萊斯, 車界中的勞力士) 。Kruglinski 本人為了卡住這個尊崇的位置, 甚至「於數年前的一個冬天, 有著風雪的傍晚, 冒險進入紐約的 East Village, 拜訪 Windows 大師 Charles Petzold, 問他關於撰寫 Programming Windows 的想法...」 (語見本書之 Introduction 部份) 。</p>
+
+<p class="calibre2">Kruglinski 毫不隱藏他對 MFC 的熱愛, 他說這是他等了十年才盼到的軟體開發環境。十年有點跨張, PC 的歷史才多久? 但 MFC 與 Visual C++ 整合環境之功能強大卻是不假。這本書劃分為四大篇。第一篇介紹 application framework 的觀念以及 Visual C++ 整合環境的各個工具元件。第二篇真正進入MFC 程式設計, 不能免俗地從 "Hello World" 開始, 焦點放在視窗顯示身上 (也就是 CView 的運用) 。作者嘗試以 C++ 和 MFC 完成一些功能簡單的程式, 像是簡易繪圖、圖形捲動、字形輸出、通用對話盒與通用控制元件、OCX 之使用等等。</p>
+
+<p class="calibre2">第三篇才真正進入 MFC 的核心, 也就是 Document-View 架構, 這也是所謂 application framework 的最大特質。當你學會如何使用 Document 並且把它和 View 連接起來後, 你會驚訝資料的檔案動作和印表動作 (包括預視功能) 是多麼容易加入。這一篇的章節包括漂亮迷人的 UI 元件如工具列、狀態列、分裂視窗、求助系統、屬性對話盒, 以及 SDI、MDI、列印、預視、動態聯結函式庫等主題。</p>
+
+<p class="calibre2">第四篇的五章談的全部都是 OLE。不像一般書籍對於 OLE 蜻蜓點水, 這一篇是道道地地的硬扎貨色, 範圍包括COM (Component Object Model) 、OLE Automation、Uniform Data Transfer、Structured Storage、Embedded Servers and Containers。</p>
+
+<p class="calibre2">第五篇談的全部是資料庫管理。一章談 ODBC (Open Database Connectivity) , 另一章談 DAO (Data Access Objects) 。<br class="calibre8"/>網路上一位讀者抱怨說, 本書雖是名著, 他卻完全看不懂。呵啊, 一切都在意料之內。作者一開始就顧著給我們完全正規的作法, 用 AppWizard 產生程式碼, 用 ClassWizard 改寫虛擬函式、攔截訊息並撰寫訊息處理常式。剛開始學習Windows 程式設計的人, 甚至已經有 SDK 經驗但沒有物件導向經驗的人, 根本昏頭轉向摸不著頭緒。是的, 學習MFC (或其他 Application Framework) , 先得有許多基礎。包括 C++ 語言基礎、Windows 作業系統基礎、物件導向程式觀念的基礎。</p>
+
+<p class="calibre2">最新消息: 本書第五版已有預告, 書目上寫的出版日期是97 年三月。以我對 Microsoft Press 出書進度的瞭解, 屆時可能咱們還需再等一等。新書內容並非針對 Visual C++ 5.0, 仍是以 MFC 4.x 為架構核心, 但加了不少網路技術, 如Basic TCP/IP、Winsock programming for clients and servers、MFC WinInet、DocObjects and ActiveX controls 等主題。</p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">■<b class="calibre6">Programming Windows 95 with MFC</b> 作者: Jeff Prosise<br class="calibre8"/>出版公司: Microsoft Press<br class="calibre8"/>出版日期: 1996 第二季<br class="calibre8"/>頁數: 14 章, 998 頁<br class="calibre8"/>售價: US$ 49.95。含光碟一片。</p>
+
+<p class="calibre2">PartI: MFC Basics<br class="calibre8"/>1. Hello, MFC<br class="calibre8"/>2. Drawing in a Window<br class="calibre8"/>3. The Mouse and the Keyboard<br class="calibre8"/>4. Menus<br class="calibre8"/>5. Controls<br class="calibre8"/>6. Dialog Boxes and Property Sheets<br class="calibre8"/>7. Timers and Idle Processing<br class="calibre8"/>PartII: The Document/View Architecture<br class="calibre8"/>8. Documents, Views, and Single Document Interface<br class="calibre8"/>9. Multiple Documents and Multiple Views<br class="calibre8"/>10. Printing and Print Previewing<br class="calibre8"/>11. Toolbars, Status Bars, and Versionable Schemas<br class="calibre8"/>PartIII: Advanced Topics<br class="calibre8"/>12. Bitmaps, Palettes, and Regions<br class="calibre8"/>13. The Common Controls<br class="calibre8"/>14. Threads and Thread Synchronization </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img68.jpeg" alt="img68.jpeg" class="calibre12"/></span></p>
+
+<p class="calibre2">每一位 MFC 書籍作者, 最大的夢想就是其作品被譽為「C++ 中的Petzold 書籍」。有人親訪 Petzold, 有人則搬出老天王來說幾句話。老天王 Ray Duncan 這麼說:  "Jeff Prosise has written the definitive introduction to Windows software development in the era of 32 bits and application frameworks. This book is the Petzold for MFC programming"。這段話被當作本書的廣告主打詞。有趣的是, 儘管萬方爭取, Petzold 本人倒是從來沒有說過什麼話。也許他想說的是『我自己來寫本 MFC 經典』, 呵呵。</p>
+
+<p class="calibre2">本書有沒有接班人的能耐呢? 有！和 Inside Visual C++ 比較, 本書在低階部份照顧得多些, 程式細節則非常完備。別誤會, 我的意思並非說它是那種「把五句話可以說清楚的一段文字, 以十句話來表達」的書籍 (註 ) , 我是說它把各個技術主題挖得很深入, 旁徵博引的功夫很好, 資料準備得很齊全。</p>
+
+<p class="calibre2">註 : 另一位大師 Matt Pietrek 的書就有點這種拖拉味道, 不過書仍然很棒就是了。下次我會介紹 Matt 的一本重量級作品。</p>
+
+<p class="calibre2">本書在導入部份比 Inside Visual C++ 好。作者先安排一個極小的 SDK 程式, 解釋 message-based、event-driven 的程式模型, 然後再安排一個極小的 MFC 程式, 解釋 framework 的運作, 告訴你應該改寫什麼函式, 標準作法如何, 應該攔截什麼訊息, 標準作法又如何。雖然程式運行的脈絡仍然不是十分清晰可尋, 不過總算是表現不錯了。</p>
+
+<p class="calibre2">從章節目錄可以看出, 這本書選題中規中矩, 該有的沒遺漏, 大獨家倒也沒有。注意, 所有的範例程式都沒有說明其製作過程, 只是列出原始碼並以文字解釋原始碼的意義。你知道, 視覺性軟體開發過程中, 工具的參與絕對少不了, 而且角色日形吃重, 因此, 本書讀者要自己想辦法補足「工具的使用」這一節。Inside Visual C++ 就不一樣了, 幾乎對於每一個程式, 都詳列出工具參與的足跡。</p>
+
+<p class="calibre2">究竟工具的使用要在什麼時候進場, 才能夠帶來利益而不是沉重的盲與茫呢? 我以為作者最好先給一個純手工製造的MFC 程式, 用來解釋 MFC 程式的來龍去脈以及程式和application framework 的互動關係, 然後再引進工具的使用說明, 然後就安排讓工具強力介入程式設計過程。畢竟, 正規的、大型的 MFC 程式開發過程中少不了工具的運用。Inside Visual C++ 的作者操之過急, 工具一下子全面介入, Programming Win95 with MFC 的作者又避若蛇蠍, 完全捨棄工具。</p>
+
+<p class="calibre2">過猶不及！這方面 Dissecting MFC 的作者就處理得不錯。</p>
+
+<p class="calibre2">這本書沒有談到當紅的 OLE 和 ActiveX。關於這一點, Windows Developer's Journal (WDJ) 的 Books in Brief 專欄 (主持人是 Ron Burk) 在 1996.10 有這麼一段讀者與評論者的對話: </p>
+
+<p class="calibre2">讀者來函: 『我還忘了說, Prosise 的這本書完全沒有討論 OLE。雖然我了解這是這本一般性、介紹性書籍的抉擇, 我還是認為這和書名之間存在著一種矛盾。畢竟, Win95 程式設計一定會牽扯到某些 COM 和 OLE。實際情況的確如此, 現在再也不可能和 shell 交談而沒有使用 COM 物件了, Uniform Data Transfer 似乎也已經成為實作拖放 (drag and drop) 和剪貼 (copy and paste) 功能的最佳途徑了。所以, 忽略這個主題實在令人有點驚訝。』 </p>
+
+<p class="calibre2">Burk 回答: 『我同意你的大部份觀點。程式設計書籍的名稱沒有恰如其份地反應出書籍內容是出了名的, 所以我無法不同意你的觀點。然而, 我絕對不贊成這本書涵蓋 OLE。OLE 複雜到足夠成為一本書。要在這一本已經過胖的書籍中加入一章 OLE, 可想而知必然內容膚淺, 就像其他為了滿足市場因素而強加一章 OLE 的其他書籍一樣。那樣的書籍在我的架上有一大堆。與其加一章膚淺的 OLE, 我寧願作者多花時間讓其他章節更有深度些。...我比任何人忍耐了更多的爛書, 所以我寧願看到涵蓋主題不多但是內容十分紮實的書籍。』 </p>
+
+<p class="calibre2">「與其加一章膚淺的 OLE, 我寧願作者多花時間讓其他章節更有深度些。」唔, 就連我當初閱讀 Carles Petzold 的世界名著Programming Windows 95 的最後一章 (OLE) 時, 也有相同的感受。如果 Prosise 來到臺灣, 發現他的大作被改了名稱, 加上了在他抉擇之外的 ActiveX, 讓我們猜猜他臉上的表情。這本書的中譯本在原著之外增加了第零章 ActiveX, 我願意相信是出版者的用心, 而不是如 Ron Burk 所說「為了滿足市場因素而強加一章膚淺的 OLE」。我不願評論中文版新加的一章內容如何, 畢竟用心良苦。但是把書名也給改了, 掛上斗大的 ActiveX, 這種行徑曾經在 BBS 上引起讀者的強烈抗議, 他們說這是「掛羊頭賣狗肉」。</p>
+
+<p class="calibre2">Ron Burk 說「程式設計書籍的名稱沒有恰當反應出其內容, 是出了名的」, 嗯...嗯...我也感受深刻。</p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">■<b class="calibre6">MFC Internals</b> 作者: George Shepherd, Scot Wingo<br class="calibre8"/>出版公司: Addison Wesley<br class="calibre8"/>出版日期: 1996 第二季<br class="calibre8"/>頁數: 15 章, 709 頁<br class="calibre8"/>售價: US$ 39.95</p>
+
+<p class="calibre2">1. A Conceptual Overview of MFC<br class="calibre8"/>2. Basic Windows Support<br class="calibre8"/>3. Message Handling in MFC<br class="calibre8"/>4. The MFC Utility Classes<br class="calibre8"/>5. All Roads lead to CObject<br class="calibre8"/>6. MFC Dialog and Control Classes<br class="calibre8"/>7. MFC's Document/View Architecture<br class="calibre8"/>8. Advanced Document/Vieww Internals<br class="calibre8"/>9. MFC's Enhanced User-Interface Classes<br class="calibre8"/>10. MFC DLLs and Threads<br class="calibre8"/>11. How MFC Implements COM<br class="calibre8"/>12. Uniform Data Transfer and MFC<br class="calibre8"/>13. OLE Documents the MFC Way<br class="calibre8"/>14. MFC and Automation<br class="calibre8"/>15. OLE Controls<br class="calibre8"/>Appendix A: A Field Guide to the MFC Source Code<br class="calibre8"/>Appendix B: The MFC Internals Floppy </p>
+
+<p class="calibre2"><span class="imgBig"><img src="img/img69.jpeg" alt="img69.jpeg" class="calibre12"/></span></p>
+
+<p class="calibre2">Addison Wesley 出版公司似乎最喜歡出一些未公開秘密、內部運作奧秘之類的書籍。這是繼 Windows Internetls 和 DOS Internals 和Windows 95 Internals 之後又一本黑箱書。</p>
+
+<p class="calibre2">本書挖盡 MFC 原始碼, 解釋 MFC 的黑箱作業原理與動作流程。這書的訴求對象已經不是想以 MFC 撰寫一般程式的人, 而是 MFC 玩了相當一段時間, 欲有所突破的人。</p>
+
+<p class="calibre2">應用技術欲有所突破, 核心技術就得加強。很多人對於「了解 MFC 的黑箱作業」心存疑惑, 總認為這違反物件導向的封裝繼承性以及application framework 的精神。啊, 不是這麼說！你買一本汽車百科, 了解汽車的構造原理, 並不妨礙你「希望在沒有任何機械背景的情況下, 學會駕馭這一堆鐵」的心願。然而, 當你看過汽車的解剖圖, 知道變速箱、離合器、萬向傳動軸、引擎燃料系統、動力傳達裝置、懸吊裝置、煞車裝置..., 是否開起車來比較實實在在? 了解構造原理之後, 要來個甩尾大迴旋, 比較知道該怎麼做吧, 基本操作也比較不會出錯 (很多人煞車時順帶把離合器踏板給踩下去, 怕熄火。這習慣養成之後, 高速公路上就會要你的命) 。</p>
+
+<p class="calibre2">依我之見, 了解 MFC 原始碼是有必要的, 尤其在導入部份 -- 這是影響一個人能否學成 MFC 的關鍵。一本好的 MFC 書籍應該讓程式員完全了解每一個奇怪巨集 (像是DECLARE_MESSAGE_MAP 、BEGIN_MESSAGE_MAP 、END_MESSAGE_MAP 、DECLARE_SERIAL 、IMPLEMENT_SERIAL 等等等) 的背後所代表的機制, 以及每一個必須改寫的虛擬函式 (例如CWinApp::InitInstance、CDocument::Serial、CView::OnDraw 等等等) 背後所代表的意義與動作。但是當程式的主軸精神完全掌握之後, 旁支應用 (例如對話盒、控制元件、列印、預視) 就不需要再那麼深入探究原始碼了。當然, 這是指一般性質的 MFC 書籍而言, MFC Internals 本來就是要把 MFC 整個翻兩翻的, 所以它照挖不誤。</p>
+
+<p class="calibre2">附帶一提, 本書附錄Ａ對於 MFC 原始碼有相當完整的一份整理。當你探索 MFC 叢林, 進而發現自己和 MFC 的內臟大腸糾結不清時, 附錄Ａ可以發揮指南針的功效。這裡面介紹了 MFC 的常見寫碼風格, 以及探索 MFC 所需的一些提示和工具, 然後介紹 MFC 安裝後的磁碟目錄架構、表頭檔、inline 檔 (.INL 檔) 、資源檔、原始檔。另外, 書附磁片中除了內含範例程式, 還有一份 MFC FAQ (常見問答集) , 有 Word 和 HTML 兩種格式。</p>
+
+<p class="calibre2"><span><img src="img/img63.jpeg" alt="img63.jpeg" class="calibre10"/></span></p>
+
+<p class="calibre2">■<b class="calibre6">Dissecting MFC</b> (深入淺出 MFC) </p>
+
+<p class="calibre2">作者: 侯俊傑<br class="calibre8"/>出版公司: 松崗<br class="calibre8"/>出版日期: 1996/10<br class="calibre8"/>頁數: 13 章, 778 頁<br class="calibre8"/>售價: NT$ 860.00。含光碟一片。</p>
+
+<p class="calibre2">第一篇 勿在浮砂築高臺 - 技術前提<br class="calibre8"/>1. Win32 程式基本觀念<br class="calibre8"/>2. C++ 的重要性質<br class="calibre8"/>3. MFC 六大關鍵技術之模擬<br class="calibre8"/>第二篇 Visual C++ v4.0 開發工具<br class="calibre8"/>4. Visual C++ - 整合性軟體開發環境<br class="calibre8"/>第三篇 淺出 MFC 程式設計<br class="calibre8"/>5. 總觀 Application Framework<br class="calibre8"/>6. MFC 程式設計導論 - MFC 程式的生與死<br class="calibre8"/>7. 一個簡單而完整的 MFC 骨幹程式<br class="calibre8"/>第四篇 深入 MFC 程式設計<br class="calibre8"/>8. Document-View 深入探討<br class="calibre8"/>9. 訊息映射與繞行<br class="calibre8"/>10. 對話盒與 DDX/DDV<br class="calibre8"/>11. View功能之加強與重繪效率之提昇<br class="calibre8"/>12. 印表與預視<br class="calibre8"/>13. 多重文件與多重顯示<br class="calibre8"/>Appendix A: 從搖籃到墳墓 - Windows 的完全學習<br class="calibre8"/>Appendix B: Scribble Step5 程式原始碼列表<br class="calibre8"/>Appendix C: Visual C++ 所附範例程式一覽<br class="calibre8"/>Appendix D: OWL 程式設計一覽 </p>
+
+<p class="calibre2"><a href="http://jjhou.boolan.com/jjwbooks-dissecting-mfc-2e.htm" target="_blank" class="calibre3"><span class="imgBig"><img src="img/img70.jpeg" alt="img70.jpeg" class="calibre12"/></span></a> </p>
+
+<p class="calibre2">我談這本書, 可能會被譏以「分身替本尊說話」, 但為了舉薦好書, 以及秉持外舉不避仇、內舉不避親的原則, 我不想閃躲。</p>
+
+<p class="calibre2">這本書目前只有中文版。已經有國內出版社積極表達爭取出版英文本的意願。大陸方面, 則有多家出版社亟願將此書譯為簡體版, 甚至直接 Email 與作者聯絡。這本就是前陣子在 BBS 上引起眾多討論的「深入淺出 MFC」, Dissecting MFC。</p>
+
+<p class="calibre2">依我看, 本書橫亙在 Inside Visual C++ 和 MFC Internals 兩書之間, 有 InsideVisual C++ 的實用面, 而在核心技術更擅勝場。有 MFC Internals 的深入面, 而無其過於晦澀。</p>
+
+<p class="calibre2">所謂核心技術, 本書指的是: </p>
+
+<p class="calibre2">1. 應用程式和 MFC framework 的因果關係 。這一部份是你學習MFC 程式設計的成敗關鍵。因為太多人上不了第一個台階。本書把隱藏的 WinMain 函式、視窗類別註冊、視窗誕生、訊息迴路等動作統統挖掘出來, 讓屬於 framework 的那半邊曝光, 和你的應用程式碼這半邊拼兜出一張完整的邏輯脈絡圖。才不會堆積木老是少一塊。</p>
+
+<p class="calibre2">2. 訊息映射 (Message Mapping) 和命令繞行 (Command Routing)  。「物件導向」從來沒有考慮過 Windows 訊息 (那當然) 。MFC 程式有四大類別 (application、frame、document、view) , 程式員最容易陷入的苦惱是不知道在哪一個類別中攔截並處理命令訊息。那是因為沒有能夠看清楚訊息在類別中的流動路線。流動路線的整個地圖隱隱在巍巍山巔: 在由 DECLARE_MESSAGE_MAP、BEGIN_MESSAGE_MAP、END_MESSAGE_MAP 以及其他的 ON_COMMAND、ON_WM_PAINT 等巨集架構起來的巨大網絡中。當你的程式一開始執行, 整個 MFC 的絕大部份類別, 都已經貢獻出一些資料, 組成這張巨幅網絡 (噢, 是的, 當然也耗用了你的記憶體) 。</p>
+
+<p class="calibre2">3. Document/View/Template 之間的關係 。一個程式如果支援兩份以上的Documents, 應該如何管理? 對應的使用者介面應該如何設定? Document Template 究竟是何用途? 這是這個主題要探討的題目。</p>
+
+<p class="calibre2">4. Runtime Type Information (RTTI) 和 Dynamic Creation 。把一份 document 寫入檔案之中, 連同類別名稱和成員變數的值, 沒有問題。是的, 一點問題也沒有, 但是讀出來就有問題了, 因為你不可能讀一個類別名稱到一個字串中然後對這個字串做 new 動作。「從檔案讀出類別名稱然後產生其物件」, 就是 "dynamic creation" 的具體表現。C++ 不支援這項能力, 但 MFC 非要不可, 因為有太多時候需要 dynamic creation。其實你只要使用笨方法如下, 就可以解決 dynamic creation 的問題: </p>
+
+<p class="calibre2"><small class="calibre11">read ClassName to str<br class="calibre8"/>if (str == "Class1")<br class="calibre8"/>    new Class1;<br class="calibre8"/>else if (str == "Class2")<br class="calibre8"/>    new Class2;<br class="calibre8"/>else if (str == "Class3")<br class="calibre8"/>    new Class3;<br class="calibre8"/>else if (str == "Class4")<br class="calibre8"/>    new Class4;<br class="calibre8"/>...</small> MFC 小組比我們聰明嗎? 不會。但是他們比我們懂得包裝。他們在MFC framework 中架構起一個由所有類別相關資訊 (包括類別名稱及建構函式) 組成的類別型錄網絡 (一個串列) , 然後把類別名稱的比對動作埋藏在 Serialize 虛擬函式中。類別型錄網絡中的每一個成員就是 CRuntimeClass 物件, 網絡的組成則是藉由類別宣告時的DECLARE_DYNCREATE 和 IMPLEMENT_DYNCREATE 巨集完成。RUNTIME_CLASS 巨集就是取出「類別型錄網絡」中的一個元素 (代表一個類別) 。所以, 當你的程式一開始執行, 整個 MFC 的絕大部份類別, 都已經放在這個「類別型錄網絡」之中 (噢, 是的, 當然也耗用了你的記憶體) 。有了這網絡, RTTI (執行時期型別辨識) 和 Dynamic Creation 都不是問題。</p>
+
+<p class="calibre2">5. Persistence 。文件內容要用什麼型式寫到檔案去, 才能夠再從檔案讀出來恢復為一個個的物件? 這就是 persistence (MFC 稱之為 serialization) 要探討的題目。本書把 Serialize 虛擬函式的內部行為全部挖掘出來, 並且實際觀察一個文件檔的 hex 傾印內容。</p>
+
+<p class="calibre2">這五個部份是本書最精華的地方, 也是它獨步全球的地方。要有這麼深入的了解, 非得觀察 MFC 原始碼不可。本書把相關的 MFC 碼整理出來, 加上相當多的示意圖, MFC Internals 雖然挖得更廣, 整理的功夫卻沒有這本好。</p>
+
+<p class="calibre2">這本書用詞相當精準。用詞精準在容易岐路的物件導向領域中至為重要, 許多細微的觀念就在字句推敲中成形 。</p>
+
+<p class="calibre2">實例方面, 希望看到琳琅滿目的範例程式的讀者, 將會大失所望。這本書使用Visual C++ 的標準範例 Scribble。只有第 13 章「多重文件與多重顯示」中才有作者自己設計的程式。然而以Scribble 為範例主軸, 有一個意想不到的好處: 常看 Microsoft Systems Journal 或 Windows Developer's Journal 的朋友就知道, 許多作家喜歡在示範新技術或新構想時, 以 Scribble 為載具。如果你對Scribble 十分熟悉, 閱讀那些文章可就駕輕就熟了。</p>
+
+<p class="calibre2">本書的許多精心插圖, 是令人驚喜的地方。一圖解千言萬語, 在這裡獲得最佳註腳。</p>
+
+<p class="calibre2">我偷窺了一封讀者寫給本書作者的信, 信上這麼說: </p>
+
+<p class="calibre2">『當我在書店中駐足察看這本書五分鐘之後, 我便知道這本書是一定要買下的。我一鼓作氣將這本書給讀完了, 而且是徹徹底底地讀了兩遍。...我個人特別喜歡第三章: MFC 六大關鍵技術之模擬。這章內容的設計的確是要在 MFC 叢林中, 大刀闊斧地披露出最重要的筋絡, 我相信這正是所有學習 MFC 的人所需要的一種表明方式。對我而言, 以往遺留的許多疑惑, 在此都一一得到了解答。最重要的是, 您曾在說到, 學習 MFC 的過程中最重要的莫過於自我審視 MFC 程式碼的能力。很高興地, 在我看完本書之後, 我確實比以前更有能力來看 MFC 原始碼了。總之, 我為自己能夠更深入了解 MFC 而要向你說聲謝謝。』 </p>
+
+<p class="calibre2">作者因為這封令人感動的信, 當天又多熬夜三個小時。不要問我是怎麼知道的 :-)。</p>
+</body>
+</html>

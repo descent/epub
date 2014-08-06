@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="35af614a-6e99-432a-8c29-df0b77189946" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (0.9.41)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>一個「蠅量級」 C 語言協程庫 | 酷 殼</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="article0" playOrder="1">
+      <navLabel>
+        <text>一個「蠅量級」 C 語言協程庫 | 酷 殼 - CoolShell.cn</text>
+      </navLabel>
+      <content src="OEBPS/article0.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

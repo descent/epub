@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="stylesheet" href="../styles/dotepub.css" type="text/css" />
+  <title>Dotepub.com</title>
+</head>
+
+<body>
+
+<a name="what_is_opcode">
+<h1>
+1. 什么是OpCode？
+</h1>
+</a>
+
+<blockquote><p><i>Things have changed in the past two decades.</i></p>
+<p>-- Bill Gates(1995)</p></blockquote>
+
+<h2>什么是OpCode？</h2>
+<p>不管计算机技术的发展如何日新月异, 其最基本的东西是不会突然改变的。OpCode就是这其中的一样东西——因此, Bill Gates的这句话用在这里并不太合适。</p><p>在开始回答什么是OpCode之前, 请让我先来提几个小问题。</p>
+<ol><li>计算机只认识0和1吗？</li><li>如果上面的回答是“是”, 那么我们平时写的程序源代码是0和1吗？</li>
+<li>如果上面的回答是“不是”, 那么计算机是怎么“知道”我们的程序的意思的？</li></ol>
+<p>按顺序作答, 依次是：</p><ol><li>是</li><li>不是</li><li>？？？</li></ol><p>最后一个问题的答案是……？我们来举个例子, 在汇编语言中：</p>
+
+<pre class="cmd">NOP</pre>
+
+<p>这条指令很简单, 是吧？</p>
+<p>在编译的时候, Assembler会扫描整个源代码。</p>
+<p>在前面我们已经知道了, 由于计算机只认识0和1, 所以, 源代码“NOP”是无法直接运行的。当Assembler遇到“NOP”的时候, 为了生成让计算机能运行的“东西”（暂且这样称呼吧）, 就会以十六进制数“0x90”来代替它。</p><p>在这里, “0x90”就是“OpCode”, 而“NOP”则是“助记符(mnemonic)”。</p>
+
+<strong>OpCode的全称</strong><p>OpCode就是Operation Code, 意即操作码的意思。</p>
+
+<h2>一个OpCode只对应一个助记符吗？</h2>
+<table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="8"> 示例：OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">NOP</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">XCHG AX, AX</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">XCHG EAX, EAX</td></tr></tbody></table>
+
+<p>从上表中可以看出, 同一个OpCode可以对应N个mnemonic。为什么会这样呢？原因现在不必深究, 以后自然会明白的。</p><h2>一个助记符只对应一个OpCode吗？</h2><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="8"> 示例：OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>mnemonic</strong></td><td class="table_cells"><strong>OpCode</strong></td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x83C001</td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x0501000000</td></tr><tr><td class="table_cells">ADD EAX, 1</td><td class="table_cells">0x81C001000000</td></tr></tbody></table><p>从上表中也可以看出, 同一个mnemonic可以对应多个OpCode。原因同样留待以后再说。</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>OpCode与mnemonic的关系</strong><p>一个OpCode不只对应一个mnemonic。<br /> 一个mnemonic不只对应一个OpCode。</p></td> </tr> </tbody></table> 
+
+<h2>OpCode管中窥豹</h2><p>有6个域是OpCode可能会用到的, 或者说OpCode是由这6个域组成的——不过请注意：它们的名字是什么, 这并不重要——重要的是它们的排列顺序。</p><p>它们是：</p><ol><li>Prefixes</li><li>code</li><li>ModR/M</li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>OpCode的这6个域的详细介绍留待以后再说, 现在首先要知道：</p>
+
+在实际的使用中, 并不是这所有的6个域都会被用到的, 但是有一项却是一定会有的, 那就是第2项：code,
+有些指令甚至只会用到code这一项。
+
+<p>例如：</p><table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="10"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">0xC3</td><td class="table_cells">RETN</td></tr><tr><td class="table_cells">0x2F</td><td class="table_cells">DAS</td></tr><tr><td class="table_cells">0x90</td><td class="table_cells">NOP</td></tr><tr><td class="table_cells">0xAC</td><td class="table_cells">LODSB</td></tr></tbody></table>
+<p>上表中的几个OpCode都只用到了code这一项。其中的最后一项：0xAC, 让我们来看看能不能给它加上一些额外的“东西”：</p><pre>0xF3AC    REP LODSB</pre><p>可以看到：rep lodsb</p>
+
+<p>为什么会多了个“<strong>rep</strong>”呢？是不是由额外的“<strong>F3</strong>”造成的呢？</p><p>Yes, 猜对了, 我们来看看它的OpCode格式描述, 如下：（注：用{}包围起来的是域的名称）</p>
+<pre>AC -- {code}
+F3 AC -- {Prefix}{code}
+因此, F3 就是域 Prefix
+</pre>
+
+<p>在稍后的章节中我们会知道, F3表示的是<u>Rep Prefix</u>, 它也能与movsb,
+stosb等指令联用, 但是, 具体细节在这里暂不深究。</p>
+<p>让我再来强调一次：<strong>OpCode中的6个域是可选的（除了域code之外）, 不必都用上, 但是code是一定会有的。</strong></p><p>知道了这一点, 我们再来看一些例子：</p>
+<table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="14"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">27</td><td class="table_cells">DAA</td></tr><tr><td class="table_cells">2F</td><td class="table_cells">DAS</td></tr><tr><td class="table_cells">3F</td><td class="table_cells">AAS</td></tr><tr><td class="table_cells">37</td><td class="table_cells">AAA</td></tr><tr><td class="table_cells">D40A</td><td class="table_cells">AAM</td></tr><tr><td class="table_cells">D50A</td><td class="table_cells">AAD</td></tr></tbody></table><p>在Intel的文档中, 上表中的所有指令都是1字节的, 但是, 我们能够看到AAM和AAD是2字节的, 到底有什么不同呢？<br />先不要看下面的答案, 试着自己想一想……</p><p>.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br />.<br /></p><p>We can see:</p><ol><li>AAM和AAD都是2字节的, 然而其余的4个指令都是1字节的。</li><li>AAM和AAD的OpCode的第2个字节都是<strong>0Ah</strong>。</li></ol><p>如果你还没把大学里的汇编知识彻底还给老师的话, 应该还记得AAM和AAD的描述：</p>
+
+<pre class="cmd">AAM : divide al by 10
+商   放在AH里
+余数 放在AL里
+</pre>
+<br/>
+<p>
+
+</p>
+<pre class="cmd">AAD : AL = AH * 10 + AL
+</pre>
+
+<p>注意到了吗？两者的操作都与10有关。而且两者的OpCode的第二个字节都是10(<strong>0Ah</strong>)。</p>
+
+<p>人类与动物的其中一个区别是具有思维的联想性。聪明的你是不是猜到了什么？</p><p>嗯……<strong>0Ah</strong>会不会是偶然的呢？它会不会是操作数的一部分？进一步地, AAM与AAD的指令格式会不会<strong>不是</strong>：</p>
+
+<pre>D40A for AAM
+D50A for AAD
+</pre>
+<p>而是：</p><pre>D4:imm8 for AAM
+D5:imm8 for AAD
+</pre><p>以及, imm8可以是任何别的数字呢？（注：imm8表示8位的立即数）</p><p>答案是肯定的！</p><p>事实上, 我们可以通过反汇编器得知, <strong>D407</strong>表示的是AAM <strong>7</strong>, <strong>D508</strong>表示的是AAD <strong>8</strong>, 以此类推。</p><p>现在, 我们又知道了一种新的指令格式：</p>
+
+<pre>{code}{Immediate}（域2和域6）
+</pre>
+
+<p>还有别的, 以后再说。</p>
+<h2>There's Something We Should Know...</h2>
+<p>最后再强调一点：</p>
+虽然并不是6个域都是必要的, 但是, 它们的排列顺序绝对不能乱, 必须严格按照上面的顺序进行。有些域也许不会出现, 但是只要出现了, 编号小的域就绝对不允许出现在编号大的域的后面, 反之亦然。
+<p>例如, {Prefix}{code}的顺序绝对不允许变成{code}{Prefix}。</p><p>不相信？举个例子：<strong>4004</strong>和<strong>0440</strong>（假设在32位条件下）</p>
+
+<table style="text-align: center" border="1"> <tbody><tr> <td class="table_title" colspan="6"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">4004</td><td class="table_cells">INC EAX</td></tr><tr><td class="table_cells">0440</td><td class="table_cells">ADD AL, 40h</td></tr></tbody></table>
+
+<p>明白了吗？</p><p>理解了OpCode的规则, 将有助于底层程序员明白一些鲜为人知的事情。在接下来的章节中, 我们将学习OpCode的6个域的详细信息。
+
+</p>
+
+<a name="begin_end">
+<h1>
+2. 从哪里开始，到哪里结束
+</h1>
+</a>
+
+<blockquote><p><i>Everything that has a beginning... Has an end.</i></p><p>-- Neo, The Movie - "The Matrix: Revolutions"(2003)</p></blockquote>
+
+<h2>开始</h2><p>“从哪里开始, 到哪里结束”, 这是几乎所有的OpCode初学者都会问到的问题, 具体来说, 就是给定一串OpCode, 计算机是如何知道哪里是某一条指令的开始, 到哪里才是它的结束呢？</p><p>让我们照例从实例开始说明：</p><pre>EB:imm8
+</pre><p>这是一条近跳转指令, 翻译成mnemonic就是jmp, imm8表示一个8位的立即数, 整条指令的意思是jmp到imm8的偏移后的地址去。</p><p>从上一章的内容中我们可以知道, 这条OpCode的域格式是这样的：</p><pre>{code}{Immediate}
+</pre><p>一共是2个字节。</p><p>问题来了, 我们用肉眼一看就知道, 这代表2个字节, 我们也知道这条指令应该是从EB开始, 总长度是2个字节, 到imm8为结束, 可是计算机是怎么知道这一点的呢？假如有一串OpCode发送给处理器, 例如“90EB0090”, 让它从中找到这个jmp指令, 它会不会认不出来呢？</p><p>又或者, 传送一串OpCode给处理器, 例如“EB1234”, 它会不会把后面的34也算进了jmp的跳转范围呢？</p><p>答案是, 不会的。</p><p>CPU有个寄存器叫做EIP, 它储存了内存中的某个地址, 这个地址会告诉CPU, 哪里是当前指令的开始；但是, 在CPU没有对OpCode进行解码之前, 它并不会知道哪里才是指令的结束。</p><p>让我们来举个例子：</p><pre>00401000    90    NOP
+</pre><p>第一列表示的是内存中的地址, 在这里是00401000, 它同时也是EIP的值, 此时EIP = 00401000<br />第二列表示的是OpCode, 第三列表示的是mnemonic, 相信不必多说, 读者也能明白它们的意思：90对应NOP</p><p>由于EIP = 00401000, 所以CPU会知道当前的指令应该是从内存单元中的00401000开始, 在这里, 储存了一个OpCode：90, 接下来CPU会对90进行解码：</p><pre>OpCode：90
+域格式：{code}
+</pre><p>只有1个字节。所以CPU就会知道, OpCode“90”是从内存地址“00401000”开始, 到“00401001”结束。</p><p>明白了吗？不过还有一种特殊情况：如果CPU遇到了无效的指令, 它就会无法解析, 例如OpCode“FFFF”, 在运行的时候, 会产生一个异常。</p><p>再来看本章开头的：</p><pre>EB:imm8
+</pre><p>EB是域{code}, 当EIP遇到内存中的EB的地址时, CPU就会知道第1个字节后面会跟着一个imm8立即数, 总长度是2个字节。</p>
+
+至此, 我们可以给出：<br/>
+
+<table border="1">
+<tbody><tr> <td class="note_box"> <strong>初步的结论</strong><br/>1. <u>开始</u>:
+处理器认为当前 EIP 指向的内存单元中的第一个字节就是指令的开始。<br />
+2. <u>结束</u>：处理器通过对OpCode进行解码 (大多数情况下是根据{code}域),
+从而知道哪里是结束。</td> </tr> </tbody></table>
+<br/>
+不过, 不得不提的一点是:<br/>
+在运行完一条指令后, EIP并不总是指向下一条指令的开始！<br/>
+
+举个例子:<br/>
+<pre>00401000    EB 00    JMP 00000002
+00401002    90       NOP
+</pre>
+<p>此时 EIP = 00401000, EB00 翻译成 mnemonic 就是 JMP 00000002。
+为什么呢？因为 EB:imm8 是 2 个字节的 OpCode, 在这里 imm8 的值是 00, 所以 00 (imm8) + 02 (本条OpCode的长度) = 02 (应该跳转的地址), 也就是跳转到相对偏移为02的地方去。</p>
+
+<p>因此, EB00运行完后, EIP的值应该是00401002, 也就是指向90的地址, 下一步处理器将会执行指令“NOP”。</p>
+
+<p>好, 再看：</p>
+
+<pre>00401000    EB FE    JMP 00000000
+00401002    90       NOP
+</pre><p>此时EIP = 00401000, 但是为什么EBFE会是JMP 00000000呢？想想看？</p><p>答案：<br />FE + 02 = 100</p><p>由于imm8的关系（8位只表示一个字节）, 100其实只取00（100其实是2个字节了——其高位为0, 即0100）<br />所以这条指令运行后, EIP应该还是00401000, 没有改变！原因是这条指令的跳转地址是它本身！后面00401002处的“90”永远都不会执行！</p><p>真正的底层程序员应该会理解指令的本质, 而不仅仅是从指令的字面上去理解它的意思。例如, cmp, 从字面上来看, 表示compare一些东西。但是真正的底层程序员不会这样说, 他会说, cmp表示的是用第一个操作数<u>减去</u>第二个操作数, 由此来设置相应的标志位。同时, 我们关心的只是标志位, 并不关心减操作后的结果, 所以不需要把减操作的结果储存到第一个操作数中。</p><p>让我们回到正题。再来看一些应用：</p><p>OpCode：04 AC</p><pre>00401000    04 AC    ADD AL, 0AC
+</pre><p>我们已经知道, AC是助记符lodsb的OpCode, 00401000是OpCode 04AC的开始地址, 而00401002将会是它的结束（这个指令只有2个字节的关系）。但是, 我们一直以来都没讨论的是：如果把这条OpCode从中间截断！即从00401001地址处开始的指令会是什么呢？</p><p>如果我们把寄存器EIP的内容设置成00401001, 我们就会发现：<br />处理器会把AC看作lodsb, 而不是：<br />ADD AL, 0AC<br /><strong>04</strong>:imm8(AL+imm8)中的imm8</p><p>应用这个原理, 我们来看一个小例子, 假设要实现下面的算法：</p><pre>IF zf = 0
+ lodsb
+ELSE
+ add al, 0AC
+</pre><p>试试写成助记符？不知道读者朋友们会怎么写——我会写成这样：</p><pre>jnz $+1
+add al, 0AC
+</pre><p>解释如下：</p><pre>如果标志位zf等于0, 则EIP会指向add al, 0AC的第2个字节, 也就是AC——我们知道AC表示助记符lodsb
+明白了吗？使人惊奇的是, 整个算法的实现只用了区区4个字节！
+</pre><p>这个算法的OpCode:</p><pre>00401000    75 01    JNZ SHORT 3
+00401002    04 AC    ADD AL, 0AC
+</pre><p>让我们来看看每个字节表示什么意思：</p><p><strong>75</strong>:imm8 是 7501 的域格式<br /><strong>75</strong>是JNZ的OpCode, imm8在这里是01, 会加到EIP里面去, 整个7501表示如果这条指令被执行了, 则EIP会指向下一条指令的第2个字节的地址。</p><p>04AC的域格式：<br /><strong>04</strong>:imm8 其中：<br /><strong>04</strong> - {code}<br /><strong>AC</strong> - {Immediate}</p><p>整个算法实现的思路如下：</p><p>如果<u>zf=0</u>, 7501这条指令就会把下一条指令的起始地址+1（75后面的操作数就是需要跳的字节数：0不跳, 1跳一个, n就跳n个……但是字节是有符号的, 负的就往后跳……所以jnz short xxx是有最大的跳跃限制的）, 然后把跳跃后的地址赋值给EIP——也就是00401003, 从而迫使处理器认为AC所在的地址才是下一条指令的开始（跳过了OpCode 04）, 这时, AC会被当成{code}。</p><p>否则, EIP会指向04AC所在的地址00401002, 所以下一条指令的开始就会从04开始算起, 处理器会认出域格式：<br /><strong>04</strong>:imm8(add al, imm8)<br />这时, AC会被当成{Immediate}, 而不是{code}。</p><p>呵呵, 是不是有点儿迷糊了？</p><p>为了加深理解, 最后再给大家看一个算法及其实现：</p><pre>IF zf = 0
+ inc eax
+ELSE
+ mov al, 40
+</pre><p>答案：</p><pre>00401000    75 01    JNZ SHORT 3
+00401002    B0 40    MOV AL, 40
+</pre><p>嗯……提示一下：40表示的是inc eax……聪明的你, 明白了吗？</p><h2>结束</h2><p>本章到这里已经结束了, 但是……OpCode的学习只是刚刚开始而已, 请大家打好精神, 为后面的旅程作好准备！</p><br />
+
+<a name="prefix_1">
+<h1>
+3. Prefixes - Part I
+</h1>
+</a>
+
+To be, or not to be: that is the question.<br/>
+<p>-- William Shakespeare, "HAMLET".</p>
+
+<h2>Hello, Prefixes!</h2><p>就像经典的“Hello World!”程序一样, 让我们也从最简单的一个实例看起：</p>
+<table border="1">
+<tbody><tr> <td class="table_title" colspan="6"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">40</td><td class="table_cells">INC EAX</td></tr><tr><td class="table_cells">66 40</td><td class="table_cells">INC AX</td></tr></tbody></table><p>假设默认的操作数是32位, 我们就可以得到上表的结果。（为什么默认是32位？看到后面就会明白的）</p><p>我们可以看到, 40表示的是INC EAX, 66 40表示的是INC AX, 两者的分别在于：前者的操作数是32位的(EAX), 而后者是16位的(AX)。</p><p>从OpCode的角度来看, 后者比前者多了一个66, 就导致了不同的结果, 唔……Intel x86规定：</p>
+
+<p><strong>66</strong>是一个Prefix, 我们把Prefix翻译为前缀, 所谓前缀, 就是与code进行组合用以产生出某些变化形式的“东西”。唔……好拗口啊, 真不好解释, 请看晕了的朋友不要抛砖头, 继续往下阅读吧。</p><h2>认识 Prefixes</h2><p>回忆一下第一章中介绍的OpCode的6个域：</p><ol><li><strong>Prefixes</strong></li><li>code</li><li>ModR/M</li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>记住：</p><ul><li>在实际的使用中, 并不是这所有的6个域都会被用到的, 但是有一项却是一定会有的, 那就是第2项：code, 有些指令甚至只会用到code这一项。</li><li>这6个域的排列顺序绝对不能乱, 必须严格按照上面的顺序进行。有些域也许不会出现, 但是只要出现了, 编号小的域就绝对不允许出现在编号大的域的后面, 反之亦然。</li></ul><p>Prefixes是所有的域中最容易理解的一个, 请先明了它的一些特性：</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>Prefixes的几个特性</strong><p>1. 它是唯一的一个可能出现在code<strong>之前</strong>的域。<br />2. 所有的Prefixes都只有<strong>1</strong>个字节。<br />3. 在一个OpCode中可能会有多个Prefixes。</p></td> </tr> </tbody></table><p>看看刚才提到过的prefix 66, 这个prefix的意思是“切换默认的操作数的大小”。例如在有的系统中有2种默认的操作数大小：<strong>16</strong>位和<strong>32</strong>位。操作数有可能会被写成<strong>16</strong>位或者<strong>32</strong>位, 唯一的区分方法是看它有没有prefix 66。</p><p>唔……是不是讲得不够清楚呢？我们来看看：</p><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="6"> OpCode &amp;&amp; mnemonic </td> </tr> <tr><td class="table_cells"><strong>OpCode</strong></td><td class="table_cells"><strong>mnemonic</strong></td></tr><tr><td class="table_cells">66 AD</td><td class="table_cells">LODSW</td></tr><tr><td class="table_cells">AD</td><td class="table_cells">LODSD</td></tr></tbody></table><p>依然假设默认的操作数是32位的, 有没有发现什么不寻常的地方？</p><p>LODSW和LODSD的code域是一样的——都是AD！其实, LODSW和LODSD这两个指令是同一个指令, 只不过它们的操作数大小不一样——LODSW使用了2个字节（<strong>16</strong>位）的WORD作为操作数, 而LODSD则使用了4个字节（<strong>32</strong>位）的DWORD作为操作数。</p><p>看到这里, 读者应该能够明白了：prefix 66的作用是<strong><u>切换</u></strong>默认的操作数大小。请注意我们并没有说“指定”, 而是“切换”！反映到这个例子中, 就是“切换默认的<strong>32</strong>位操作数到<strong>16</strong>位”, 而不是“指定操作数的大小为<strong>16</strong>位”。</p><p>这点非常重要！！！绝对不是在玩文字游戏！！</p><p>如果默认的操作数大小是WORD（<strong>16</strong>位）, 那么切换后就是DWORD（<strong>32</strong>位）；反之, 如果默认的操作数大小是DWORD（<strong>32</strong>位）, 那么切换后就是WORD（<strong>16</strong>位）。</p><p><strong>切记！Prefixes 66就像一个触发器一样, 起的作用就是进行切换。</strong></p><p>让我们再来看一个特例：</p><pre>B0 FF    MOV AL, 0FF
+8A C1    MOV AL, CL
+</pre><p>看清楚了吗？现在的操作数是AL和CL, 加上prefix 66后会如何？</p><pre>66 B0 FF    MOV AL, 0FF
+66 8A C1    MOV AL, CL
+</pre><p>Faint！没有任何变化！</p><p>为什么呢？我们可以猜测一下：也许并不是所有情况下的操作数大小都可以随意改变的。假如这个改变是不允许的, 那么它就会被忽略。</p><p>为了证实这个猜想, 让我们来看看下一个更有趣的例子：</p><p>prefix F3(rep)的作用是让CPU对随后的指令循环执行ecx(cx)次, 指令INC EAX的OpCode是40, 好, 如果我们想连续执行3次INC EAX的话, 应该怎么样呢？</p><p>也许你会想当然地认为应该这样写：</p><pre>xor eax, eax
+mov ecx, 3
+rep inc eax
+</pre><p>实际上！并不是这样！这样的程序的运行结果是：</p><ol><li>没有任何异常（exception）产生。</li><li>最后eax = 1, 这意味着prefix F3并没有起作用——它被忽略了。</li></ol><p>现在我们可以证实之前的想法：</p><p><strong><u>如果Prefixes不能对随它之后的OpCode起作用, 那么它就会被忽略。</u></strong></p><p>再回忆一下之前提到的三个特性：</p><ol><li>Prefixes是唯一的一个可能出现在code<strong>之前</strong>的域。</li><li>所有的Prefixes都只有<strong>1</strong>个字节。</li><li>在一个OpCode中可能会有多个Prefixes。</li></ol><p>前面两点应该比较容易理解, 让我们来看看第3点是什么意思。</p><p>如果想得到下面的指令：</p><pre>REP LODSW
+</pre><p>它的OpCode将会是：</p><pre>66 F3 AD
+</pre><p>解释如下：</p><pre>66 AD：LODSW
+F3： REP
+</pre><p>都是前面讲过的内容, 不难吧？只是组合起来使用罢了。</p><p>不过……细心的读者可能会问：为什么要把66放在第一位, 把F3放在第二位呢？把它们的位置调换一下行不行？答案是：行！事实上它也可以写成：</p><pre>F3 66 AD
+</pre><p>效果是一样的！</p><table style="text-align: center" border="0" width="80%"> <tbody><tr> <td class="note_box"> <strong>Prefixes的特性</strong><p>一个OpCode中可以有多个Prefixes。<br /> 如果有多个Prefixes, 那么它们的顺序可以打乱, 不会有任何问题。</p></td> </tr> </tbody></table><p>最后, 我们还可以得出一个推论：</p><p>由于每个Prefixes会多占用1个字节, 所以也必定会导致处理器多使用一个指令周期进行解码——无论在时间还是空间上都会造成浪费。因此, 我们应该权衡在哪些场合才使用Prefixes, 如非必要, 应该减少对它的使用。</p><h2>Is it ALL?</h2><p>Of course not! 由于章节的篇幅问题, Prefixes的进一步讲解会放在后面的章节中继续进行, 我们会看到更多的有关Prefixes的信息。</p>
+
+<a name="prefix_2">
+<h1>
+ 4. Prefixes - Part II 
+</h1>
+</a>
+
+I'll be back.<br/>
+<p>-- Arnold Schwarzenegger, The Movie - "Terminator"(1984)</p>
+
+<h2>Prefixes合集</h2>
+
+在前一章中我们已经知道：
+
+<ol>
+<li>所有Prefixes的长度都是1个字节。</li>
+<li>一个OpCode可能会有几个Prefixes。</li>
+<li>如果有多个Prefixes, 那么它们的顺序可以打乱。</li>
+<li>如果Prefixes不能对随它之后的OpCode起作用, 那么它就会被忽略。</li>
+</ol>
+
+<br/>
+现在我们将要学习剩下的几个Prefixes, 它们可以被划分为5个集合, 分别是：
+<br/>
+
+<ol>
+<li>Change DEFAULT operand size. (66)</li>
+<li>Change DEFAULT address size. (67)</li>
+<li>Repeat prefixes. (F2, F3)</li>
+<li>Segment override prefixes(change DEFAULT segment). (2E, 36, 3E, 26, 64, 65)</li>
+<li>LOCK prefix. (F0)</li>
+</ol>
+
+<h2>Prefix 66</h2>
+在前面我们已经学习过它了, 而且也够详细的了, 对吗？
+
+<h2>
+Prefix 67
+</h2>
+
+改变默认的地址大小。
+
+请注意：67与66的分别在于, 66改变的是默认的操作数大小, 而67则是地址的大小。两者有什么差异呢？
+
+<pre>
+8A 00    MOV AL, [EAX]
+</pre>
+
+现在把它的OpCode改成以67开头的：
+
+<pre>
+67 8A 00    MOV AL, [BX+SI]
+</pre>
+
+我们可以看到：
+
+<ol>
+<li>地址由原来的32位的[EAX]变成了16位的[BX+SI]。</li>
+<li>疑问来了：为什么不是[AX], 而是[BX+SI]呢？</li>
+</ol>
+
+	<p class=""> 第2个问题我们将会在以后的{ModR/M}和{SIB}的格式讲解中回答。现在我们可以暂时认为, 在<strong>16</strong>位的地址模式中无法完全使用<strong>32</strong>位中的对应的地址模式, 两种模式中的寄存器有着一定的区别。（看不明白？没关系, 后面的章节中会详细解释）</p>
+
+<pre>F2: REPNE
+F3: REP / REPE
+</pre><p>Repeat Prefixes作为一个串操作指令的前缀, 它重复执行其后的串操作指令。每一次重复都先判断(E)CX是否为0, 如为0就结束重复, 否则(E)CX的值减1, 然后再重复其后的串操作指令。所以当(E)CX的值为0时, 就不再执行其后的操作指令。</p><p>它类似于LOOP指令, 但LOOP指令是先把(E)CX的值减1, 后再判断是否为0。</p><p>举例：</p><pre>CLD
+MOV ECX, 3
+REP MOVSB
+</pre><p>运行的结果是把DS:(E)SI的3个字节(byte)移动到ES:(E)DI去。</p><p>有两点规则：</p><ol><li>你可以看到有3种Repeat Prefixes的助记符：rep/repe/repene, 但是只有2个OpCode：F2、F3。</li><li>如果某些指令<strong><u>只使用</u></strong>前缀rep, 那么这里的rep可以用repe或者repne来代替。</li></ol><p>第2条规则比较难以理解, 对吗？我们来举个例子：</p><pre>REP LODSB
+REPE LODSB
+REPNE LODSB
+</pre><p>这3条助记符的运行结果都是一样的：它会重复运行指令LODSB一共(E)CX次, 而不管它的Repeat Prefixes是rep/repe[F3]还是repne[F2]。</p><p>但是请注意：第2条规则的适用范围仅仅是<strong><u>只使用</u></strong>“rep”的指令, 意即无论是F2还是F3, 对指令的执行结果都无影响, 而这样的指令非常的少！</p><p>从OpCode的角度来看rep/repe[F3]和repne[F2]的区别：</p><p>我们知道, 重复串指令时可能会改变某些标志位（例如ZF）, 在这种情况下, 有些指令与重复前缀搭配使用时, F2和F3会把<u>最后一位</u>与标志位ZF进行比较, 如果它们不相同, 则重复串指令的操作将会结束。而有些指令不用进行这个比较的操作, 因此标志位ZF对这些指令的运行结果无影响。</p><p>讲得不够清楚？呵呵, 把F2和F3转换成二进制就能明白了。</p><pre>1111 0010  F2
+1111 0011  F3
+</pre>
+<br/>
+
+最后我们再来看看Repeat Prefixes的结束条件：<br/>
+Repeat Prefiex的结束条件<br/>
+<table border="1">
+<tbody>
+<tr><td> Repeat Prefix</td><td> 结束条件1 </td><td>      结束条件2</td></tr>
+<tr><td> REP   </td><td> ECX=0 </td><td>  None</td></tr>
+<tr><td> REPE  </td><td> ECX=0 </td><td>  ZF=0</td></tr>
+<tr><td> REPNE </td><td> ECX=0 </td><td>  ZF=1</td></tr>
+</tbody>
+</table>
+
+ 从上表中可以看出：repe和repne的结束必须同时满足两个结束条件, 而rep只管ECX等不等于0。
+
+ 看到这里, 再结合上面的第2条规则, 我们就能更清楚了：由于rep并不与标志位ZF进行比较, 所以它可以被替换成repe或者repne, 对执行结果无影响！
+
+<h2>
+Segment Override Prefixes (2E, 36, 3E, 26, 64, 65)
+</h2>
+
+
+我们先来看看这些Prefixes是什么:<br/>
+Prefixes &amp;&amp; Explanation<br/>
+<table border="1"> 
+<tbody>
+<tr><td ><b>Prefix</b></td><td ><b>Explanation</b></td></tr>
+<tr><td >2E</td><td ><b>CS</b> segment override prefix</td></tr>
+<tr><td >36</td><td ><b>SS</b> segment override prefix</td></tr>
+<tr><td >3E</td><td ><b>DS</b> segment override prefix</td></tr>
+<tr><td >26</td><td ><b>ES</b> segment override prefix</td></tr>
+<tr><td >64</td><td ><b>FS</b> segment override prefix</td></tr>
+<tr><td >65</td><td ><b>GS</b> segment override prefix</td></tr>
+</tbody>
+</table>
+
+<br/>
+ 再来看一个例子：<br/>
+<pre>
+   8B 03    MOV EAX, [DWORD DS:EBX]
+65 8B 03    MOV EAX, [DWORD GS:EBX]
+</pre>
+
+    65就是一个Segment override prefix, 用来改变默认的段, 从上表中我们可以看出：65代表的是段GS。注意！这里也是用默认的概念。
+    <br/>
+
+    读者在这里也许会存在一个疑问：默认？我怎么知道当前默认的是哪个段呢？以及为什么要用默认的概念呢？ 
+    <br/>
+
+    答案是这样的：在使用内存中的数据时, 处理器必须首先知道它的段地址(Segment)和偏移量(Offset), 但是如果在每个地方都要显式地直接指出段地址, 那么在OpCode格式中就必须增加一个新的域, 这将会比现有的OpCode体系多占用大量的字节, 而且处理器也必须多花费额外的时钟周期来进行解码——无论在空间还是时间上, 都不值得！
+    <br/>
+
+    因此, 为了解决这个问题, 一个方案诞生了：
+    <br/>
+
+    指令由不同的定义被划分为不同的组, 每个组各自有一个默认的段：
+    <br/>
+
+<pre>
+CS: for EIP pointer
+ES: 目的操作数是内存单元的串指令（movs, cmps等）, 在这里源操作数是储存在段DS里面。
+SS: 堆栈操作（push, pop等）
+DS: 剩下的数据操作指令。
+</pre>
+
+有了这个规则, 处理器识别当前应该用哪个段将会变得非常简单而直接：
+
+<ol>
+<li>
+如果有“Segment override prefix”, 那么就使用这个prefix所指定的段。
+</li>
+<li>
+否则就使用默认的段。
+</li>
+</ol>
+<br/>
+看看：
+
+<pre>
+   AC     LODS [BYTE DS:ESI]
+3E AC     LODS [BYTE DS:ESI]
+</pre>
+
+从上面的表中可以查出, 3E是表示段DS, 但是实际上在这里即使不直接指明3E, 处理器也是会使用DS的, 因为DS是指令LODS的默认段。
+<br/>
+
+最后值得一提的是64, 它表示的是段FS, 也许读者会对FS不太熟悉, 平时好像很少会用到。没关系, 我们来简单介绍一下：FS一般是由SEH（结构化异常处理）所使用, 但是由于SEH不属于OpCode格式的范畴, 所以我们在这里不必深究, 知道有这个概念就行了。
+<br/>
+
+<h2>
+LOCK Prefix (F0)
+</h2>
+
+对于这个Prefix, Intel的文档已经解释得很清楚了, 不过它的具体意义对OpCode的格式学习并无任何帮助,
+有兴趣的读者可以在 "Intel Architecture Software Developer's Manual Volume 2: Instruction Set Reference" 的3-387页看到关于它的详细解释。在OpCode的格式学习中, 我们只需要知道F0表示的是助记符LOCK就足够了。
+
+<h2>
+The End Of Prefixes
+</h2>
+
+结束了吗？
+<br/>
+
+是的！关于Prefixes的格式学习到此就告一段落了。在接下来的章节中, 我们将会学习最激动人心的一部分：如何对OpCode进行手工解码。
+
+<a name="modrm">
+<h1>
+5. ModRM - Part I
+</h1>
+</a>
+
+道, 可道, 非常道。<br/>
+<p>-- 老子, 《道德经》</p>
+
+<h2>基本概念</h2><p>让我们从最经常用到的域开始学起——ModR/M。</p><p>在开始之前, 先来讲一些最基础的概念, 扫扫盲。</p><p>一个字节如果被转换成二进制, 则是由8位（bit）来表示（不足8位的话则高位用0来补足）, 例如：</p><pre>16进制      2进制
+B7          1011 0111
+3A          0011 1010
+</pre><p>示例中的B7的二进制是1011 0111, 这是典型的4:4表示格式——1011表示的是B, 0111表示的是7, 这样, 1011 0111表示的就是B7了。</p><p>很容易理解吧？呵呵, 那么我们可不可以用另外一种方式来表示一个字节呢？</p><p>答案是肯定的：</p><pre>16进制      2进制的4:4格式      2进制的2:3:3格式
+B7          1011 0111           10 110 111
+3A          0011 1010           00 111 010
+</pre><p>请看, 我们在这里引进了一种新的表示格式：<strong>2:3:3</strong></p><p>它的特点是把一个字节的8位二进制分成3个部分：最高的2位表示的是一个东西, 接下来的3位表示的是另外一个东西, 以及最后的3位表示的是另另外一个东西。</p><p>好了, 明白了这一点后, 我们来开始吧！</p><p>首先回忆一下OpCode的组成格式：</p><ol><li>Prefixes</li><li>code</li><li><strong>ModR/M</strong></li><li>SIB</li><li>Displacement</li><li>Immediate</li></ol><p>请注意第三项：<strong>ModR/M</strong>, 它占一个字节, 其格式为：</p>
+
+<table border="1">
+<tbody>
+<tr>
+<td>
+7 6
+</td>
+<td>
+5 3
+</td>
+<td>
+2 0
+</td>
+</tr>
+
+<tr>
+
+<td>
+Mod
+</td>
+<td>
+Reg/Opcode
+</td>
+<td>
+R/M
+</td>
+
+</tr>
+</tbody>
+</table>
+<br/>
+<p>可见, <strong>ModR/M</strong>是由Mod, Reg/Opcode 和 R/M 三个部分组成的。每个部分所占的bit大小为：</p>
+
+
+<table border="1">
+<tbody>
+<tr>
+
+<td>
+Mod
+</td>
+
+<td>
+占最高位的6～7共2个bit
+</td>
+
+</tr>
+
+<tr>
+<td>
+Reg/Opcode
+</td>
+
+<td>
+占中间位的3～5共3个bit
+</td>
+</tr>
+
+<tr>
+<td>
+R/M
+</td>
+
+<td>
+占最低位的0～2共3个bit
+</td>
+</tr>
+
+</tbody>
+</table>
+<br/>
+<p>呵呵, 正好是<strong>2:3:3</strong>的格式！</p><p><strong>ModR/M</strong>的具体描述如下面两个表, 第一个是16位的, 第二个是32位的：<br />
+（截图自《IA-32 Intel Architecture Software Developer's Manual Volume 2: Instruction Set Reference》, 页码2-5, 2-6, 希望Intel不要因为版权问题找我的麻烦）</p>
+
+ - 16位 -
+<img width="550" src="../img/16bitmodrm.png" />
+
+ - 32位 -
+<img width="550" src="../img/32bitmodrm.png" />
+
+<p><br /></p><p>哇, 这两个图好复杂呀！你是不是已经有了这个感慨了呢？</p><p>呵呵不要紧, 让我们来举个例子看看<strong>ModR/M</strong>到底是怎么来看的：</p><pre>mov edi, ecx 8B F9
+sub edi, ecx 2B F9
+</pre><p>注意这两个OpCode的第二个字节——都是<strong>F9</strong>, 再来看看OpCode的格式：</p><pre>Prefixes  Code  ModR/M  SIB  Displacement  Immediate
+</pre><p>我们在前面说过, 在OpCode的格式中, 只有Code是必须有的, 别的都是可选的。所以, 在8B F9和2B F9这两组OpCode中, 8B和2B就是Code, （这里没有Prefixes, 因为Prefixes只有在前面的章节中所介绍过的那几个：66、67、F2、F3、2E、36、3E、26、64、65、F0）。</p><p>紧接着在Code后面的就是ModR/M了, 所以在这两组OpCode中的<strong>F9</strong>就是ModR/M。（在这里也没有SIB、Displacement和Immediate）</p><p><strong>F9</strong>的4:4格式的二进制是<strong>1111 1001</strong>, 我们把它分解成2:3:3的二进制看看：</p><pre>16进制      2进制的2:3:3格式
+F9          11 111 001
+</pre><p>也就是：</p><pre>       Mod: 11
+Reg/Opcode: 111
+       R/M: 001
+</pre><p>晕头转向了？呵呵, 让我们来对其分而治之吧！</p><p>假设是在32位模式下。从上面的第二个图中可以看到, Mod总共分为00、01、10、11四种情况, 每种情况又分别有8种情况。现在Mod是11, 所以我们应该看Mod为11的那一栏。</p><p>OK, 现在来讨论第二个：Reg/Opcode</p><p>Reg/Opcode中间的那个“/”表示“或”, 意思就是, 这个地方可以表示为Reg或者Opcode——至于到底什么时候表示Reg, 什么时候表示Opcode, 这就要由Code来决定了。目前我们不必去深究它, 后面会讲明白的, 我们只要知道, 如果它是表示Opcode, 则这个指令必定是2个字节的。</p><p>Reg由3个bit的二进制组成, 因此, 它可以表示：</p><pre>2 ^ 3 = 8
+</pre><p>一共8种可能的值。我们知道, 常用的通用寄存器恰好也有8个, 因此, 根据组合数学的常识, 可以得到：</p><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="18"> REG &amp;&amp; Register </td> </tr> <tr><td class="table_cells"><strong>REG</strong></td><td class="table_cells"><strong>Register</strong></td></tr><tr><td class="table_cells">000</td><td class="table_cells">EAX</td></tr><tr><td class="table_cells">001</td><td class="table_cells">ECX</td></tr><tr><td class="table_cells">010</td><td class="table_cells">EDX</td></tr><tr><td class="table_cells">011</td><td class="table_cells">EBX</td></tr><tr><td class="table_cells">100</td><td class="table_cells">ESP</td></tr><tr><td class="table_cells">101</td><td class="table_cells">EBP</td></tr><tr><td class="table_cells">110</td><td class="table_cells">ESI</td></tr><tr><td class="table_cells">111</td><td class="table_cells">EDI</td></tr></tbody></table><p>这是在32位的模式下得到的。</p><p>在16位的模式下, Reg则是表示另外一种“局部”的格式, 它的低4位表示寄存器的低地址, 高4位表示寄存器的高地址, 如下表：</p><table style="text-align: center" border="0" width="90%"> <tbody><tr> <td class="table_title" colspan="18"> REG &amp;&amp; Register </td> </tr> <tr><td class="table_cells"><strong>REG</strong></td><td class="table_cells"><strong>Register</strong></td></tr><tr><td class="table_cells">000</td><td class="table_cells">AL</td></tr><tr><td class="table_cells">001</td><td class="table_cells">CL</td></tr><tr><td class="table_cells">010</td><td class="table_cells">DL</td></tr><tr><td class="table_cells">011</td><td class="table_cells">BL</td></tr><tr><td class="table_cells">100</td><td class="table_cells">AH</td></tr><tr><td class="table_cells">101</td><td class="table_cells">CH</td></tr><tr><td class="table_cells">110</td><td class="table_cells">DH</td></tr><tr><td class="table_cells">111</td><td class="table_cells">BH</td></tr></tbody></table><p>好了, 把目光返回到上面的32位<strong>ModR/M</strong>图, 看看最上面, 在r32(/r)那一栏中, REG=111表示的就是寄存器EDI</p><p>到目前为止, 最后剩下还没讨论的就是R/M。这一栏要与Mod结合起来。我们来看Mod为11的那一栏——R/M为001对应的寄存器是ECX</p><p>好了！大功告成！整理如下：</p><pre>       Mod: 11  表示应该查看Mod为11的那一栏
+Reg/Opcode: 111 表示的是寄存器EDI
+       R/M: 001 表示的是ECX
+</pre><p>因此, 通过OpCode：</p><pre>8B F9
+2B F9
+</pre><p>不难得到：</p><pre>mov edi, ecx 8B F9
+sub edi, ecx 2B F9
+</pre><p>（注：8B是助记符“MOV”的Code, 2B是助记符“SUB”的Code）</p>
+
+
+</body>
+</html>

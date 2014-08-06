@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="uuid_id">
+  <metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:publisher>http://www.grabmybooks.com</dc:publisher>
+    <meta name="calibre:title_sort" content="無責任書評3"/>
+    <dc:language>en</dc:language>
+    <dc:creator opf:file-as="jjhou" opf:role="aut">jjhou</dc:creator>
+    <meta name="calibre:timestamp" content="2013-09-11T09:29:50+00:00"/>
+    <dc:title>無責任書評3</dc:title>
+    <meta name="cover" content="cover"/>
+    <dc:date>2013-09-11T09:29:50+00:00</dc:date>
+    <dc:contributor opf:role="bkp">calibre (0.8.38) [http://calibre-ebook.com]</dc:contributor>
+    <dc:identifier opf:scheme="URI">http|//www.grabmybooks.com/1378891780422_794126</dc:identifier>
+    <dc:identifier id="uuid_id" opf:scheme="uuid">4e5443a6-f337-4ca0-930c-3559f03e6e14</dc:identifier>
+  </metadata>
+  <manifest>
+    <item href="cover.jpeg" id="cover" media-type="image/jpeg"/>
+    <item href="OEBPS/article0.xhtml" id="article0" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article1.xhtml" id="article1" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article10.xhtml" id="article10" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article11.xhtml" id="article11" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article12.xhtml" id="article12" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article13.xhtml" id="article13" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article14.xhtml" id="article14" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article15.xhtml" id="article15" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article2.xhtml" id="article2" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article3.xhtml" id="article3" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article4.xhtml" id="article4" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article5.xhtml" id="article5" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article6.xhtml" id="article6" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article7.xhtml" id="article7" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article8.xhtml" id="article8" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/article9.xhtml" id="article9" media-type="application/xhtml+xml"/>
+    <item href="OEBPS/img/img63.jpeg" id="img63" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img64.jpeg" id="img64" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img65.jpeg" id="img65" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img66.jpeg" id="img66" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img67.jpeg" id="img67" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img68.jpeg" id="img68" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img69.jpeg" id="img69" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img70.jpeg" id="img70" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img71.jpeg" id="img71" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img72.jpeg" id="img72" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img73.jpeg" id="img73" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img74.jpeg" id="img74" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img75.jpeg" id="img75" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img76.jpeg" id="img76" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img77.jpeg" id="img77" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img78.jpeg" id="img78" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img79.jpeg" id="img79" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img80.jpeg" id="img80" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img81.jpeg" id="img81" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img82.jpeg" id="img82" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img83.jpeg" id="img83" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img84.jpeg" id="img84" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img85.jpeg" id="img85" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img86.jpeg" id="img86" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img87.jpeg" id="img87" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img88.jpeg" id="img88" media-type="image/jpeg"/>
+    <item href="OEBPS/img/img89.jpeg" id="img89" media-type="image/jpeg"/>
+    <item href="stylesheet.css" id="css" media-type="text/css"/>
+    <item href="titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" media-type="application/x-dtbncx+xml" id="ncx"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage"/>
+    <itemref idref="article0"/>
+    <itemref idref="article1"/>
+    <itemref idref="article2"/>
+    <itemref idref="article3"/>
+    <itemref idref="article4"/>
+    <itemref idref="article5"/>
+    <itemref idref="article6"/>
+    <itemref idref="article7"/>
+    <itemref idref="article8"/>
+    <itemref idref="article9"/>
+    <itemref idref="article10"/>
+    <itemref idref="article11"/>
+    <itemref idref="article12"/>
+    <itemref idref="article13"/>
+    <itemref idref="article14"/>
+    <itemref idref="article15"/>
+  </spine>
+  <guide>
+    <reference href="titlepage.xhtml" type="cover" title="Cover"/>
+  </guide>
+</package>
