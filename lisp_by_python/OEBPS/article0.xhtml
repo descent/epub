@@ -31,7 +31,7 @@
 <p class="calibre2">2. <b class="calibre3">執行</b> : 內部表達可以根據語言的<i class="calibre4">語意規則</i> (<i class="calibre4">semantic rules</i> )來處理，然後給出最後計算結果。執行的部份是在函式 eval 中實作(注意，此名稱遮蓋了Python的內建函式)。</p>
 
 <p class="calibre2">這邊有一張直譯過程的示意圖，以及一個把玩 parse, eval
-範例:
+範例:</p>
 
 <br class="calibre7"/>
 <img src="img/chart.png" alt="chart.png" class="calibre8"/>
@@ -123,7 +123,7 @@
 
 <p class="calibre2">從那時起，Tony和我就採取不同作法。他認為困難的部份在於直譯器如何處理表示式；他需要知道如何寫一個小的C routine將不是Lisp的字元回傳出來，然後再將其連結回Lisp程式。我不知道如何作連結，不過我認為替這個簡單的語言寫一個直譯器是很容易的事(所有要做的事就是設定變數，讀取，然後作字串串接)，所以我就用C寫了個直譯器。所以，諷刺的是，Tony寫了個Lisp程式(還有一個小的C routine)，因為他是一個C 程式設計師，而我寫了個C程式，因為我是一個Lisp程式設計師。到頭來，我們都完成了我們的工作(<a href="http://www.eecs.berkeley.edu/Pubs/TechRpts/1985/6081.html" target="_blank">Tony</a>, <a href="http://www.eecs.berkeley.edu/Pubs/TechRpts/1987/5995.html" target="_blank">Peter</a> )。</p>
 
-<p class="calibre2"> <b class="calibre3"> </b> <b class="calibre3">全部的東西</b> <b class="calibre3"> </b> <b class="calibre3"> </b>  為了回顧，這邊是Lispy的完整代碼(也可以從這邊下載: <a href="http://lis.py/" target="_blank">lis.py</a> )</p>
+<p class="calibre2"> <b class="calibre3"> </b> <b class="calibre3">全部的東西</b> <b class="calibre3"> </b> <b class="calibre3"> </b>  為了回顧，這邊是Lispy的完整代碼(也可以從這邊下載: <a href="http://norvig.com/lis.py" target="_blank">lis.py</a> )</p>
 
 <pre style="white-space: pre-wrap;">
 <b>  1</b> ################ Lispy: Scheme Interpreter in Python
@@ -241,6 +241,5 @@
 <b>113</b>         if val is not None: print to_string(val)
 </pre>
 
-<p class="calibre2"><b class="calibre3"> </b> <b class="calibre3"> </b> <b class="calibre3"> </b> <b class="calibre3"> </b> 張貼者: <a href="https://plus.google.com/111341057982442963248" target="_blank">Mars Cheng </a> 於 <a href="http://reborn2266.blogspot.tw/2011/11/how-to-write-lisp-interpreter-in-python.html" target="_blank">下午10:19 </a> <a href="http://www.blogger.com/post-edit.g?blogID=7674221624544256416&amp;postID=3904629660160706384&amp;from=pencil" target="_blank"><span><img src="img/img2.jpeg" alt="img2.jpeg" class="calibre9"/></span> </a> </p>
 </body>
 </html>
