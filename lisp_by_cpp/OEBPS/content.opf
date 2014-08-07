@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="bookId" 
+   version="2.0">
+   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:dcterms="http://purl.org/dc/terms/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:opf="http://www.idpf.org/2007/opf">
+      <dc:title>How to Write a Program: Lisp interpreter in 90 lines of C++</dc:title>
+      <dc:language xsi:type="dcterms:RFC3066">en</dc:language>
+      <dc:identifier id="bookId" opf:scheme="URI">
+         http://www.grabmybooks.com/1407401160207_061664
+      </dc:identifier>
+      <dc:creator>Anthony C. Hay</dc:creator>
+      <dc:publisher>http://www.grabmybooks.com</dc:publisher>
+      <meta content="jpeg" name="imgType"/>
+   </metadata>
+   <manifest>
+      <item id="ncx"      href="toc.ncx" media-type="application/x-dtbncx+xml"/>                 
+      <item id="article0"      href="article0.xhtml" media-type="application/xhtml+xml"/>                 
+<item id="book-css"
+  href="css/book.css"
+ media-type="text/css"/>
+<item id="img0"
+  href="img/img0.jpeg"
+ media-type="image/jpeg"/>
+<item id="img1"
+  href="img/img1.jpeg"
+ media-type="image/jpeg"/>
+<item id="img2"
+  href="img/img2.jpeg"
+ media-type="image/jpeg"/>
+<item id="img3"
+  href="img/img3.jpeg"
+ media-type="image/jpeg"/>
+<item id="img4"
+  href="img/img4.jpeg"
+ media-type="image/jpeg"/>
+   </manifest>
+   <spine toc="ncx">
+      <itemref idref="article0" />
+   </spine>
+</package>

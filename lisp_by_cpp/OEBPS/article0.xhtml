@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+<title>http://www.grabmybooks.com</title>
+<link rel="stylesheet" href="css/book.css" type="text/css"/>
+</head>
+<body>
+<h2>How to Write a Program: Lisp interpreter in 90 lines of C++</h2>
+<p><b><a href="http://howtowriteaprogram.blogspot.tw/" target="_blank">How to Write a Program</a> </b></p>
+
+<p>Anthony C. Hay</p>
+
+<p><b>27 November 2010</b></p>
+
+<p><b>Lisp interpreter in 90 lines of C++ </b></p>
+
+<p>I&#39;ve enjoyed reading Peter Norvig&#39;s recent articles on Lisp. He implements a Scheme interpreter in 90 lines of Python in the <a href="http://norvig.com/lispy.html" target="_blank">first</a> , and develops it further in the <a href="http://norvig.com/lispy2.html" target="_blank">second</a> .</p>
+
+<p>Just for fun I wondered if I could write one in C++. My goals would be</p>
+
+<p>1. A Lisp interpreter that would complete Peter&#39;s <a href="http://norvig.com/lispytest.py" target="_blank">Lis.py test cases</a> correctly...<br/>2. ...in no more than 90 lines of C++.</p>
+
+<p>Although I&#39;ve been thinking about this for a few weeks, as I write this I have not written a line of the code. I&#39;m pretty sure I will achieve 1, and 2 will be... a piece of cake!</p>
+
+<p>In one short line of Python Mr. Norvig implements Lisp functions car, cdr and append. Another line and we&#39;ve done the four basic mathematical operators on bignums. Gulp.</p>
+
+<p>To give myself any sort of chance I don&#39;t intend to support bignums, garbage collection or error handling and I&#39;m only going to implement the bare minimum to pass the test cases.</p>
+
+<p>. . .</p>
+
+<p>OK, I&#39;ve done it. Here it is:</p>
+
+<p>// Scheme Interpreter in 90 lines of C++ (not counting lines after the first 90).<br/>// Inspired by Peter Norvig&#39;s Lis.py.</p>
+
+<p>// Made by Anthony C. Hay in 2010. See http://howtowriteaprogram.blogspot.co.uk/<br/>// This is free and unencumbered public domain software, see http://unlicense.org/<br/>// This code is known to have faults. E.g. it leaks memory. Use at your own risk.</p>
+
+<p>#include &#60;iostream&#62;<br/>#include &#60;sstream&#62;<br/>#include &#60;string&#62;<br/>#include &#60;vector&#62;<br/>#include &#60;list&#62;<br/>#include &#60;map&#62;</p>
+
+<p>// return given mumber as a string<br/>std::string str(long n) { std::ostringstream os; os &#60;&#60; n; return os.str(); }</p>
+
+<p>// return true iff given character is &#39;0&#39;..&#39;9&#39;<br/>bool isdig(char c) { return isdigit(static_cast&#60;unsigned char&#62;(c)) != 0; }</p>
+
+<p>////////////////////// cell</p>
+
+<p>enum cell_type { Symbol, Number, List, Proc, Lambda };</p>
+
+<p>struct environment; // forward declaration; cell and environment reference each other</p>
+
+<p>// a variant that can hold any kind of lisp value<br/>struct cell {<br/>typedef cell (*proc_type)(const std::vector&#60;cell&#62; &#38;);<br/>typedef std::vector&#60;cell&#62;::const_iterator iter;<br/>typedef std::map&#60;std::string, cell&#62; map;<br/>cell_type type; std::string val; std::vector&#60;cell&#62; list; proc_type proc; environment * env;<br/>cell(cell_type type = Symbol) : type(type), env(0) {}<br/>cell(cell_type type, const std::string &#38; val) : type(type), val(val), env(0) {}<br/>cell(proc_type proc) : type(Proc), proc(proc), env(0) {}<br/>};</p>
+
+<p>typedef std::vector&#60;cell&#62; cells;<br/>typedef cells::const_iterator cellit;</p>
+
+<p>const cell false_sym(Symbol, &#34;#f&#34;);<br/>const cell true_sym(Symbol, &#34;#t&#34;); // anything that isn&#39;t false_sym is true<br/>const cell nil(Symbol, &#34;nil&#34;);</p>
+
+<p>////////////////////// environment</p>
+
+<p>// a dictionary that (a) associates symbols with cells, and<br/>// (b) can chain to an &#34;outer&#34; dictionary<br/>struct environment {<br/>environment(environment * outer = 0) : outer_(outer) {}</p>
+
+<p>environment(const cells &#38; parms, const cells &#38; args, environment * outer)<br/>: outer_(outer)<br/>{<br/>cellit a = args.begin();<br/>for (cellit p = parms.begin(); p != parms.end(); ++p)<br/>env_[p-&#62;val] = *a++;<br/>}</p>
+
+<p>// map a variable name onto a cell<br/>typedef std::map&#60;std::string, cell&#62; map;</p>
+
+<p>// return a reference to the innermost environment where &#39;var&#39; appears<br/>map &#38; find(const std::string &#38; var)<br/>{<br/>if (env_.find(var) != env_.end())<br/>return env_; // the symbol exists in this environment<br/>if (outer_)<br/>return outer_-&#62;find(var); // attempt to find the symbol in some &#34;outer&#34; env<br/>std::cout &#60;&#60; &#34;unbound symbol &#39;&#34; &#60;&#60; var &#60;&#60; &#34;&#39;\n&#34;;<br/>exit(1);<br/>}</p>
+
+<p>// return a reference to the cell associated with the given symbol &#39;var&#39;<br/>cell &#38; operator[] (const std::string &#38; var)<br/>{<br/>return env_[var];<br/>}</p>
+
+<p>private:<br/>map env_; // inner symbol-&#62;cell mapping<br/>environment * outer_; // next adjacent outer env, or 0 if there are no further environments<br/>};</p>
+
+<p>////////////////////// built-in primitive procedures</p>
+
+<p>cell proc_add(const cells &#38; c)<br/>{<br/>long n(atol(c[0].val.c_str()));<br/>for (cellit i = c.begin()+1; i != c.end(); ++i) n += atol(i-&#62;val.c_str());<br/>return cell(Number, str(n));<br/>}</p>
+
+<p>cell proc_sub(const cells &#38; c)<br/>{<br/>long n(atol(c[0].val.c_str()));<br/>for (cellit i = c.begin()+1; i != c.end(); ++i) n -= atol(i-&#62;val.c_str());<br/>return cell(Number, str(n));<br/>}</p>
+
+<p>cell proc_mul(const cells &#38; c)<br/>{<br/>long n(1);<br/>for (cellit i = c.begin(); i != c.end(); ++i) n *= atol(i-&#62;val.c_str());<br/>return cell(Number, str(n));<br/>}</p>
+
+<p>cell proc_div(const cells &#38; c)<br/>{<br/>long n(atol(c[0].val.c_str()));<br/>for (cellit i = c.begin()+1; i != c.end(); ++i) n /= atol(i-&#62;val.c_str());<br/>return cell(Number, str(n));<br/>}</p>
+
+<p>cell proc_greater(const cells &#38; c)<br/>{<br/>long n(atol(c[0].val.c_str()));<br/>for (cellit i = c.begin()+1; i != c.end(); ++i)<br/>if (n &#60;= atol(i-&#62;val.c_str()))<br/>return false_sym;<br/>return true_sym;<br/>}</p>
+
+<p>cell proc_less(const cells &#38; c)<br/>{<br/>long n(atol(c[0].val.c_str()));<br/>for (cellit i = c.begin()+1; i != c.end(); ++i)<br/>if (n &#62;= atol(i-&#62;val.c_str()))<br/>return false_sym;<br/>return true_sym;<br/>}</p>
+
+<p>cell proc_less_equal(const cells &#38; c)<br/>{<br/>long n(atol(c[0].val.c_str()));<br/>for (cellit i = c.begin()+1; i != c.end(); ++i)<br/>if (n &#62; atol(i-&#62;val.c_str()))<br/>return false_sym;<br/>return true_sym;<br/>}</p>
+
+<p>cell proc_length(const cells &#38; c) { return cell(Number, str(c[0].list.size())); }<br/>cell proc_nullp(const cells &#38; c) { return c[0].list.empty() ? true_sym : false_sym; }<br/>cell proc_car(const cells &#38; c) { return c[0].list[0]; }</p>
+
+<p>cell proc_cdr(const cells &#38; c)<br/>{<br/>if (c[0].list.size() &#60; 2)<br/>return nil;<br/>cell result(c[0]);<br/>result.list.erase(result.list.begin());<br/>return result;<br/>}</p>
+
+<p>cell proc_append(const cells &#38; c)<br/>{<br/>cell result(List);<br/>result.list = c[0].list;<br/>for (cellit i = c[1].list.begin(); i != c[1].list.end(); ++i) result.list.push_back(*i);<br/>return result;<br/>}</p>
+
+<p>cell proc_cons(const cells &#38; c)<br/>{<br/>cell result(List);<br/>result.list.push_back(c[0]);<br/>for (cellit i = c[1].list.begin(); i != c[1].list.end(); ++i) result.list.push_back(*i);<br/>return result;<br/>}</p>
+
+<p>cell proc_list(const cells &#38; c)<br/>{<br/>cell result(List); result.list = c;<br/>return result;<br/>}</p>
+
+<p>// define the bare minimum set of primintives necessary to pass the unit tests<br/>void add_globals(environment &#38; env)<br/>{<br/>env[&#34;nil&#34;] = nil; env[&#34;#f&#34;] = false_sym; env[&#34;#t&#34;] = true_sym;<br/>env[&#34;append&#34;] = cell(&#38;proc_append); env[&#34;car&#34;] = cell(&#38;proc_car);<br/>env[&#34;cdr&#34;] = cell(&#38;proc_cdr); env[&#34;cons&#34;] = cell(&#38;proc_cons);<br/>env[&#34;length&#34;] = cell(&#38;proc_length); env[&#34;list&#34;] = cell(&#38;proc_list);<br/>env[&#34;null?&#34;] = cell(&#38;proc_nullp); env[&#34;+&#34;] = cell(&#38;proc_add);<br/>env[&#34;-&#34;] = cell(&#38;proc_sub); env[&#34;*&#34;] = cell(&#38;proc_mul);<br/>env[&#34;/&#34;] = cell(&#38;proc_div); env[&#34;&#62;&#34;] = cell(&#38;proc_greater);<br/>env[&#34;&#60;&#34;] = cell(&#38;proc_less); env[&#34;&#60;=&#34;] = cell(&#38;proc_less_equal);<br/>}</p>
+
+<p>////////////////////// eval</p>
+
+<p>cell eval(cell x, environment * env)<br/>{<br/>if (x.type == Symbol)<br/>return env-&#62;find(x.val)[x.val];<br/>if (x.type == Number)<br/>return x;<br/>if (x.list.empty())<br/>return nil;<br/>if (x.list[0].type == Symbol) {<br/>if (x.list[0].val == &#34;quote&#34;) // (quote exp)<br/>return x.list[1];<br/>if (x.list[0].val == &#34;if&#34;) // (if test conseq [alt])<br/>return eval(eval(x.list[1], env).val == &#34;#f&#34; ? (x.list.size() &#60; 4 ? nil : x.list[3]) : x.list[2], env);<br/>if (x.list[0].val == &#34;set!&#34;) // (set! var exp)<br/>return env-&#62;find(x.list[1].val)[x.list[1].val] = eval(x.list[2], env);<br/>if (x.list[0].val == &#34;define&#34;) // (define var exp)<br/>return (*env)[x.list[1].val] = eval(x.list[2], env);<br/>if (x.list[0].val == &#34;lambda&#34;) { // (lambda (var*) exp)<br/>x.type = Lambda;<br/>// keep a reference to the environment that exists now (when the<br/>// lambda is being defined) because that&#39;s the outer environment<br/>// we&#39;ll need to use when the lambda is executed<br/>x.env = env;<br/>return x;<br/>}<br/>if (x.list[0].val == &#34;begin&#34;) { // (begin exp*)<br/>for (size_t i = 1; i &#60; x.list.size() - 1; ++i)<br/>eval(x.list[i], env);<br/>return eval(x.list[x.list.size() - 1], env);<br/>}<br/>}<br/>// (proc exp*)<br/>cell proc(eval(x.list[0], env));<br/>cells exps;<br/>for (cell::iter exp = x.list.begin() + 1; exp != x.list.end(); ++exp)<br/>exps.push_back(eval(*exp, env));<br/>if (proc.type == Lambda) {<br/>// Create an environment for the execution of this lambda function<br/>// where the outer environment is the one that existed* at the time<br/>// the lambda was defined and the new inner associations are the<br/>// parameter names with the given arguments.<br/>// *Although the environmet existed at the time the lambda was defined<br/>// it wasn&#39;t necessarily complete - it may have subsequently had<br/>// more symbols defined in that environment.<br/>return eval(/*body*/proc.list[2], new environment(/*parms*/proc.list[1].list, /*args*/exps, proc.env));<br/>}<br/>else if (proc.type == Proc)<br/>return proc.proc(exps);</p>
+
+<p>std::cout &#60;&#60; &#34;not a function\n&#34;;<br/>exit(1);<br/>}</p>
+
+<p>////////////////////// parse, read and user interaction</p>
+
+<p>// convert given string to list of tokens<br/>std::list&#60;std::string&#62; tokenize(const std::string &#38; str)<br/>{<br/>std::list&#60;std::string&#62; tokens;<br/>const char * s = str.c_str();<br/>while (*s) {<br/>while (*s == &#39; &#39;)<br/>++s;<br/>if (*s == &#39;(&#39; || *s == &#39;)&#39;)<br/>tokens.push_back(*s++ == &#39;(&#39; ? &#34;(&#34; : &#34;)&#34;);<br/>else {<br/>const char * t = s;<br/>while (*t &#38;&#38; *t != &#39; &#39; &#38;&#38; *t != &#39;(&#39; &#38;&#38; *t != &#39;)&#39;)<br/>++t;<br/>tokens.push_back(std::string(s, t));<br/>s = t;<br/>}<br/>}<br/>return tokens;<br/>}</p>
+
+<p>// numbers become Numbers; every other token is a Symbol<br/>cell atom(const std::string &#38; token)<br/>{<br/>if (isdig(token[0]) || (token[0] == &#39;-&#39; &#38;&#38; isdig(token[1])))<br/>return cell(Number, token);<br/>return cell(Symbol, token);<br/>}</p>
+
+<p>// return the Lisp expression in the given tokens<br/>cell read_from(std::list&#60;std::string&#62; &#38; tokens)<br/>{<br/>const std::string token(tokens.front());<br/>tokens.pop_front();<br/>if (token == &#34;(&#34;) {<br/>cell c(List);<br/>while (tokens.front() != &#34;)&#34;)<br/>c.list.push_back(read_from(tokens));<br/>tokens.pop_front();<br/>return c;<br/>}<br/>else<br/>return atom(token);<br/>}</p>
+
+<p>// return the Lisp expression represented by the given string<br/>cell read(const std::string &#38; s)<br/>{<br/>std::list&#60;std::string&#62; tokens(tokenize(s));<br/>return read_from(tokens);<br/>}</p>
+
+<p>// convert given cell to a Lisp-readable string<br/>std::string to_string(const cell &#38; exp)<br/>{<br/>if (exp.type == List) {<br/>std::string s(&#34;(&#34;);<br/>for (cell::iter e = exp.list.begin(); e != exp.list.end(); ++e)<br/>s += to_string(*e) + &#39; &#39;;<br/>if (s[s.size() - 1] == &#39; &#39;)<br/>s.erase(s.size() - 1);<br/>return s + &#39;)&#39;;<br/>}<br/>else if (exp.type == Lambda)<br/>return &#34;&#60;Lambda&#62;&#34;;<br/>else if (exp.type == Proc)<br/>return &#34;&#60;Proc&#62;&#34;;<br/>return exp.val;<br/>}</p>
+
+<p>// the default read-eval-print-loop<br/>void repl(const std::string &#38; prompt, environment * env)<br/>{<br/>for (;;) {<br/>std::cout &#60;&#60; prompt;<br/>std::string line; std::getline(std::cin, line);<br/>std::cout &#60;&#60; to_string(eval(read(line), env)) &#60;&#60; &#39;\n&#39;;<br/>}<br/>}</p>
+
+<p>int main ()<br/>{<br/>environment global_env; add_globals(global_env);<br/>repl(&#34;90&#62; &#34;, &#38;global_env);<br/>}</p>
+
+<p>With Lis.py to guide me writing this was fairly straight-forward, with two exceptions. The first point I had to stop and think was in eval() when the symbol to be evaluated was &#34;lambda &#34;, i.e. at the point of definition of the lambda. In Peter&#39;s code he returns a Python lambda; not something available to me. Then I realised that I didn&#39;t have to actually do anything with the lambda body, just keep it around until it needs to be executed. That&#39;s why I can just change the cell type from Symbol to Lambda and return it as-is.</p>
+
+<p>The second pause for thought was much longer; this time it was at the point of execution of the lambda. Partly because I don&#39;t know Python (or Scheme) it wasn&#39;t clear to me what was going on with the environment. The problem was that lambdas that returned lambdas didn&#39;t work: variables that were defined at the time the lambda was returned were not defined at the time that returned lambda was executed.</p>
+
+<p>It took a little while to work through the problem, but eventually I did. It helped to look at some simple examples to see where things went wrong. Here is my program executing some sample code adapted from an article that appeared in February 1988 Byte magazine:</p>
+
+<p>90&#62; (define multiply-by (lambda (n) (lambda (y) (* y n))))<br/>&#60;Lambda&#62;<br/>90&#62; (define doubler (multiply-by 2))<br/>&#60;Lambda&#62;<br/>90&#62; (define tripler (multiply-by 3))<br/>&#60;Lambda&#62;<br/>90&#62; (doubler 4)<br/>8<br/>90&#62; (tripler 4)<br/>12<br/>90&#62;</p>
+
+<p>Clearly, doubler is not only associated with the procedure (lambda (y) (* y n)) but it must also have access to an environment where the value of n is 2 .</p>
+
+<p>I added some code to the start of the eval function to dump out the value of the paramaters x and env each time it is called. Here is the output while executing some of the above sample code.</p>
+
+<p>eval(&#34;(define multiply-by (lambda (n) (lambda (y) (* y n))))&#34;, [global])<br/>eval(&#34;(lambda (n) (lambda (y) (* y n)))&#34;, [global]) -&#62; &#60;Lambda&#62;(lambda (n) (lambda (y) (* y n)))+ref[global]<br/>-&#62; &#60;Lambda&#62;(lambda (n) (lambda (y) (* y n)))+ref[global]</p>
+
+<p>eval(&#34;(define doubler (multiply-by 2))&#34;, [global])<br/>eval(&#34;(multiply-by 2)&#34;, [global])<br/>eval(&#34;multiply-by&#34;, [global]) -&#62; &#60;Lambda&#62;(lambda (n) (lambda (y) (* y n)))+ref[global]<br/>eval(&#34;2&#34;, [global]) -&#62; 2<br/>; execute the &#60;Lambda&#62;(lambda (n) (lambda (y) (* y n)))+ref[global], which involves<br/>; creating a new environment containing [n-&#62;2] with an outer environment of [global]<br/>; and then calling eval with (lambda (y) (* y n)) <br/>eval(&#34;(lambda (y) (* y n))&#34;, [n-&#62;2 [global]]) -&#62; &#60;Lambda&#62;(lambda (y) (* y n))+ref[n-&#62;2 [global]]<br/>-&#62; &#60;Lambda&#62;(lambda (y) (* y n))+ref[n-&#62;2 [global]]<br/>-&#62; &#60;Lambda&#62;(lambda (y) (* y n))+ref[n-&#62;2 [global]]</p>
+
+<p>eval(&#34;(doubler 4)&#34;, [global])<br/>eval(&#34;doubler&#34;, [global]) -&#62; &#60;Lambda&#62;(lambda (y) (* y n))+ref[n-&#62;2 [global]]<br/>eval(&#34;4&#34;, [global]) -&#62; 4<br/>; execute the &#60;Lambda&#62;(lambda (y) (* y n))+ref[n-&#62;2 [global]], which involves<br/>; creating a new environment containing [y-&#62;4] with an outer environment of [n-&#62;2 [global]]<br/>; and then calling eval with (* y n) <br/>eval(&#34;(* y n)&#34;, [y-&#62;4 [n-&#62;2 [global]]])<br/>eval(&#34;*&#34;, [y-&#62;4 [n-&#62;2 [global]]]) -&#62; proc_mul<br/>eval(&#34;y&#34;, [y-&#62;4 [n-&#62;2 [global]]]) -&#62; 4<br/>eval(&#34;n&#34;, [y-&#62;4 [n-&#62;2 [global]]]) -&#62; 2<br/>proc_mul(4, 2) -&#62; 8<br/>-&#62; 8<br/>-&#62; 8</p>
+
+<p>&#34;[global] &#34; means the global environment where &#34;* &#34; maps to the built-in proc_mul , etc.</p>
+
+<p>&#34;[y-&#62;4 [n-&#62;2 [global]]] &#34; means an innermost environment where y maps to 4 , that environment&#39;s outer environment where n maps to 2 and that environemt&#39;s outer environment, which is the global environment.</p>
+
+<p>When looking up the value of a variable the code starts with the innermost environment and if the variable is not defined there it tries the next outer environment and so on.</p>
+
+<p>I don&#39;t know whether I&#39;ve explained that clearly enough to make sense. The important bit I realised is that a new environment must be created when a lambda is evaluated containing (a) all the paramater-&#62;argument associations, and (b) this new environment&#39;s outer environment must be the reference to the environment that existed at the time the lambda was defined. I believe this is called a <a href="http://en.wikipedia.org/wiki/Closure_(computer_science)" target="_blank">lexical closure</a> .</p>
+
+<p>Here&#39;s my program executing a another example I like, this time adapted from that Wikipedia article on lexical closures. It just underlines that the closure captures the variable, not just the value of the variable, and that the captured variable may be changed.</p>
+
+<p>90&#62; (define count-down-from (lambda (n) (lambda () (set! n (- n 1)))))<br/>&#60;Lambda&#62;<br/>90&#62; (define count-down-from-3 (count-down-from 3))<br/>&#60;Lambda&#62;<br/>90&#62; (define count-down-from-4 (count-down-from 4))<br/>&#60;Lambda&#62;<br/>90&#62; (count-down-from-3)<br/>2<br/>90&#62; (count-down-from-4)<br/>3<br/>90&#62; (count-down-from-3)<br/>1<br/>90&#62; (count-down-from-3)<br/>0<br/>90&#62; (count-down-from-4)<br/>2<br/>90&#62; (count-down-from-4)<br/>1<br/>90&#62; (count-down-from-4)<br/>0<br/>90&#62;</p>
+
+<p>Here is another example, again adapted from the Wikipedia article on closures. This demonstrates that not only can the closure capture existing variables, it also captures variables created inside the closure (the variable hidden in this case). Also in this example, two procedures are created that share the same closure. (I spread some of the code over several lines to make it more readable; it has to be entered all on one line for my primitive program.)</p>
+
+<p>90&#62; (define set-hidden 0)<br/>0<br/>90&#62; (define get-hidden 0)<br/>0<br/>90&#62; ((lambda ()<br/>(begin<br/>(define hidden 0)<br/>(set! set-hidden (lambda (n) (set! hidden n)))<br/>(set! get-hidden (lambda () hidden)))))<br/>&#60;Lambda&#62;<br/>90&#62; (get-hidden)<br/>0<br/>90&#62; (set-hidden 1234)<br/>1234<br/>90&#62; (get-hidden)<br/>1234<br/>90&#62; hidden<br/>unbound symbol &#39;hidden&#39;</p>
+
+<p>Testing</p>
+
+<p>Here are the 29 tests for Lis.py. The main() function in the code above is replaced by all this code to run the tests.</p>
+
+<p>////////////////////// unit tests</p>
+
+<p>unsigned g_test_count; // count of number of unit tests executed<br/>unsigned g_fault_count; // count of number of unit tests that fail</p>
+
+<p>template &#60;typename T1, typename T2&#62;<br/>void test_equal_(const T1 &#38; value, const T2 &#38; expected_value, const char * file, int line)<br/>{<br/>++g_test_count;<br/>if (value != expected_value) {<br/>std::cout<br/>&#60;&#60; file &#60;&#60; &#39;(&#39; &#60;&#60; line &#60;&#60; &#34;) : &#34;<br/>&#60;&#60; &#34; expected &#34; &#60;&#60; expected_value<br/>&#60;&#60; &#34;, got &#34; &#60;&#60; value<br/>&#60;&#60; &#39;\n&#39;;<br/>++g_fault_count;<br/>}<br/>}</p>
+
+<p>// write a message to std::cout if value != expected_value<br/>#define TEST_EQUAL(value, expected_value) test_equal_(value, expected_value, __FILE__, __LINE__)</p>
+
+<p>// evaluate the given Lisp expression and compare the result against the given expected_result<br/>#define TEST(expr, expected_result) TEST_EQUAL(to_string(eval(read(expr), &#38;global_env)), expected_result)</p>
+
+<p>int main ()<br/>{<br/>environment global_env; add_globals(global_env);</p>
+
+<p>// the 29 unit tests for lis.py<br/>TEST(&#34;(quote (testing 1 (2.0) -3.14e159))&#34;, &#34;(testing 1 (2.0) -3.14e159)&#34;);<br/>TEST(&#34;(+ 2 2)&#34;, &#34;4&#34;);<br/>TEST(&#34;(+ (* 2 100) (* 1 10))&#34;, &#34;210&#34;);<br/>TEST(&#34;(if (&#62; 6 5) (+ 1 1) (+ 2 2))&#34;, &#34;2&#34;);<br/>TEST(&#34;(if (&#60; 6 5) (+ 1 1) (+ 2 2))&#34;, &#34;4&#34;);<br/>TEST(&#34;(define x 3)&#34;, &#34;3&#34;);<br/>TEST(&#34;x&#34;, &#34;3&#34;);<br/>TEST(&#34;(+ x x)&#34;, &#34;6&#34;);<br/>TEST(&#34;(begin (define x 1) (set! x (+ x 1)) (+ x 1))&#34;, &#34;3&#34;);<br/>TEST(&#34;((lambda (x) (+ x x)) 5)&#34;, &#34;10&#34;);<br/>TEST(&#34;(define twice (lambda (x) (* 2 x)))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;(twice 5)&#34;, &#34;10&#34;);<br/>TEST(&#34;(define compose (lambda (f g) (lambda (x) (f (g x)))))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;((compose list twice) 5)&#34;, &#34;(10)&#34;);<br/>TEST(&#34;(define repeat (lambda (f) (compose f f)))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;((repeat twice) 5)&#34;, &#34;20&#34;);<br/>TEST(&#34;((repeat (repeat twice)) 5)&#34;, &#34;80&#34;);<br/>TEST(&#34;(define fact (lambda (n) (if (&#60;= n 1) 1 (* n (fact (- n 1))))))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;(fact 3)&#34;, &#34;6&#34;);<br/>//TEST(&#34;(fact 50)&#34;, &#34;30414093201713378043612608166064768844377641568960512000000000000&#34;);<br/>TEST(&#34;(fact 12)&#34;, &#34;479001600&#34;); // no bignums; this is as far as we go with 32 bits<br/>TEST(&#34;(define abs (lambda (n) ((if (&#62; n 0) + -) 0 n)))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;(list (abs -3) (abs 0) (abs 3))&#34;, &#34;(3 0 3)&#34;);<br/>TEST(&#34;(define combine (lambda (f)&#34;<br/>&#34;(lambda (x y)&#34;<br/>&#34;(if (null? x) (quote ())&#34;<br/>&#34;(f (list (car x) (car y))&#34;<br/>&#34;((combine f) (cdr x) (cdr y)))))))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;(define zip (combine cons))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;(zip (list 1 2 3 4) (list 5 6 7 8))&#34;, &#34;((1 5) (2 6) (3 7) (4 8))&#34;);<br/>TEST(&#34;(define riff-shuffle (lambda (deck) (begin&#34;<br/>&#34;(define take (lambda (n seq) (if (&#60;= n 0) (quote ()) (cons (car seq) (take (- n 1) (cdr seq))))))&#34;<br/>&#34;(define drop (lambda (n seq) (if (&#60;= n 0) seq (drop (- n 1) (cdr seq)))))&#34;<br/>&#34;(define mid (lambda (seq) (/ (length seq) 2)))&#34;<br/>&#34;((combine append) (take (mid deck) deck) (drop (mid deck) deck)))))&#34;, &#34;&#60;Lambda&#62;&#34;);<br/>TEST(&#34;(riff-shuffle (list 1 2 3 4 5 6 7 8))&#34;, &#34;(1 5 2 6 3 7 4 8)&#34;);<br/>TEST(&#34;((repeat riff-shuffle) (list 1 2 3 4 5 6 7 8))&#34;, &#34;(1 3 5 7 2 4 6 8)&#34;);<br/>TEST(&#34;(riff-shuffle (riff-shuffle (riff-shuffle (list 1 2 3 4 5 6 7 8))))&#34;, &#34;(1 2 3 4 5 6 7 8)&#34;);</p>
+
+<p>std::cout<br/>&#60;&#60; &#34;total tests &#34; &#60;&#60; g_test_count<br/>&#60;&#60; &#34;, total failures &#34; &#60;&#60; g_fault_count<br/>&#60;&#60; &#34;\n&#34;;<br/>return g_fault_count ? EXIT_FAILURE : EXIT_SUCCESS;<br/>}</p>
+
+<p>All 29 tests pass. Goal 1 achieved.</p>
+
+<p>Goal 2: I&#39;m not counting blank lines or comment-only lines, and I&#39;m not counting lines that contain only an opening or closing curly brace, because I&#39;m just not counting them.</p>
+
+<p>bash$ grep -v &#34;^ *$\|^ *//\|^ *[}{] *$&#34; lisp.cpp | wc<br/>198 953 8256</p>
+
+<p>Not quite 90. But south of 200 isn&#39;t bad, is it? (Just to be clear: I&#39;m not claiming I&#39;ve produced the equivalent of Lis.py in under 200 lines of C++.)</p>
+
+<p>Conclusion</p>
+
+<p>Compared with Lis.py my effort is incomplete, inefficient and leaks memory. Unlike some of the code I&#39;ve presented in other blog posts the end result here is not useful in itself; it was the process of developing it that was useful, if only for me.</p>
+
+<p>Nevertheless, I get a little thrill out of having made something that allows me to type (define cube (lambda (n) (* n n n))) and then (cube 3) . It&#39;s like magic.</p>
+
+<p><b>EDIT June 2013</b> : Since I published this post it has been viewed 37,561 times, which is a big deal for me. Occasionally someone will ask me if I&#39;ll allow the code to be used for their project and I always say yes. To make it simpler I&#39;ve removed the copyright and placed it in the public domain.</p>
+
+<p><a href="http://howtowriteaprogram.blogspot.com/2013/06/index-of-posts.html" target="_blank">index of blog posts</a> </p>
+
+<p>Posted by <a href="http://www.blogger.com/profile/08039922425199378850" target="_blank">Anthony C. Hay </a> <a href="http://www.blogger.com/post-edit.g?blogID=9058905145289005942&#38;postID=2169778095536456215&#38;from=pencil" target="_blank"><span class="imgSmall"><img src="img/img0.jpeg" alt="img0.jpeg"/></span> </a> Labels: <a href="http://howtowriteaprogram.blogspot.tw/search/label/fun" target="_blank">fun</a> , <a href="http://howtowriteaprogram.blogspot.tw/search/label/learning%20languages" target="_blank">learning languages</a> , <a href="http://howtowriteaprogram.blogspot.tw/search/label/Lisp" target="_blank">Lisp</a> </p>
+
+<p><b>23 comments:</b></p>
+
+<p><span class="imgSmall"><img src="img/img1.jpeg" alt="img1.jpeg"/></span> <a href="http://www.blogger.com/profile/10477071199531932196" target="_blank">aki</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291036924883#c8058557788607429873" target="_blank">November 29, 2010 at 1:22 PM</a> </p>
+
+<p>I totally agree with your last sentence. I posted this on HN but you might be interested too: http://michaux.ca/articles/scheme-from-scratch-introduction</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=8058557788607429873" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img1.jpeg" alt="img1.jpeg"/></span> <a href="http://www.blogger.com/profile/11752242624438232184" target="_blank">Ron</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291047946224#c1391624438046889510" target="_blank">November 29, 2010 at 4:25 PM</a> </p>
+
+<p>You might be interested in this:</p>
+
+<p>https://github.com/rongarret/Ciel</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=1391624438046889510" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291056314308#c8529726678282750443" target="_blank">November 29, 2010 at 6:45 PM</a> </p>
+
+<p>Compiled using bcc32 (old Borland). It doesn&#39;t have an &#39;isdigit&#39; function so I wrote a little cheeso version.</p>
+
+<p>Your program compiled fine and I was able to duplicate the first example given.</p>
+
+<p>Well done.<br/>~johnohara (via HN)</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=8529726678282750443" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291068737394#c4256301461269646523" target="_blank">November 29, 2010 at 10:12 PM</a> </p>
+
+<p>attempted to compile via dmc, I failed miserably.<br/>I suck at cpp<br/>what is the compiler you used?</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=4256301461269646523" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> <a href="http://williambowers.net/" target="_blank">William Bowers</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291095752235#c478471086849439676" target="_blank">November 30, 2010 at 5:42 AM</a> </p>
+
+<p>Lisp is a great language for practicing building (or learning how to build) interpreters (I did the same thing myself: https://github.com/willurd/js-lisp). I&#39;m actually not too surprised at this being 90 lines; a lisp core is really easy to implement. The hard part / long part comes when you start implementing your new lisp&#39;s standard library :P As you can see, http://williambowers.net/projects/js-lisp/docs/port/, I still have a long way to go :-D</p>
+
+<p>Nice job btw. Very clean!</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=478471086849439676" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291096508093#c502386802380476887" target="_blank">November 30, 2010 at 5:55 AM</a> </p>
+
+<p>@Anonymous</p>
+
+<p>Compiler? Probably gcc. Stuff like this is best done on a UNIX-like system.</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=502386802380476887" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> sixtypoundhound <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291107776322#c1702903934039895695" target="_blank">November 30, 2010 at 9:02 AM</a> </p>
+
+<p>Nice work - I&#39;ve gotten it to compile on two packages:</p>
+
+<p>- Compiled with no changes in VS 2010 Express (dodges hail of rotten vegetables)...</p>
+
+<p>- Had to add two library references to get my open source compiler to run (MinGW, running from within Code::Blocks).</p>
+
+<p>#include <br/>#include</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=1702903934039895695" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> sixtypoundhound <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291107831221#c6605274022689230337" target="_blank">November 30, 2010 at 9:03 AM</a> </p>
+
+<p>library refs for prior message:</p>
+
+<p>stdio.h<br/>stdlib.h</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=6605274022689230337" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img3.jpeg" alt="img3.jpeg"/></span> <a href="http://www.blogger.com/profile/11707703831241539347" target="_blank">Tommy McGuire</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291157926743#c757530755960087959" target="_blank">November 30, 2010 at 10:58 PM</a> </p>
+
+<p>&#34;...it was the process of developing it that was useful, if only for me.&#34;</p>
+
+<p>That is almost entirely the point.</p>
+
+<p>Excellent!</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=757530755960087959" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img4.jpeg" alt="img4.jpeg"/></span> <a href="http://www.blogger.com/profile/08039922425199378850" target="_blank">Anthony C. Hay</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1291221188497#c5661156916145937006" target="_blank">December 1, 2010 at 4:33 PM</a> </p>
+
+<p>aki - Thank you for posting on HN. I&#39;m going to take a look at the link you posted.</p>
+
+<p>Ron - Ciel sounds interesting. I&#39;ll take a look. Thank you.</p>
+
+<p>~johnohara - Thank you.</p>
+
+<p>Anonymous - I usually develop code for this blog on Xcode (GCC 4.2.1) and test it on MSVC 2003. I also paste it into http://www.comeaucomputing.com/tryitout/ and it tells me if I&#39;m not complying with some standard or other.</p>
+
+<p>William - Thank you. I&#39;ll take a look at js-lisp</p>
+
+<p>Anonymous - Yes, I like to work on my iMac. (However, MSVC 2010 is a much better C++ IDE than Xcode - in my opinion - especially when exploring running code in the debugger. Sad to say.)</p>
+
+<p>sixtypoundhound - Thank you.</p>
+
+<p>Tommy - Thank you!</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=5661156916145937006" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1311950269872#c475840763790327375" target="_blank">July 29, 2011 at 3:37 PM</a> </p>
+
+<p>I added in the ability to read a file with multi-line statements. Add the following and modify the main function as shown:</p>
+
+<p>#include </p>
+
+<p>string Trim(string str)<br/>{<br/>size_t endpos = str.find_last_not_of(&#34; \t&#34;);</p>
+
+<p>if (string::npos != endpos)<br/>{<br/>str = str.substr(0, endpos + 1);<br/>}</p>
+
+<p>size_t startpos = str.find_first_not_of(&#34; \t&#34;);</p>
+
+<p>if (string::npos != startpos)<br/>{<br/>str = str.substr(startpos);<br/>}</p>
+
+<p>return str;<br/>}</p>
+
+<p>vector loadFile()<br/>{<br/>vector text;</p>
+
+<p>ifstream ifs(&#34;Scheme code.txt&#34;); //your file here</p>
+
+<p>string buffer, strLine;</p>
+
+<p>int brackets = 0;<br/>strLine = &#34;&#34;;</p>
+
+<p>while (getline(ifs, buffer))<br/>{<br/>buffer = Trim(buffer);<br/>size_t s = buffer.find_first_of(&#34;()&#34;);</p>
+
+<p>while (s != string::npos)<br/>{<br/>strLine += buffer.substr(0, s + 1);<br/>brackets += (buffer[s] == &#39;(&#39; ? 1 : -1);</p>
+
+<p>if (brackets == 0)<br/>{<br/>text.push_back(strLine);<br/>strLine = &#34;&#34;;<br/>}</p>
+
+<p>buffer = buffer.substr(s + 1);<br/>s = buffer.find_first_of(&#34;()&#34;);<br/>}<br/>}</p>
+
+<p>return text;<br/>}</p>
+
+<p>int main()<br/>{<br/>environment global_env; <br/>add_globals(global_env);</p>
+
+<p>vector lines = loadFile();</p>
+
+<p>for(int i = 0; i &#60; lines.size(); i++)<br/>{</p>
+
+<p>eval(read(lines[i]), &#38;global_env);<br/>}</p>
+
+<p>repl(&#34;&#62; &#34;, &#38;global_env);</p>
+
+<p>return 0;<br/>}</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=475840763790327375" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1311950398723#c1556977400583136494" target="_blank">July 29, 2011 at 3:39 PM</a> </p>
+
+<p>should have include fstream - won&#39;t add it in the text because of the angled brackets I assume</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=1556977400583136494" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img4.jpeg" alt="img4.jpeg"/></span> <a href="http://www.blogger.com/profile/08039922425199378850" target="_blank">Anthony C. Hay</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1311954353944#c2396887781451661228" target="_blank">July 29, 2011 at 4:45 PM</a> </p>
+
+<p>That&#39;s cool, thanks!</p>
+
+<p>I&#39;m sorry the indentation and angle brackets get lost. We lose the vector template brackets too.</p>
+
+<p>I tried it out and it isn&#39;t quite right. Try something like this in your source file, then execute (test). The 3 went missing and you get the unexpected answer 4.</p>
+
+<p>(define test (lambda ()<br/>(if (&#60; 1 2)<br/>3<br/>4)))</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=2396887781451661228" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1312132225131#c6178506065475368723" target="_blank">July 31, 2011 at 6:10 PM</a> </p>
+
+<p>Yep - makes sense. I look to pair () on each line so I knew it would lose it if there were no brackets. I&#39;ll fix it and re-post.</p>
+
+<p>Great work btw!</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=6178506065475368723" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1312132566523#c3932111620631718514" target="_blank">July 31, 2011 at 6:16 PM</a> </p>
+
+<p>Add...</p>
+
+<p>if (s == string::npos) strLine += buffer;<br/>else</p>
+
+<p>immediately before the inside while loop and it should work</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=3932111620631718514" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1312132922357#c8376616799072423552" target="_blank">July 31, 2011 at 6:22 PM</a> </p>
+
+<p>One more thing... newline does not act as whitespace, so change </p>
+
+<p>strLine += ...</p>
+
+<p>to </p>
+
+<p>strLine += &#34; &#34; + ...</p>
+
+<p>in the 2 places it occurs to fix this. Let me know if you want me to post the whole function again if it is easier</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=8376616799072423552" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img1.jpeg" alt="img1.jpeg"/></span> <a href="http://www.blogger.com/profile/14436740269836358850" target="_blank">Matthieu</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1337510473012#c5175318078082109054" target="_blank">May 20, 2012 at 11:41 AM</a> </p>
+
+<p>That&#39;s a great tutorial, I&#39;ve played a bit with it and found out some things that I have improved.<br/>One of them is the following: consider the code (define f (lambda (x y) (+ x y))), I wanted to be able to do (define g (f 5)) instead of (define g (lambda (y) (f 5 y))) -- in other words, being able to return a partial lambda when not all the arguments are provided to a lambda. Here are the few modifications to your code in order to do that :</p>
+
+<p>First, in the eval function, replace all the code inside the if (proc.type == Lambda) { ... } statement by the following :</p>
+
+<p>if (proc.type == Lambda) {<br/>// check if we provided too many arguments to the lambda object<br/>if(proc.list[1].list.size() &#60; exps.size()) {<br/>std::cerr &#60;&#60; &#34;Error : too many arguments\n&#34;;<br/>// if the number of argument is equal to the number of parameters required, then eval<br/>} else if (proc.list[1].list.size() == exps.size()) {<br/>return eval(/*body*/proc.list[2], new environment(/*parms*/proc.list[1].list, /*args*/exps, proc.env));<br/>} else {<br/>// if there is not enough arguments, build a new lambda with the first arguments provided linked<br/>cell result;<br/>result.type = Lambda;<br/>result.env = new environment(proc.list[1].list,exps,proc.env);<br/>result.list = cells(3);<br/>result.list[2] = proc.list[2]; // copy the body<br/>// copy the remaining arguments<br/>for(int i = exps.size(); i &#60; proc.list[1].list.size(); i++) {<br/>result.list[1].list.push_back(proc.list[1].list[i]);<br/>}<br/>return result;<br/>}<br/>}</p>
+
+<p>Then you wil have to better check the number of arguments and parameters provided to a new environment, by changing its second constructor to:</p>
+
+<p>environment(const cells &#38; parms, const cells &#38; args, environment* outer)<br/>: outer_(outer)<br/>{<br/>cellit a = args.begin();<br/>int s = args.size();<br/>int i = 0;<br/>for (cellit p = parms.begin(); p != parms.end() &#38;&#38; i != s; ++p, i++) {<br/>env_[p-&#62;val] = *a++;<br/>}<br/>}</p>
+
+<p>That&#39;s all, you&#39;re now able to return partial lambda objects and use the full power of functional programing! Hope this is useful!</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=5175318078082109054" target="_blank">Delete</a> Replies </p>
+
+<p><span class="imgSmall"><img src="img/img4.jpeg" alt="img4.jpeg"/></span> <a href="http://www.blogger.com/profile/08039922425199378850" target="_blank">Anthony C. Hay</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1337533102360#c8445379325796886487" target="_blank">May 20, 2012 at 5:58 PM</a> </p>
+
+<p>Hi Matthieu, that&#39;s really cool, thank you. And thank you for the kind words - I&#39;m really glad you found this code of interest.</p>
+
+<p><a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=8445379325796886487" target="_blank">Delete</a> Reply </p>
+
+<p><span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1341517126904#c8472863054049008153" target="_blank">July 5, 2012 at 8:38 PM</a> </p>
+
+<p>Great job. It does seem cons doesn&#39;t work quite as expected: (cons 1 2) should give (1 . 2) not (3). I realize this is not in line with what you are testing, but thought you might want to know (if you didn&#39;t already).</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=8472863054049008153" target="_blank">Delete</a> <span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1341517181609#c5299151614927000128" target="_blank">July 5, 2012 at 8:39 PM</a> </p>
+
+<p>Sorry, typo in the above post: (cons 1 2) should give (1 . 2) not (1).</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=5299151614927000128" target="_blank">Delete</a> Replies </p>
+
+<p><span class="imgSmall"><img src="img/img4.jpeg" alt="img4.jpeg"/></span> <a href="http://www.blogger.com/profile/08039922425199378850" target="_blank">Anthony C. Hay</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1341663808808#c4192666967406554469" target="_blank">July 7, 2012 at 1:23 PM</a> </p>
+
+<p>Hi there. You are right: my cons is broken. They way I wrote it it expects the second argument to be a list. If the second argument is not a list it returns a list containing just the first argument.</p>
+
+<p>This code is clearly not an example of how to implement Scheme. It&#39;s only good for learning a little bit more about the language than you might have known before, which is what I got out of it. At some point I hope to write a &#34;proper&#34; implementation...</p>
+
+<p><a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=4192666967406554469" target="_blank">Delete</a> Reply </p>
+
+<p><span class="imgSmall"><img src="img/img2.jpeg" alt="img2.jpeg"/></span> Anonymous <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1381480213866#c4886157575587882576" target="_blank">October 11, 2013 at 9:30 AM</a> </p>
+
+<p>More tutorials about the language...pls....</p>
+
+<p>Reply <a href="http://www.blogger.com/delete-comment.g?blogID=9058905145289005942&#38;postID=4886157575587882576" target="_blank">Delete</a> Replies </p>
+
+<p><span class="imgSmall"><img src="img/img4.jpeg" alt="img4.jpeg"/></span> <a href="http://www.blogger.com/profile/08039922425199378850" target="_blank">Anthony C. Hay</a> <a href="http://howtowriteaprogram.blogspot.com/2010/11/lisp-interpreter-in-90-lines-of-c.html?showComment=1381523495380#c8218912705871912947" target="_blank">October 11, 2013 at 9:31 PM</a> </p>
+
+<p>Hi. Thank you for the implied compliment! Not exactly a tutorial, but I&#39;m just finishing a &#34;look, here it is C++ and now here it is in Lisp&#34; post that I&#39;ll publish later this weekend. I hope it might be of interest to you. Ant.</p>
+</body>
+</html>
