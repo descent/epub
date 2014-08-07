@@ -58,15 +58,50 @@ eval 範例:</p>
 
 <p class="calibre2"><b class="calibre3"> </b></p>
 
-<p class="calibre2"><b class="calibre3"> 執 行: eval </b></p>
+<h3>執 行: eval </h3>
 
-<p class="calibre2"> <b class="calibre3">這邊是eval的定義。上表中的9個規則在此處都有幾行實作, eval的定義就只需處理這9個規則: </b> </p>
+<p class="calibre2">這邊是 eval 的定義。上表中的 9
+個規則在此處都有幾行實作, eval 的定義就只需處理這 9 個規則:</p>
 
-<p class="calibre2"><b class="calibre3">def eval(x, env=global_env):<br class="calibre7"/>"Evaluate an expression in an environment."<br class="calibre7"/>if isa(x, Symbol): # variable reference<br class="calibre7"/>return env.find(x)[x]<br class="calibre7"/>elif not isa(x, list): # constant literal<br class="calibre7"/>return x                <br class="calibre7"/>    elif x[0] == 'quote': # (quote exp)<br class="calibre7"/>(_, exp) = x<br class="calibre7"/>        return exp<br class="calibre7"/>    elif x[0] == 'if': # (if test conseq alt)<br class="calibre7"/>(_, test, conseq, alt) = x<br class="calibre7"/>        return eval((conseq if eval(test, env) else alt), env)<br class="calibre7"/>elif x[0] == 'set!': # (set! var exp)<br class="calibre7"/>(_, var, exp) = x<br class="calibre7"/>        env.find(var)[var] = eval(exp, env)<br class="calibre7"/>elif x[0] == 'define': # (define var exp)<br class="calibre7"/>(_, var, exp) = x<br class="calibre7"/>        env[var] = eval(exp, env)<br class="calibre7"/>elif x[0] == 'lambda': # (lambda (var*) exp)<br class="calibre7"/>(_, vars, exp) = x<br class="calibre7"/>        return lambda *args: eval(exp, Env(vars, args, env))<br class="calibre7"/>elif x[0] == 'begin': # (begin exp*)<br class="calibre7"/>for exp in x[1:]:<br class="calibre7"/>            val = eval(exp, env)<br class="calibre7"/>return val<br class="calibre7"/>    else: # (proc exp*)<br class="calibre7"/>        exps = [eval(exp, env) for exp in x]<br class="calibre7"/>        proc = exps.pop(0)<br class="calibre7"/>return proc(*exps)</b></p>
+<pre style="white-space: pre-wrap;">
+<b> 1</b> def eval(x, env=global_env):
+<b> 2</b>     &quot;Evaluate an expression in an environment.&quot;
+<b> 3</b>     if isa(x, Symbol):             # variable reference
+<b> 4</b>         return env.find(x)[x]
+<b> 5</b>     elif not isa(x, list):         # constant literal
+<b> 6</b>         return x                
+<b> 7</b>     elif x[0] == 'quote':          # (quote exp)
+<b> 8</b>         (_, exp) = x
+<b> 9</b>         return exp
+<b>10</b>     elif x[0] == 'if':             # (if test conseq alt)
+<b>11</b>         (_, test, conseq, alt) = x
+<b>12</b>         return eval((conseq if eval(test, env) else alt), env)
+<b>13</b>     elif x[0] == 'set!':           # (set! var exp)
+<b>14</b>         (_, var, exp) = x
+<b>15</b>         env.find(var)[var] = eval(exp, env)
+<b>16</b>     elif x[0] == 'define':         # (define var exp)
+<b>17</b>         (_, var, exp) = x
+<b>18</b>         env[var] = eval(exp, env)
+<b>19</b>     elif x[0] == 'lambda':         # (lambda (var*) exp)
+<b>20</b>         (_, vars, exp) = x
+<b>21</b>         return lambda *args: eval(exp, Env(vars, args, env))
+<b>22</b>     elif x[0] == 'begin':          # (begin exp*)
+<b>23</b>         for exp in x[1:]:
+<b>24</b>             val = eval(exp, env)
+<b>25</b>         return val
+<b>26</b>     else:                          # (proc exp*)
+<b>27</b>         exps = [eval(exp, env) for exp in x]
+<b>28</b>         proc = exps.pop(0)
+<b>29</b>         return proc(*exps)
+<b>30</b> 
+<b>31</b> isa = isinstance
+<b>32</b> Symbol = str
+</pre>
 
-<p class="calibre2">isa = isinstance<br class="calibre7"/>Symbol = str </p>
-
-<p class="calibre2"> <b class="calibre3"><i class="calibre4">這就是所有要估算的了！</i> ...嗯, 除了environments以外。environments僅僅是符號與其值的對應而已。一個新的符號/值的關聯會藉由define或一個程序(lambda 表示式)被加入environment中。我們來看看一個例子, 當定義了一個Scheme 程序以及呼叫它時會發生什麼事情(提示符號 lis.py&gt; 表示我們正跟Lisp直譯器交談, 而不是Python): </b> <b class="calibre3"> </b>  </p>
+<p class="calibre2"> 
+<i class="calibre4">這就是所有要估算的了！</i> ... 嗯, 除了
+environments 以外。environments 僅僅是符號與其值的對應而已。一個新的符號/值的關聯會藉由 define 或一個程序(lambda 表示式)被加入environment中。我們來看看一個例子, 當定義了一個Scheme 程序以及呼叫它時會發生什麼事情(提示符號 lis.py&gt; 表示我們正跟Lisp直譯器交談, 而不是
+Python):</p>
 
 <p class="calibre2"><b class="calibre3">lis.py&gt; (define area (lambda (r) (* 3.141592653 (* r r))))<br class="calibre7"/>lis.py&gt; (area 3)<br class="calibre7"/>28.274333877</b> </p>
 
