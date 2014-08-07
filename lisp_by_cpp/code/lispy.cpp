@@ -12,6 +12,10 @@
 #include <list>
 #include <map>
 
+#include <cstdlib>
+
+using namespace std;
+
 // return given mumber as a string
 std::string str(long n) { std::ostringstream os; os << n; return os.str(); }
 
