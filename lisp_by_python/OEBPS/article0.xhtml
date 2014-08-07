@@ -8,7 +8,6 @@
 </head>
   <body class="calibre">
 <h2 class="calibre1">軟體學徒forever: 中文試譯: (How to Write a (Lisp) Interpreter (in Python))</h2>
-<p class="calibre2"><b class="calibre3">中文試譯: (How to Write a (Lisp) Interpreter (in Python)) </b></p>
 
 作者: <a href="http://norvig.com/" target="_blank">Peter Norvig</a> 
 <br class="calibre7"/>
@@ -16,7 +15,9 @@
 原文連結: <a href="http://norvig.com/lispy.html" target="_blank">http://norvig.com/lispy.html</a> 
 <br class="calibre7"/>
 
-這篇文章有兩個目的: 描述直譯器通常是如何實作出來, 以及展示如何用<a href="http://python.org/" target="_blank">Python</a> 去完成<a href="http://en.wikipedia.org/wiki/Scheme_(programming_language)" target="_blank">Scheme</a> 的子集, Scheme是Lisp的一種方言。我將我的直譯器叫作<i class="calibre4">Lispy</i> (<a href="http://lis.py/" target="_blank">lis.py</a> )。幾年前, 我曾展現過如何<a href="http://norvig.com/jscheme.html" target="_blank">用Java寫一個Scheme直譯器</a>, 類似的Scheme直譯器也曾經以<a href="http://books.google.com/books?id=QzGuHnDhvZIC&amp;lpg=PA756&amp;vq=scheme%20interpreter&amp;dq=Paradigms%20of%20Artificial%20Intelligence%20Programming&amp;pg=PA753#v=onepage&amp;q&amp;f=false" target="_blank">Common Lisp實作過</a> 。這次的目的則是為了儘可能地證明<a href="http://queue.acm.org/detail.cfm?id=1039523" target="_blank">Alan Kay曾宣示</a> 的<i class="calibre4">"軟體的馬克斯威爾方程式"</i> 。
+<br class="calibre7"/>
+
+這篇文章有兩個目的: 描述直譯器通常是如何實作出來, 以及展示如何用<a href="http://python.org/" target="_blank">Python</a> 去完成<a href="http://en.wikipedia.org/wiki/Scheme_(programming_language)" target="_blank">Scheme</a> 的子集, Scheme是Lisp的一種方言。我將我的直譯器叫作<i class="calibre4">Lispy</i> (<a href="http://lis.py/" target="_blank">lis.py</a> )。幾年前, 我曾展現過如何<a href="http://norvig.com/jscheme.html" target="_blank">用Java寫一個Scheme直譯器</a>, 類似的Scheme直譯器也曾經以<a href="http://books.google.com/books?id=QzGuHnDhvZIC&amp;lpg=PA756&amp;vq=scheme%20interpreter&amp;dq=Paradigms%20of%20Artificial%20Intelligence%20Programming&amp;pg=PA753#v=onepage&amp;q&amp;f=false" target="_blank">Common Lisp實作過</a> 。這次的目的則是為了儘可能地證明<a href="http://queue.acm.org/detail.cfm?id=1039523" target="_blank">Alan Kay曾宣示</a> 的<i class="calibre4">"軟體的馬克斯威爾方程式 (Maxwell's Equations of Software)"</i> 。
 
 <p class="calibre2"><b class="calibre3">Scheme子集, Lispy的語法及語意</b> 大部份的電腦語言有多樣化的句法規則(關鍵字、中序運算子、大括號、運算子順序、點的表示、分號...等等)。然而, 身為Lisp家族的一員, Scheme所有的語法都是根基於括號的list的前置表示法。這或許會不太令人習慣, 但這會有簡單與一致性的好處。(有人開玩笑地說, "Lisp"表示"一堆惹人生氣的智障括號(<i class="calibre4"><a href="http://www.google.com/search?q=Lots+of+Irritating+Silly+Parentheses" target="_blank">Lots of Irritating Silly Parentheses</a> </i> )", 我認為Lisp是表示"Lisp是純淨的句法(<i class="calibre4"><a href="http://www.google.com/search?hl=en&amp;as_q=&amp;as_epq=Lisp+Is+Syntactically+Pure" target="_blank">Lisp Is Syntactically Pure</a> </i> )")。考慮一下: </p>
 
@@ -28,16 +29,16 @@
 
 <p class="calibre2">在此表中, <i class="calibre4">var</i> 必須是一個符號--一個像是 x 或 square 的識別符號, 而 <i class="calibre4">number</i> 必須是一個整數或浮點數, 其他的斜體字則可以是任意的表示法。<i class="calibre4">exp</i> ...表示0或多個<i class="calibre4">exp</i> 的重複。<br class="calibre7"/>如果想深入學習Scheme, 可參考一些很棒的書籍(<a href="http://books.google.com/books?id=xyO-KLexVnMC&amp;lpg=PP1&amp;dq=scheme%20programming%20book&amp;pg=PP1#v=onepage&amp;q&amp;f=false" target="_blank">Friedman and Fellesein</a>, <a href="http://books.google.com/books?id=wftS4tj4XFMC&amp;lpg=PA300&amp;dq=scheme%20programming%20book&amp;pg=PP1#v=onepage&amp;q&amp;f=false" target="_blank">Dybvig</a>, <a href="http://books.google.com/books?id=81mFK8pqh5EC&amp;lpg=PP1&amp;dq=scheme%20programming%20book&amp;pg=PP1#v=onepage&amp;q&amp;f=false" target="_blank">Queinnec</a>,<a href="http://www.eecs.berkeley.edu/~bh/ss-toc2.html" target="_blank">Harvey and Wright</a>  或<a href="http://mitpress.mit.edu/sicp/" target="_blank">Sussman and Abelson</a> ), 影片 (by <a href="http://groups.csail.mit.edu/mac/classes/6.001/abelson-sussman-lectures/" target="_blank">Abelson and Sussman</a> ), 教學 (by <a href="http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html" target="_blank">Dorai</a>, <a href="http://docs.racket-lang.org/quick/index.html" target="_blank">PLT</a>, or<a href="http://cs.gettysburg.edu/~tneller/cs341/scheme-intro/index.html" target="_blank">Neller</a> ), 或<a href="http://www.schemers.org/Documents/Standards/R5RS/HTML" target="_blank">reference manual</a> 。</p>
 
-<p class="calibre2"><b class="calibre3"> 一個語言直譯器作了什麼？ </b></p>
+<h2> 一個語言直譯器作了什麼?</h2>
 
 <p class="calibre2">一個語言直譯器有兩件事要處理: </p>
 
-<p class="calibre2">1. <b class="calibre3">剖析</b> : parsing元件會被輸入一個以一連串字元所組成的程式, 然後藉由<i class="calibre4">句法規則</i> (<i class="calibre4">syntactic rules</i> )來檢視程式, 並將程式轉換為一種內部的表達方式。在簡單的直譯器裡, 內部表達方式會是一種樹, 看起來會很接近程式裡的巢狀結構與表示式的樣子。叫作編譯器的語言轉換器則會將此內部表達方式化為一連串的指令, 可以直接被電腦所執行。如同<a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html" target="_blank">Steve Tegge</a> 所說: "如果你不知道編譯器如何工作, 那麼你就不知道電腦如何工作。", Yegge描述了八種可以透過編譯器解決問題的情況(直譯器也是一樣, 或Yegge's typical heavy dosage of cynicism)。Lispy parser實作在函式 parse 中。</p>
+<p class="calibre2">1. <b class="calibre3">剖析</b>: parsing元件會被輸入一個以一連串字元所組成的程式, 然後藉由<i class="calibre4">句法規則</i> (<i class="calibre4">syntactic rules</i> )來檢視程式, 並將程式轉換為一種內部的表達方式。在簡單的直譯器裡, 內部表達方式會是一種樹, 看起來會很接近程式裡的巢狀結構與表示式的樣子。叫作編譯器的語言轉換器則會將此內部表達方式化為一連串的指令, 可以直接被電腦所執行。如同<a href="http://steve-yegge.blogspot.com/2007/06/rich-programmer-food.html" target="_blank">Steve Tegge</a> 所說: "如果你不知道編譯器如何工作, 那麼你就不知道電腦如何工作。", Yegge描述了八種可以透過編譯器解決問題的情況(直譯器也是一樣, 或Yegge's typical heavy dosage of cynicism)。Lispy parser實作在函式 parse 中。</p>
 
-<p class="calibre2">2. <b class="calibre3">執行</b> : 內部表達可以根據語言的<i class="calibre4">語意規則</i> (<i class="calibre4">semantic rules</i> )來處理, 然後給出最後計算結果。執行的部份是在函式 eval 中實作(注意, 此名稱遮蓋了Python的內建函式)。</p>
+<p class="calibre2">2. <b class="calibre3">執行</b>: 內部表達可以根據語言的<i class="calibre4">語意規則</i> (<i class="calibre4">semantic rules</i> )來處理, 然後給出最後計算結果。執行的部份是在函式 eval 中實作(注意, 此名稱遮蓋了Python的內建函式)。</p>
 
-<p class="calibre2">這邊有一張直譯過程的示意圖, 以及一個把玩 parse, eval
-範例:</p>
+<p class="calibre2">這邊有一張直譯過程的示意圖, 以及一個把玩 parse,
+eval 範例:</p>
 
 <br class="calibre7"/>
 <img src="img/chart.png" alt="chart.png" class="calibre8"/>
@@ -173,9 +174,13 @@
 <b>65</b> 4
 </pre>
 
-<p class="calibre2"><b class="calibre3">Lispy有多小/快/完整/好？</b> 我們依據下列幾點來審視Lispy:</p>
+<h2>Lispy有多小/快/完整/好?</h2> 
 
-<p class="calibre2"><b class="calibre3">小</b> : Lispy非常地小: 去除註解與空行, 只有90行。源代碼少於4K(我接受了Eric Cooper的建議, 將class定義去除, 改用lambda, 使得從原本第1版的96行減為90行)。我用Java實作的Scheme, <a href="http://norvig.com/jscheme.html" target="_blank">Jscheme</a>, 最小的版本也要1664行, 57K的大小。Jscheme原本叫作SILK(Scheme in Fifty Kilobytes), 但我是透過計算bytecode而不是代碼大小來維持這個底線。Lispy作的好多了, 我認為它有達到Alan Kay在1972的<a href="http://www.smalltalk.org/smalltalk/TheEarlyHistoryOfSmalltalk_IV.html" target="_blank">宣示</a> : 你可以用一張紙的代碼定義出這個世界上最具威力的語言。(不過我認為Alan會不同意, 因為他會將Pyhon compiler也計算進去, 那就超過一張紙啦)</p>
+我們依據下列幾點來審視 Lispy:
+<br class="calibre7"/>
+
+<p class="calibre2"><b class="calibre3">小</b>: Lispy 非常地小: 去除註解與空行, 只有 90 行。原始碼少於 4K (我接受了 Eric Cooper 的建議, 將 class 定義去除, 改用lambda, 使得從原本第1版的96行減為90行)。我用
+Java 實作的 Scheme, <a href="http://norvig.com/jscheme.html" target="_blank">Jscheme</a>, 最小的版本也要1664行, 57K的大小。Jscheme原本叫作SILK(Scheme in Fifty Kilobytes), 但我是透過計算bytecode而不是代碼大小來維持這個底線。Lispy作的好多了, 我認為它有達到Alan Kay在1972的<a href="http://www.smalltalk.org/smalltalk/TheEarlyHistoryOfSmalltalk_IV.html" target="_blank">宣示</a> : 你可以用一張紙的代碼定義出這個世界上最具威力的語言。(不過我認為Alan會不同意, 因為他會將Pyhon compiler也計算進去, 那就超過一張紙啦)</p>
 
 <p class="calibre2">bash$ grep "^\s*[^#\s]" lis.py | wc<br class="calibre7"/>      90 398 3423</p>
 
