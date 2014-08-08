@@ -120,11 +120,23 @@
 
 <p class="calibre2">為瞭解決這個問題, 我們應當簡化寫法。須知, XML僅僅是一種表達層次化數據的方式。我們並不是一定要使用尖括號才能得到樹的序列化結果。我們完全可以採用其他的格式。其中的一種(剛好就是Lisp改採用的)格式, 叫做s表達式。s表達式要做的和XML一樣, 但它的好處是寫法更簡單, 簡單的寫法更適合代碼輸入。後面我會詳細講s表達式。這之前我要清理一下XML的東西。考慮一下關於拷貝文件的例子:</p>
 
-<p class="calibre2">&lt;copy toDir="../new/dir"&gt;&lt;fileset dir="src_dir"&gt;&lt;/copy&gt;</p>
+<pre style="white-space: pre-wrap;">
+<b> 1</b> &lt;copy todir=&quot;../new/dir&quot;&gt;
+<b> 2</b>     &lt;fileset dir=&quot;src_dir&quot;/&gt;
+<b> 3</b> &lt;/copy&gt;
+<b> 4</b> 
+</pre>
 
 <p class="calibre2">想想看在內存裡面, 這段代碼的解析樹在內存會是什麼樣子? 會有一個"copy"節點, 其下有一個 "fileset"節點, 但是屬性在哪裡呢? 它怎樣表達呢? 如果你以前用過XML, 並且弄不清楚該用元素還是該用屬性, 你不用感到孤單, 別人一樣糊塗著呢。沒人真的搞得清楚。這個選擇與其說是基於技術的理由, 還不如說是閉著眼瞎摸。從概念上來講, 屬性也是一種元素, 任何屬性能做的, 元素一樣做得到。XML引入屬性的理由, 其實就是為了讓XML寫法不那麼冗長。比如我們看個例子:</p>
 
-<p class="calibre2">&lt;copy&gt;&lt;toDir&gt;../new/dir&lt;/toDir&gt;&lt;fileset&gt;&lt;dir&gt;src_dir&lt;/dir&gt;&lt;/fileset&gt;&lt;/copy&gt;</p>
+<pre style="white-space: pre-wrap;">
+<b> 6</b> &lt;copy&gt;
+<b> 7</b>     &lt;todir&gt;../new/dir&lt;/todir&gt;
+<b> 8</b>     &lt;fileset&gt;
+<b> 9</b>         &lt;dir&gt;src_dir&lt;/dir&gt;
+<b>10</b>     &lt;/fileset&gt;
+<b>11</b> &lt;/copy&gt;
+</pre>
 
 <p class="calibre2">兩下比較, 內容的信息量完全一樣, 用屬性可以減少打字數量。如果XML沒有屬性的話,光是打字就夠把人搞瘋掉。</p>
 
@@ -184,20 +196,46 @@
 
 <p class="calibre2">大體上, 符號相當於C++或Java語言中的標誌符, 它的名字可以用來訪問變量值(例如currentTime, arrayCount, n, 等等), 差別在於, Lisp中的符號更加基本。在C++或Java裡面, 變量名只能用字母和下劃線的組合, 而Lisp的符號則非常有包容性, 比如, 加號(+)就是一個合法的符號, 其他的像-, =, hello-world, *等等都可以是符號名。符號名的命名規則可以在網上查到。你可以給這些符號任意賦值, 我們這裡先用偽碼來說明這一點。假定函數set是給變量賦值(就像等號=在C++和Java裡的作用), 下面是我們的例子:</p>
 
-<p class="calibre2">set(test, 5) // 符號test的值為5set(=, 5) // 符號=的值為5set(test, "hello") // 符號test的值為字符串"hello"set(test, =) // 此時符號=的值為5, 所以test的也為5set(*, "hello") // 符號*的值為"hello"</p>
+<pre style="white-space: pre-wrap;">
+set(test, 5)            // symbol 'test' will equal an integer 5
+set(=, 5)               // symbol '=' will equal an integer 5
+set(test, "hello")      // symbol 'test' will equal a string "hello"
+set(test, =)            // at this point symbol '=' is equal to 5
+                        // therefore symbol 'test' will equal to 5
+set(*, "hello")         // symbol '*' will equal a string "hello"
+</pre>
 
 <p class="calibre2">好像有什麼不對的地方? 假定我們對*賦給整數或者字符串值, 那做乘法時怎麼辦? 不管怎麼說, *總是乘法呀? 答案簡單極了。Lisp中函數的角色十分特殊, 函數也是一種數據類型, 就像整數和字符串一樣, 因此可以把它賦值給符號。乘法函數Lisp的內置函數, 默認賦給*, 你可以把其他函數賦值給*, 那樣*就不代表乘法了。你也可以把這函數的值存到另外的變量裡。我們再用偽碼來說明一下:</p>
 
-<p class="calibre2">*(3,4) // 3乘4, 結果是12set(temp, *) // 把*的值, 也就是乘法函數, 賦值給tempset(*, 3) // 把3賦予**(3,4) // 錯誤的表達式, *不再是乘法, 而是數值3temp(3,4) // temp是乘法函數, 所以此表達式的值為3乘4等於12set(*, temp) // 再次把乘法函數賦予**(3,4) // 3乘4等於12</p>
+<pre style="white-space: pre-wrap;">
+*(3, 4)                 // multiplies 3 by 4, resulting in 12
+set(temp, *)            // symbol '*' is equal to the multiply function
+                        // so temp will equal to the multiply function
+set(*, 3)               // sets symbol '*' to equal to 3
+*(3, 4)                 // error, symbol '*' no longer equals to a function
+                        // it's equal to 3
+temp(3, 4)              // temp equals to a multiply function
+                        // so Lisp multiplies 3 by 4 resulting in 12
+set(*, temp)            // symbol '*' equals multiply function again
+*(3, 4)                 // multiplies 3 by 4, resulting in 12
+</pre>
 
 <p class="calibre2">再古怪一點, 把減號的值賦給加號:</p>
 
-<p class="calibre2">set(+, -) // 減號(-)是內置的減法函數+(5, 4) // 加號(+)現在是代表減法函數, 結果是5減4等於1</p>
-
+<pre style="white-space: pre-wrap;">
+set(+, -)               // the value of '-' is a built in minus function
+                        // so now symbol '+' equals to a minus function
++(5, 4)                 // since symbol '+' is equal to the minus function
+                        // this results in 1
+</pre>
 <p class="calibre2">這只是舉例子, 我還沒有詳細講函數。Lisp中的函數是一種數據類型, 和整數, 字符串,符號等等一樣。一個函數並不必然有一個名字, 這和C++或者Java語言的情形很不相同。在這裡函數自己代表自己。事實上它是一個指向代碼塊的指針, 附帶有一些其他信息(例如一組參數變量)。只有在把函數賦予其他符號時, 它才具有了名字, 就像把一個數值或字符串賦予變量一樣的道理。你可以用一個內置的專門用於創建函數的函數來創建函數,然後把它賦值給符號fn, 用偽碼來表示就是:</p>
 
-<p class="calibre2">fn [a]{return *(a, 2);}</p>
-
+<pre style="white-space: pre-wrap;">
+fn [a]
+{
+  return *(a, 2);
+}
+</pre>
 <p class="calibre2">這段代碼返回一個具有一個參數的函數, 函數的功能是計算參數乘2的結果。這個函數還沒有名字, 你可以把此函數賦值給別的符號:</p>
 
 <p class="calibre2">set(times-two, fn [a] {return *(a, 2)})</p>
