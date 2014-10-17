@@ -10,15 +10,29 @@
 <h2 class="calibre1">Implementing a Thread Library on Linux (evanjones.ca)</h2>
 <p class="calibre2"><b class="calibre3">[ 2003-December-10 11:12 ]</b></p>
 
-<p class="calibre2">When a program is executed on a computer, it is executed a line at a time, which each line containing a command to execute, or directions about which piece of code to execute next. Sometimes, this is not sufficient. There are many programs which must be able to do many things at once. For example, a GUI application must repaint the display and respond to user input while doing any processing, and web servers must be able to send information to hundreds of clients simultaneously. This is the problem that threads try to solve. Threads allow multiple parts of a program to run at the same time. All modern operating systems supply some sort of thread library, such as standard Posix threads. However, I was curious about how threads actually work. So armed with a little bit of knowledge about C and the Linux kernel, I went out to build my own thread library.</p>
+<p class="calibre2">
+When a program is executed on a computer, it is executed a line at a time, which each line containing a command to execute, or directions about which piece of code to execute next. Sometimes, this is not sufficient. There are many programs which must be able to do many things at once. For example, a GUI application must repaint the display and respond to user input while doing any processing, and web servers must be able to send information to hundreds of clients simultaneously. This is the problem that threads try to solve. Threads allow multiple parts of a program to run at the same time. All modern operating systems supply some sort of thread library, such as standard Posix threads. However, I was curious about how threads actually work. So armed with a little bit of knowledge about C and the Linux kernel, I went out to build my own thread library.</p>
+
+<p class="calibre2">
+在程序在運行的時候，通常都是只有一條主線的，有些時候，這是效率不高的。有很多程序必須要能同時做很多工作。比如說，GUI程序必須在處理程序邏輯的同時重畫界面，響應用戶輸入。Web服務器必須同時向成百上千的客戶發送信息。線程可以解決這些難題。所有的現代操作系統都提供線程庫，比如標準Posix線程。特別是，我對線程的工作原理十分好奇，所以在學習了一些C和Linux內核的知識後，我開始建立自己的線程庫。
+</p>
 
 <p class="calibre2"><b class="calibre3">Multitasking</b></p>
 
-<p class="calibre2">In traditional operating systems, there are two tools for multitasking provided by the operating system. The first is a process, and the second is a thread.</p>
+<p class="calibre2">
+In traditional operating systems, there are two tools for multitasking provided by the operating system. The first is a process, and the second is a thread.</p>
+
+<p class="calibre2">
+在傳統的操作系統中，提供了實現多任務的兩種工具，一種是進程，一種是線程。
+</p>
 
 <p class="calibre2"><b class="calibre3">Processes</b></p>
 
 <p class="calibre2">Each program is a seperate process. The operating system shares computing resources between all the processes that are running. It also keeps each process seperate, preventing one process from modifing another process's resources. However, it is quite common that many processes can belong to a single program. For example, the <a href="http://www.evanjones.ca/software/threading.html#fig1" target="_blank">Figure 1</a> shows some of the processes currently running on my Linux system, and there are four processes executing mozilla-bin . In this case, one process will need to communicate with another. This is facilitated through operating system routines for inter-process communication (IPC), such as signals (<a href="http://www.evanjones.ca/software/../man/2-signal.html" target="_blank">signal </a> ), shared memory (<a href="http://www.evanjones.ca/software/../man/2-shmop.html" target="_blank">shmop </a> ), and pipes (<a href="http://www.evanjones.ca/software/../man/2-pipe.html" target="_blank">pipe </a> ). </p>
+
+<p class="calibre2">
+每個程序都是獨立的進程。操作系統在所有進程間分配資源，並且為了防止一個進程修改其他進程的資源，進程間是彼此完全獨立的。但是，多個進程配合完成一項任務也是很常見的。比如說，圖1展示了我的Linux系統下同時進行的進程，其中有4個進程執行mozilla-bin。在這種情況下，進程間需要相互通信，因此操作系統提供了進程間通信(IPC)的工具，比如有信號，共享內存和管道。
+</p>
 
 <table border="1" class="calibre4"> <tr class="row"> <td class="calibre5">Process ID</td> <td class="calibre5">Command</td> </tr> <tr class="row"> <td class="calibre5">1</td> <td class="calibre5">init</td> </tr> <tr class="row"> <td class="calibre5">142</td> <td class="calibre5">/sbin/syslogd</td> </tr> <tr class="row"> <td class="calibre5">183</td> <td class="calibre5">/usr/bin/X11/X</td> </tr> <tr class="row"> <td class="calibre5">266</td> <td class="calibre5">esd</td> </tr> <tr class="row"> <td class="calibre5">270</td> <td class="calibre5">sawfish</td> </tr> <tr class="row"> <td class="calibre5">275</td> <td class="calibre5">panel</td> </tr> <tr class="row"> <td class="calibre5">277</td> <td class="calibre5">gmc</td> </tr> <tr class="row"> <td class="calibre5">279</td> <td class="calibre5">gnome-terminal</td> </tr> <tr class="row"> <td class="calibre5">291</td> <td class="calibre5">bash</td> </tr> <tr class="row"> <td class="calibre5">319</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">341</td> <td class="calibre5">/usr/bin/scite</td> </tr> <tr class="row"> <td class="calibre5">344</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">345</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">346</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">2568</td> <td class="calibre5">ps</td> </tr> </table>
 
@@ -40,25 +54,70 @@
 
 <p class="calibre2">To play around with these concepts, a basic C thread library, <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber</a> , was written. It is implemented using two techniques for fibers and Linux kernel threads. This library provides an extremely simple implementation for creating, destroying and scheduling fibers or threads. It should only be used as an example for learning about how threads are implemented, since there are many issues with signals and synchronization. For real applications there are more polished libraries such as <a href="http://www-128.ibm.com/developerworks/linux/library/l-posix1.html" target="_blank">pthreads</a> for kernel threads or <a href="http://www.gnu.org/software/pth/" target="_blank">GNU Portable Threads (Pth)</a> for user space threads.</p>
 
-<p class="calibre2"><b class="calibre3">libfiber interface</b></p>
+<h3>
+libfiber interface
+</h3>
 
-<p class="calibre2">void initFibers(); Initializes the internal structures inside the library. Should be called before using any library routines.<br class="calibre6"/>int spawnFiber( void (*func)(void) ); Creates a new thread which will execute the given function. Returns zero on success, or nonzero on error.<br class="calibre6"/>void fiberYield(); Yield execution control to another fiber. This simply calls <a href="http://www.evanjones.ca/software/../man/2-sched_yield.html" target="_blank">sched_yield </a> in the kernel thread implementation.<br class="calibre6"/>void waitForAllFibers(); Waits for all the fibers to exit, and frees resources associated with each one. If called from a child fiber in the user space implementations, it will return once all other fibers have exited. If called from a child fiber in the kernel implementation, it will return immediately. Returns zero on success, or nonzero on error.</p>
+<dl>
+<dt>void initFibers();</dt>
+
+<dd>Initializes the internal structures inside the library. Should
+be called before using any library routines.</dd>
+
+<dt>int spawnFiber( void (*func)(void) );</dt>
+
+<dd>Creates a new thread which will execute the given function.
+Returns zero on success, or nonzero on error.</dd>
+
+<dt>void fiberYield();</dt>
+
+<dd>Yield execution control to another fiber. This simply calls <a href="../man/2-sched_yield.html"><code>sched_yield</code></a> in
+the kernel thread implementation.</dd>
+
+<dt>void waitForAllFibers();</dt>
+
+<dd>Waits for all the fibers to exit, and frees resources
+associated with each one. If called from a child fiber in the user
+space implementations, it will return once all other fibers have
+exited. If called from a child fiber in the kernel implementation,
+it will return immediately. Returns zero on success, or nonzero on
+error.</dd>
+</dl>
 
 <p class="calibre2"><a href="http://www.evanjones.ca/software/threading.html#fig2" target="_blank">Figure 2</a> shows the main function from the sample application included with the library. It creates three fibers executing different functions, waits until they have all completed, then returns.</p>
 
-<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>// Initialize the fiber library<br class="calibre6"/>initFibers();</p>
+<pre style="white-space: pre-wrap;">
+<b> 1</b> int main()
+<b> 2</b> {
+<b> 3</b>   // Initialize the fiber library
+<b> 4</b>   initFibers();
+<b> 5</b>  
+<b> 6</b>   // Go fibers!
+<b> 7</b>   spawnFiber( &amp;fiber1 );
+<b> 8</b>   spawnFiber( &amp;fibonacchi );
+<b> 9</b>   spawnFiber( &amp;squares );
+<b>10</b> 
+<b>11</b>   // Since these are not preemptive, we must allow them to run
+<b>12</b>   waitForAllFibers();
+<b>13</b>  
+<b>14</b>   // The program quits
+<b>15</b>   return 0;
+<b>16</b> }
+</pre>
 
-<p class="calibre2">// Go fibers!<br class="calibre6"/>spawnFiber( &amp;fiber1 );<br class="calibre6"/>spawnFiber( &amp;fibonacchi );<br class="calibre6"/>spawnFiber( &amp;squares );</p>
-
-<p class="calibre2">// Since these are not preemptive, we must allow them to run<br class="calibre6"/>waitForAllFibers();</p>
-
-<p class="calibre2">// The program quits<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
 
 <p class="calibre2"><b class="calibre3">Figure 2: Example program using the fiber library</b></p>
 
 <p class="calibre2"><b class="calibre3">Implementing Kernel Threads on Linux</b></p>
 
 <p class="calibre2">Linux takes a unique approach to threads. On Linux, threads and processes are treated the same. They are both considered to be tasks. The difference is that threads share the same memory space, file mappings and (in general) signal handlers. There is an excellent post from Linus Torvalds to the <a href="http://www.tux.org/lkml/" target="_blank">Linux Kernel Mailing List</a> that explains the <a href="http://www.evanjones.ca/software/threading-linus-msg.html" target="_blank">advantages of this implementation</a> . This means that in the process list in <a href="http://www.evanjones.ca/software/threading.html#fig1" target="_blank">Figure 1</a> , the processes may actually be threads. For example, the four mozilla-bin processes are actually threads inside a single process.</p>
+
+<p class="calibre2">
+Linux使用一個特殊的方法實現線程。在Linux上，進程和線程在本質上是一樣的，它們都被認為是任務。唯一的區別是現成共享內存空間，文件描述符和信號處理程序(通常情況下)。在Linux Kernel Mailing List上，Linus Torvalds發過一個經典的帖子來闡述這種實現方式的優點。
+在Linux上，內核線程可以通過系統調用clone來創建。這個系統調用跟fork相似，都是創建一個任務。只不過clone可以指定共享哪些資源。在創建線程時，我們可以共享儘可能多的資源：內存空間，文件描述符和信號處理函數。當線程退出，發出SIGCHLD信號時，wait將會返回。
+第一個挑戰是為線程分配棧空間。在libfier中使用的是最簡單的方法，即使用malloc在堆中分配棧空間。這意味著必須要估計一個棧的最大值。如果棧在使用時超出了最大值，會引起內存衝突。在bb_threads中，是使用mprotect在棧底創建一個barrier，這樣在棧溢出的時候會引發段錯誤。最好的方法是Linux pthreads的實現，是使用mmap來分配內存，這樣的話，內存隨需隨分配，如果系統不能分配另外的內存，將會產生segmentation violation。
+傳遞給clone的棧指針必須指向棧頂，因為在多數處理器中，棧是向下生長的。為了避免內存洩露，線程退出時必須釋放棧空間。Libfiber庫使用wait等待線程退出，然後使用free釋放棧空間。圖3顯示了創建線程的例子。請通過libfiber-clone.c查看完整的實現。如果想瞭解Linux pthread如何實現創建線程，請看 "<a href="http://www.linux-mag.com/id/792/">The Fibers of Threads</a>"。
+</p>
 
 <p class="calibre2">On Linux, kernel threads are created with the <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> system call. This system call is similar to <a href="http://www.evanjones.ca/software/../man/2-fork.html" target="_blank">fork </a> in that it creates a task which is executing the current program. However it differs in that <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> specifies which resources should be shared. To create a thread, we call <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> to create a task which shares as much as possible: The memory space, file descriptors and signal handlers. The signal to be sent when the thread exists is SIGCHLD so <a href="http://www.evanjones.ca/software/../man/2-wait.html" target="_blank">wait </a> will return when a thread exits.</p>
 
@@ -120,7 +179,7 @@
 
 <p class="calibre2"><b class="calibre3">Figure 4: Simple makecontext Fiber Example</b></p>
 
-<h2>Implementing Fibers Using longjmp</h2>
+<h3>Implementing Fibers Using longjmp</h3>
 
 <p class="calibre2">ANSI C provides functions for saving and restoring
 the execution context for graceful error handling.
@@ -146,8 +205,8 @@ returns to a previously saved context. The one new challenge to implementing fib
 <b>14</b>   printf( &quot;Child fiber yielding to parent\n&quot; );
 <b>15</b>   if ( setjmp( child ) )
 <b>16</b>   {
-<b>17</b>           printf( &quot;Child thread exiting\n&quot; );
-<b>18</b>           longjmp( parent, 1 );
+<b>17</b>     printf( &quot;Child thread exiting\n&quot; );
+<b>18</b>     longjmp( parent, 1 );
 <b>19</b>   }
 <b>20</b> 
 <b>21</b>   longjmp( parent, 1 );
@@ -157,7 +216,7 @@ returns to a previously saved context. The one new challenge to implementing fib
 <b>25</b> {
 <b>26</b>   if ( setjmp( child ) )
 <b>27</b>   {
-<b>28</b>           threadFunction();
+<b>28</b>     threadFunction();
 <b>29</b>   }
 <b>30</b>  
 <b>31</b>   return;
@@ -174,8 +233,8 @@ returns to a previously saved context. The one new challenge to implementing fib
 <b>42</b>   stack.ss_sp = malloc( FIBER_STACK );
 <b>43</b>   if ( stack.ss_sp == 0 )
 <b>44</b>   {
-<b>45</b>           perror( &quot;malloc: Could not allocate stack.&quot; );
-<b>46</b>           exit( 1 );
+<b>45</b>     perror( &quot;malloc: Could not allocate stack.&quot; );
+<b>46</b>     exit( 1 );
 <b>47</b>   }
 <b>48</b>   sigaltstack( &amp;stack, 0 );
 <b>49</b>  
@@ -193,8 +252,8 @@ returns to a previously saved context. The one new challenge to implementing fib
 <b>61</b>   printf( &quot;Switching to child fiber\n&quot; );
 <b>62</b>   if ( setjmp( parent ) )
 <b>63</b>   {
-<b>64</b>           printf( &quot;Switching to child fiber again\n&quot; );
-<b>65</b>           if ( setjmp( parent ) == 0 ) longjmp( child, 1 );
+<b>64</b>     printf( &quot;Switching to child fiber again\n&quot; );
+<b>65</b>     if ( setjmp( parent ) == 0 ) longjmp( child, 1 );
 <b>66</b>   }
 <b>67</b>   else longjmp( child, 1 );
 <b>68</b>  
@@ -206,11 +265,15 @@ returns to a previously saved context. The one new challenge to implementing fib
 </pre>
 <p class="calibre2"><b class="calibre3">Figure 5: Simple longjmp Fiber Example</b></p>
 
-<h2>
+<h3>
 Conclusion
-</h2>
+</h3>
 
 <p class="calibre2">The implementation of libfiber can be examined to understand how threads and fibers are created by libraries which provide them. This can be useful when analyzing the performance impact of various multiprocessing techniques. The library was developed and tested on Linux, however, the fiber implementations should be portable across most Unix platforms. The thread implementation, on the other hand, is Linux specific, due to the <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> system call.</p>
+
+<p class="calibre2">
+實現一個簡單的線程庫libfiber可以讓我們更好的理解線程庫是如何實現線程的，當我們在分析不同多線程工具的時候，上面的這些經驗就會派上用場。本線程庫是在Linux開發並測試的，但是真正的線程庫應該是可以移植到Unix平台上的，從這點上來說，本線程庫實現的內核線程是Linux專有的，因為它是利用clone系統調用來實現的。
+</p>
 
 <p class="calibre2"><b class="calibre3">Resources</b></p>
 
