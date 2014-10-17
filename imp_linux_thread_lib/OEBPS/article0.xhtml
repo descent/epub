@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre1">Implementing a Thread Library on Linux (evanjones.ca)</h2>
+<p class="calibre2"><b class="calibre3">[ 2003-December-10 11:12 ]</b></p>
+
+<p class="calibre2">When a program is executed on a computer, it is executed a line at a time, which each line containing a command to execute, or directions about which piece of code to execute next. Sometimes, this is not sufficient. There are many programs which must be able to do many things at once. For example, a GUI application must repaint the display and respond to user input while doing any processing, and web servers must be able to send information to hundreds of clients simultaneously. This is the problem that threads try to solve. Threads allow multiple parts of a program to run at the same time. All modern operating systems supply some sort of thread library, such as standard Posix threads. However, I was curious about how threads actually work. So armed with a little bit of knowledge about C and the Linux kernel, I went out to build my own thread library.</p>
+
+<p class="calibre2"><b class="calibre3">Multitasking</b></p>
+
+<p class="calibre2">In traditional operating systems, there are two tools for multitasking provided by the operating system. The first is a process, and the second is a thread.</p>
+
+<p class="calibre2"><b class="calibre3">Processes</b></p>
+
+<p class="calibre2">Each program is a seperate process. The operating system shares computing resources between all the processes that are running. It also keeps each process seperate, preventing one process from modifing another process's resources. However, it is quite common that many processes can belong to a single program. For example, the <a href="http://www.evanjones.ca/software/threading.html#fig1" target="_blank">Figure 1</a> shows some of the processes currently running on my Linux system, and there are four processes executing mozilla-bin . In this case, one process will need to communicate with another. This is facilitated through operating system routines for inter-process communication (IPC), such as signals (<a href="http://www.evanjones.ca/software/../man/2-signal.html" target="_blank">signal </a> ), shared memory (<a href="http://www.evanjones.ca/software/../man/2-shmop.html" target="_blank">shmop </a> ), and pipes (<a href="http://www.evanjones.ca/software/../man/2-pipe.html" target="_blank">pipe </a> ). </p>
+
+<table border="1" class="calibre4"> <tr class="row"> <td class="calibre5">Process ID</td> <td class="calibre5">Command</td> </tr> <tr class="row"> <td class="calibre5">1</td> <td class="calibre5">init</td> </tr> <tr class="row"> <td class="calibre5">142</td> <td class="calibre5">/sbin/syslogd</td> </tr> <tr class="row"> <td class="calibre5">183</td> <td class="calibre5">/usr/bin/X11/X</td> </tr> <tr class="row"> <td class="calibre5">266</td> <td class="calibre5">esd</td> </tr> <tr class="row"> <td class="calibre5">270</td> <td class="calibre5">sawfish</td> </tr> <tr class="row"> <td class="calibre5">275</td> <td class="calibre5">panel</td> </tr> <tr class="row"> <td class="calibre5">277</td> <td class="calibre5">gmc</td> </tr> <tr class="row"> <td class="calibre5">279</td> <td class="calibre5">gnome-terminal</td> </tr> <tr class="row"> <td class="calibre5">291</td> <td class="calibre5">bash</td> </tr> <tr class="row"> <td class="calibre5">319</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">341</td> <td class="calibre5">/usr/bin/scite</td> </tr> <tr class="row"> <td class="calibre5">344</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">345</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">346</td> <td class="calibre5">/usr/bin/mozilla-bin</td> </tr> <tr class="row"> <td class="calibre5">2568</td> <td class="calibre5">ps</td> </tr> </table>
+
+<p class="calibre2"><b class="calibre3">Figure 1: Linux System Process List</b></p>
+
+<p class="calibre2"><b class="calibre3">Threads</b></p>
+
+<p class="calibre2">Inter-process communication is simple and easy to use when it is used occasionally. However, if there are many processes and many resources to be shared between them, the model quickly becomes cumbersome. Threads were created to make this sort of resource sharing simple and efficient. The concept is that a single process can have a number of threads, and everything is shared between them except the execution context (the stack and CPU registers). This way, if a shared resource is modified in one thread, the change is visible in all other threads. The disadvantage is that care must be taken to avoid problems where two threads try to access a shared resource at the same time.</p>
+
+<p class="calibre2"><b class="calibre3">Kernel Threads</b></p>
+
+<p class="calibre2">Modern operating systems directly support threads in the kernel, which means that the scheduling of which process is supposed to run is done by the operating system. Kernel threads allow the operating system to schedule different threads to run on different processors in multiprocessor computers, which can be an enormous performance increase. The disadvantage of kernel threads is that each time the operating system switches between threads, a context switch, there is a penalty due to the overhead of saving and restoring the state of the threads. Therefore, many simultaneous threads will be slower than a single thread which distributes its time between different tasks. This is the reason that single threaded web servers, like <a href="http://www.acme.com/software/thttpd/" target="_blank">thttpd</a> , perform better than multi-threaded web servers, like <a href="http://www.apache.org/" target="_blank">Apache</a> . The <a href="http://www.dre.vanderbilt.edu/JAWS/research.html" target="_blank">JAWS research project</a> has an excellent analysis of the performance of various multitasking approaches with respect to web servers.</p>
+
+<p class="calibre2"><b class="calibre3">User Space Threads</b></p>
+
+<p class="calibre2">Threads can also be built in user space. This means that a library or program is responsable for scheduling and executing threads. When this is done in user space, there is still a penalty for a context switch. However, the cost is less than an operating system context switch. Sometimes, user space threads are called fibers, to suggest that they are "lighter" than kernel threads. For the remainder of this article, I will refer to user space threads as fibers, and kernel threads as threads. Fibers have an additional advantage over kernel threads: Only one thread can modify a shared resource at a time, since only one fiber can be executing at a time. This means that some of the locks required for threads may not be needed. However, care is still required. As mentioned in " <a href="http://research.microsoft.com/%7Eadya/pubs/usenix2002-fibers.pdf" target="_blank">Cooperative Task Management</a> ", a 2002 USENIX paper, "Cooperative task management [user space threads] avoids the concurrency problems of locks only if tasks can complete without having to yield control to any other task." Fibers also cannot take advantage of multiprocessor systems. The author of GNU Pth, Ralf Engelschall, has an excellent paper about his work <a href="http://www.engelschall.com/pw/usenix/2000/pmt-html/" target="_blank">implementing user space threads</a> , which covers the differences between different threading models in detail.</p>
+
+<p class="calibre2"><b class="calibre3">A Basic Thread Library</b></p>
+
+<p class="calibre2">To play around with these concepts, a basic C thread library, <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber</a> , was written. It is implemented using two techniques for fibers and Linux kernel threads. This library provides an extremely simple implementation for creating, destroying and scheduling fibers or threads. It should only be used as an example for learning about how threads are implemented, since there are many issues with signals and synchronization. For real applications there are more polished libraries such as <a href="http://www-128.ibm.com/developerworks/linux/library/l-posix1.html" target="_blank">pthreads</a> for kernel threads or <a href="http://www.gnu.org/software/pth/" target="_blank">GNU Portable Threads (Pth)</a> for user space threads.</p>
+
+<p class="calibre2"><b class="calibre3">libfiber interface</b></p>
+
+<p class="calibre2">void initFibers(); Initializes the internal structures inside the library. Should be called before using any library routines.<br class="calibre6"/>int spawnFiber( void (*func)(void) ); Creates a new thread which will execute the given function. Returns zero on success, or nonzero on error.<br class="calibre6"/>void fiberYield(); Yield execution control to another fiber. This simply calls <a href="http://www.evanjones.ca/software/../man/2-sched_yield.html" target="_blank">sched_yield </a> in the kernel thread implementation.<br class="calibre6"/>void waitForAllFibers(); Waits for all the fibers to exit, and frees resources associated with each one. If called from a child fiber in the user space implementations, it will return once all other fibers have exited. If called from a child fiber in the kernel implementation, it will return immediately. Returns zero on success, or nonzero on error.</p>
+
+<p class="calibre2"><a href="http://www.evanjones.ca/software/threading.html#fig2" target="_blank">Figure 2</a> shows the main function from the sample application included with the library. It creates three fibers executing different functions, waits until they have all completed, then returns.</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>// Initialize the fiber library<br class="calibre6"/>initFibers();</p>
+
+<p class="calibre2">// Go fibers!<br class="calibre6"/>spawnFiber( &amp;fiber1 );<br class="calibre6"/>spawnFiber( &amp;fibonacchi );<br class="calibre6"/>spawnFiber( &amp;squares );</p>
+
+<p class="calibre2">// Since these are not preemptive, we must allow them to run<br class="calibre6"/>waitForAllFibers();</p>
+
+<p class="calibre2">// The program quits<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
+
+<p class="calibre2"><b class="calibre3">Figure 2: Example program using the fiber library</b></p>
+
+<p class="calibre2"><b class="calibre3">Implementing Kernel Threads on Linux</b></p>
+
+<p class="calibre2">Linux takes a unique approach to threads. On Linux, threads and processes are treated the same. They are both considered to be tasks. The difference is that threads share the same memory space, file mappings and (in general) signal handlers. There is an excellent post from Linus Torvalds to the <a href="http://www.tux.org/lkml/" target="_blank">Linux Kernel Mailing List</a> that explains the <a href="http://www.evanjones.ca/software/threading-linus-msg.html" target="_blank">advantages of this implementation</a> . This means that in the process list in <a href="http://www.evanjones.ca/software/threading.html#fig1" target="_blank">Figure 1</a> , the processes may actually be threads. For example, the four mozilla-bin processes are actually threads inside a single process.</p>
+
+<p class="calibre2">On Linux, kernel threads are created with the <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> system call. This system call is similar to <a href="http://www.evanjones.ca/software/../man/2-fork.html" target="_blank">fork </a> in that it creates a task which is executing the current program. However it differs in that <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> specifies which resources should be shared. To create a thread, we call <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> to create a task which shares as much as possible: The memory space, file descriptors and signal handlers. The signal to be sent when the thread exists is SIGCHLD so <a href="http://www.evanjones.ca/software/../man/2-wait.html" target="_blank">wait </a> will return when a thread exits.</p>
+
+<p class="calibre2">The first challenge is allocating a stack for the thread. The simplest solution, used in libfiber, is allocating the stack on the heap using <a href="http://www.evanjones.ca/software/../man/3-malloc.html" target="_blank">malloc </a> . This means that an estimate of the maximum stack size must be made. If the stack grows larger, memory corruption will occur. A solution used by <a href="http://www.evanjones.ca/software/ftp://caliban.physics.utoronto.ca/pub/linux/bb_threads.tar.gz" target="_blank">bb_threads</a> , is to create a barrier at the bottom of the stack with <a href="http://www.evanjones.ca/software/../man/2-mprotect.html" target="_blank">mprotect </a> . This way, the thread will cause a segmentation fault when it overflows the stack. The best solution, used by the Linux pthreads implementation, is to use <a href="http://www.evanjones.ca/software/../man/2-mmap.html" target="_blank">mmap </a> to allocate memory, with flags specifying a region of memory which is allocated as it is used. This way, memory is allocated for the stack as it is needed, and a segmentation violation will occur if the system is unable to allocate additional memory.</p>
+
+<p class="calibre2">The stack pointer passed to <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> must reference the top of the chunk of memory, since on most processors the stack grows down. This is done by adding the size of the region to the pointer returned by <a href="http://www.evanjones.ca/software/../man/3-malloc.html" target="_blank">malloc </a> . To avoid a memory leak, the stack must be freed once the thread has exited. The libfiber library waits for threads to exit using <a href="http://www.evanjones.ca/software/../man/2-wait.html" target="_blank">wait </a> , then frees the stack using <a href="http://www.evanjones.ca/software/../man/3-free.html" target="_blank">free </a> . <a href="http://www.evanjones.ca/software/threading.html#fig3" target="_blank">Figure 3</a> shows an example of creating a thread. See libfiber-clone.c in the <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber package</a> for the full implementation. For details about how Linux's pthread implementation creates threads, see "<a href="http://www.linux-mag.com/2001-05/compile_01.html" target="_blank">The Fibers of Threads</a> " from Linux Magazine.</p>
+
+<p class="calibre2">#include &lt;malloc.h&gt;<br class="calibre6"/>#include &lt;sys/types.h&gt;<br class="calibre6"/>#include &lt;sys/wait.h&gt;<br class="calibre6"/>#include &lt;signal.h&gt;<br class="calibre6"/>#include &lt;sched.h&gt;<br class="calibre6"/>#include &lt;stdio.h&gt;</p>
+
+<p class="calibre2">// 64kB stack<br class="calibre6"/>#define FIBER_STACK 1024*64</p>
+
+<p class="calibre2">// The child thread will execute this function<br class="calibre6"/>int threadFunction( void* argument )<br class="calibre6"/>{<br class="calibre6"/>printf( "child thread exiting\n" );<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>void* stack;<br class="calibre6"/>pid_t pid;</p>
+
+<p class="calibre2">// Allocate the stack<br class="calibre6"/>stack = malloc( FIBER_STACK );<br class="calibre6"/>if ( stack == 0 )<br class="calibre6"/>{<br class="calibre6"/>perror( "malloc: could not allocate stack" );<br class="calibre6"/>exit( 1 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">printf( "Creating child thread\n" );</p>
+
+<p class="calibre2">// Call the clone system call to create the child thread<br class="calibre6"/>pid = clone( &amp;threadFunction, (char*) stack + FIBER_STACK,<br class="calibre6"/>SIGCHLD | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_VM, 0 );<br class="calibre6"/>if ( pid == -1 )<br class="calibre6"/>{<br class="calibre6"/>perror( "clone" );<br class="calibre6"/>exit( 2 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">// Wait for the child thread to exit<br class="calibre6"/>pid = waitpid( pid, 0, 0 );<br class="calibre6"/>if ( pid == -1 )<br class="calibre6"/>{<br class="calibre6"/>perror( "waitpid" );<br class="calibre6"/>exit( 3 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">// Free the stack<br class="calibre6"/>free( stack );</p>
+
+<p class="calibre2">printf( "Child thread returned and stack freed.\n" );</p>
+
+<p class="calibre2">return 0;<br class="calibre6"/>} </p>
+
+<p class="calibre2"><b class="calibre3">Figure 3: Simple clone Thread Example</b></p>
+
+<p class="calibre2"><b class="calibre3">Implementing Fibers Using makecontext</b></p>
+
+<p class="calibre2">Modern Unix systems include library functions for manipulating the execution context, contained in ucontext.h . These functions are <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/getcontext.html" target="_blank">getcontext </a> , <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/getcontext.html" target="_blank">setcontext </a> , <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/makecontext.html" target="_blank">swapcontext </a> and <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/makecontext.html" target="_blank">makecontext </a> . Essentially, <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/getcontext.html" target="_blank">getcontext </a> saves the current execution context, <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/setcontext.html" target="_blank">setcontext </a> switches to the specified execution context, <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/swapcontext.html" target="_blank">swapcontext </a> will save the current context and switch to another and <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/makecontext.html" target="_blank">makecontext </a> creates a new execution context. To create a new fiber, we call <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/getcontext.html" target="_blank">getcontext </a> to retrieve the current context then modify the members of the ucontext_t struct to specify the new context. Again, we must allocate a new stack, but this time the library takes care of the direction of the stack growth. Then we call <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/makecontext.html" target="_blank">makecontext </a> and specify the function and arguments to execute in the fiber.</p>
+
+<p class="calibre2">The remaining challenge is that in this implementation, the fibers must explicitly yield control to allow other fibers to run. The <a href="http://www.opengroup.org/onlinepubs/007908799/xsh/swapcontext.html" target="_blank">swapcontext </a> function can be used to stop executing one fiber and continue executing another. <a href="http://www.evanjones.ca/software/threading.html#fig4" target="_blank">Figure 4</a> shows a simple program which creates a child fiber and switches between the child and the parent. See libfiber-uc.c in the <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber package</a> for the full implementation.</p>
+
+<p class="calibre2">#include &lt;malloc.h&gt;<br class="calibre6"/>#include &lt;ucontext.h&gt;<br class="calibre6"/>#include &lt;stdio.h&gt;</p>
+
+<p class="calibre2">// 64kB stack<br class="calibre6"/>#define FIBER_STACK 1024*64</p>
+
+<p class="calibre2">ucontext_t child, parent;</p>
+
+<p class="calibre2">// The child thread will execute this function<br class="calibre6"/>void threadFunction()<br class="calibre6"/>{<br class="calibre6"/>printf( "Child fiber yielding to parent" );<br class="calibre6"/>swapcontext( &amp;child, &amp;parent );<br class="calibre6"/>printf( "Child thread exiting\n" );<br class="calibre6"/>swapcontext( &amp;child, &amp;parent );<br class="calibre6"/>}</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>// Get the current execution context<br class="calibre6"/>getcontext( &amp;child );</p>
+
+<p class="calibre2">// Modify the context to a new stack<br class="calibre6"/>child.uc_link = 0;<br class="calibre6"/>child.uc_stack.ss_sp = malloc( FIBER_STACK );<br class="calibre6"/>child.uc_stack.ss_size = FIBER_STACK;<br class="calibre6"/>child.uc_stack.ss_flags = 0; <br class="calibre6"/>if ( child.uc_stack.ss_sp == 0 )<br class="calibre6"/>{<br class="calibre6"/>perror( "malloc: Could not allocate stack" );<br class="calibre6"/>exit( 1 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">// Create the new context<br class="calibre6"/>printf( "Creating child fiber\n" );<br class="calibre6"/>makecontext( &amp;child, &amp;threadFunction, 0 );</p>
+
+<p class="calibre2">// Execute the child context<br class="calibre6"/>printf( "Switching to child fiber\n" );<br class="calibre6"/>swapcontext( &amp;parent, &amp;child );<br class="calibre6"/>printf( "Switching to child fiber again\n" );<br class="calibre6"/>swapcontext( &amp;parent, &amp;child );</p>
+
+<p class="calibre2">// Free the stack<br class="calibre6"/>free( child.uc_stack.ss_sp );</p>
+
+<p class="calibre2">printf( "Child fiber returned and stack freed\n" );</p>
+
+<p class="calibre2">return 0;<br class="calibre6"/>} </p>
+
+<p class="calibre2"><b class="calibre3">Figure 4: Simple makecontext Fiber Example</b></p>
+
+<p class="calibre2"><b class="calibre3">Implementing Fibers Using longjmp</b></p>
+
+<p class="calibre2">ANSI C provides functions for saving and restoring the execution context for graceful error handling. <a href="http://www.evanjones.ca/software/../man/3-setjmp.html" target="_blank">setjmp </a> saves the current execution context, and <a href="http://www.evanjones.ca/software/../man/3-longjmp.html" target="_blank">longjmp </a> returns to a previously saved context. The one new challenge to implementing fibers with these functions is that they do not provide a way to create a new stack. They simply restore a previous stack frame. To create the stack, we use sigaltstack to allocate an alternate stack for the signal handler, set up a signal handler, then call it on the new stack using <a href="http://www.evanjones.ca/software/../man/3-raise.html" target="_blank">raise </a> . The signal handler saves its current state hen returns to get rid of the "signal handler context". Finally, the fiber is ready to run. <a href="http://www.evanjones.ca/software/threading.html#fig5" target="_blank">Figure 5</a> shows a minimal program that uses this technique to set up an alternate stack. See libfiber-clone.c in the <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber package</a> for the full implementation. This technique is used by <a href="http://www.gnu.org/software/pth/" target="_blank">GNU Pth</a> to implement fibers in a very portable fashion.</p>
+
+<p class="calibre2">#include &lt;malloc.h&gt;<br class="calibre6"/>#include &lt;setjmp.h&gt;<br class="calibre6"/>#include &lt;signal.h&gt;<br class="calibre6"/>#include &lt;stdio.h&gt;</p>
+
+<p class="calibre2">// 64kB stack<br class="calibre6"/>#define FIBER_STACK 1024*64</p>
+
+<p class="calibre2">jmp_buf child, parent;</p>
+
+<p class="calibre2">// The child thread will execute this function<br class="calibre6"/>void threadFunction()<br class="calibre6"/>{<br class="calibre6"/>printf( "Child fiber yielding to parent\n" );<br class="calibre6"/>if ( setjmp( child ) )<br class="calibre6"/>{<br class="calibre6"/>printf( "Child thread exiting\n" );<br class="calibre6"/>longjmp( parent, 1 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">longjmp( parent, 1 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">void signalHandler( int arg )<br class="calibre6"/>{<br class="calibre6"/>if ( setjmp( child ) )<br class="calibre6"/>{<br class="calibre6"/>threadFunction();<br class="calibre6"/>}</p>
+
+<p class="calibre2">return;<br class="calibre6"/>}</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>stack_t stack;<br class="calibre6"/>struct sigaction sa;</p>
+
+<p class="calibre2">// Create the new stack<br class="calibre6"/>stack.ss_flags = 0;<br class="calibre6"/>stack.ss_size = FIBER_STACK;<br class="calibre6"/>stack.ss_sp = malloc( FIBER_STACK );<br class="calibre6"/>if ( stack.ss_sp == 0 )<br class="calibre6"/>{<br class="calibre6"/>perror( "malloc: Could not allocate stack." );<br class="calibre6"/>exit( 1 );<br class="calibre6"/>}<br class="calibre6"/>sigaltstack( &amp;stack, 0 );</p>
+
+<p class="calibre2">// Set up the custom signal handler<br class="calibre6"/>sa.sa_handler = &amp;signalHandler;<br class="calibre6"/>sa.sa_flags = SA_ONSTACK;<br class="calibre6"/>sigemptyset( &amp;sa.sa_mask );<br class="calibre6"/>sigaction( SIGUSR1, &amp;sa, 0 );</p>
+
+<p class="calibre2">// Send the signal to call the function on the new stack<br class="calibre6"/>printf( "Creating child fiber\n" );<br class="calibre6"/>raise( SIGUSR1 );</p>
+
+<p class="calibre2">// Execute the child context<br class="calibre6"/>printf( "Switching to child fiber\n" );<br class="calibre6"/>if ( setjmp( parent ) )<br class="calibre6"/>{<br class="calibre6"/>printf( "Switching to child fiber again\n" );<br class="calibre6"/>if ( setjmp( parent ) == 0 ) longjmp( child, 1 );<br class="calibre6"/>}<br class="calibre6"/>else longjmp( child, 1 );</p>
+
+<p class="calibre2">// Free the stack<br class="calibre6"/>free( stack.ss_sp );<br class="calibre6"/>printf( "Child fiber returned and stack freed\n" );<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
+
+<p class="calibre2"><b class="calibre3">Figure 5: Simple longjmp Fiber Example</b></p>
+
+<p class="calibre2"><b class="calibre3">Conclusion</b></p>
+
+<p class="calibre2">The implementation of libfiber can be examined to understand how threads and fibers are created by libraries which provide them. This can be useful when analyzing the performance impact of various multiprocessing techniques. The library was developed and tested on Linux, however, the fiber implementations should be portable across most Unix platforms. The thread implementation, on the other hand, is Linux specific, due to the <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> system call.</p>
+
+<p class="calibre2"><b class="calibre3">Resources</b></p>
+
+<p class="calibre2"><a href="http://www-128.ibm.com/developerworks/linux/library/l-posix1.html" target="_blank">Pthreads Tutorial Part 1</a> , <a href="http://www-128.ibm.com/developerworks/linux/library/l-posix2/" target="_blank">Part 2</a> , <a href="http://www-128.ibm.com/developerworks/linux/library/l-posix3/" target="_blank">Part 3</a> - How to use the pthreads library<br class="calibre6"/><a href="http://pauillac.inria.fr/%7Exleroy/linuxthreads/faq.html" target="_blank">LinuxThreads FAQ</a> - Frequently asked questions about Linux's pthread implementation<br class="calibre6"/><a href="http://www.linux-mag.com/2001-05/compile_01.html" target="_blank">The Fibers of Threads</a> - An article explaining how Linux's pthread library is implemented<br class="calibre6"/><a href="http://www.evanjones.ca/software/ftp://caliban.physics.utoronto.ca/pub/linux/bb_threads.tar.gz" target="_blank">Bare-bones threads</a> [<a href="http://www.evanjones.ca/software/bb_threads.tar.gz" target="_blank">local mirror</a> ] - A simple Linux thread library that uses clone and provides mutexes<br class="calibre6"/><a href="http://www.gnu.org/software/pth/" target="_blank">GNU Portable Threads (Pth)</a> - User space thread library for nearly any platform imaginable<br class="calibre6"/><a href="http://www.engelschall.com/pw/usenix/2000/pmt-html/" target="_blank">Portable Multithreading</a> - A excellent paper describing how to create user space threads<br class="calibre6"/><a href="http://www.tux.org/lkml/" target="_blank">Linux Kernel Mailing List</a> - The definitive resource for Linux operating system discussions, and development.<br class="calibre6"/><a href="http://kt.zork.net/kernel-traffic/" target="_blank">Kernel Traffic</a> - A summary of the activity on the Linux Kernel Mailing List<br class="calibre6"/><a href="http://www.dre.vanderbilt.edu/JAWS/research.html" target="_blank">JAWS: Understanding High Performance Web Systems</a> - The performance implications of processes, threads and fibers<br class="calibre6"/><a href="http://research.microsoft.com/%7Eadya/pubs/usenix2002-fibers.pdf" target="_blank">Cooperative Task Management</a> - A 2002 USENIX paper from Microsoft that describes the software engineering advantages and disadvantages of different concurrency models in great detail.</p>
+
+<p class="calibre2"><b class="calibre3">Comments </b></p>
+
+<p class="calibre2">The following are responses to questions about this document, some of which resulted in some changes.</p>
+
+<p class="calibre2">2002-10-21: <a href="http://www.evanjones.ca/software/threading-20021021-locking.html" target="_blank">Re: About locking in multi-threaded environments</a> 2002-10-21: <a href="http://www.evanjones.ca/software/threading-20021021-parameters.html" target="_blank">Re: thread library [passing multiple parameters to new threads]</a> </p>
+
+<p class="calibre2"><b class="calibre3">Revision History</b></p>
+
+<p class="calibre2"><a href="http://www.evanjones.ca/software/threading.html#2003-12-10" target="_blank">2003-12-10</a> : Whoops. Fixed another IBM thread link.<br class="calibre6"/><a href="http://www.evanjones.ca/software/threading.html#2003-02-20" target="_blank">2003-02-20</a> : IBM's Posix Threads tutorial has moved. I've also linked to all three parts.<br class="calibre6"/><a href="http://www.evanjones.ca/software/threading.html#2002-10-24" target="_blank">2002-10-24</a> : Clarified the language in the section discussing the need for locks with user space threads. Concurrency errors can occur with user space threads. However, code between two calls to yield() (or functions that in turn call yield) will always execute atomically from the perspective of the program. One sentence was modified to use softer language as follows: This means that many some of the locks required for threads are not may not be needed. A reference was added to the Microsoft Research paper on <a href="http://research.microsoft.com/%7Eadya/pubs/usenix2002-fibers.pdf" target="_blank">Cooperative Task Management</a> , which has a good quote on this subject and is a good paper on this subject in general.<br class="calibre6"/><a href="http://www.evanjones.ca/software/threading.html#2002-10-24-2" target="_blank">2002-10-24</a> : Added a comments section with responses to questions about this document.</p>
+</body>
+</html>

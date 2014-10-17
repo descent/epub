@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <title>http://www.grabmybooks.com</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre">
+<h2 class="calibre1">在Linux上實現線程庫-紅聯Linux系統門戶</h2>
+<p class="calibre2">原文：Implementing a Thread Library on Linux<br class="calibre6"/>作者：Evan Jones<br class="calibre6"/>翻譯：楊碩</p>
+
+<p class="calibre2">在程序在運行的時候，通常都是只有一條主線的，有些時候，這是效率不高的。有很多程序必須要能同時做很多工作。比如說，GUI程序必須在處理程序邏輯的同時重畫界面，響應用戶輸入。Web服務器必須同時向成百上千的客戶發送信息。線程可以解決這些難題。所有的現代操作系統都提供線程庫，比如標準Posix線程。特別是，我對線程的工作原理十分好奇，所以在學習了一些C和Linux內核的知識後，我開始建立自己的線程庫。<br class="calibre6"/>多任務<br class="calibre6"/>在傳統的操作系統中，提供了實現多任務的兩種工具，一種是進程，一種是線程。<br class="calibre6"/>進程<br class="calibre6"/>每個程序都是獨立的進程。操作系統在所有進程間分配資源，並且為了防止一個進程修改其他進程的資源，進程間是彼此完全獨立的。但是，多個進程配合完成一項任務也是很常見的。比如說，圖1展示了我的Linux系統下同時進行的進程，其中有4個進程執行mozilla-bin。在這種情況下，進程間需要相互通信，因此操作系統提供了進程間通信(IPC)的工具，比如有信號，共享內存和管道。<br class="calibre6"/>Process ID Command <br class="calibre6"/>1 init <br class="calibre6"/>142 /sbin/syslogd <br class="calibre6"/>183 /usr/bin/X11/X <br class="calibre6"/>266 esd <br class="calibre6"/>270 sawfish <br class="calibre6"/>275 panel <br class="calibre6"/>277 gmc <br class="calibre6"/>279 gnome-terminal <br class="calibre6"/>291 bash <br class="calibre6"/>319 /usr/bin/mozilla-bin <br class="calibre6"/>341 /usr/bin/scite <br class="calibre6"/>344 /usr/bin/mozilla-bin <br class="calibre6"/>345 /usr/bin/mozilla-bin <br class="calibre6"/>346 /usr/bin/mozilla-bin <br class="calibre6"/>2568 ps <br class="calibre6"/>圖1 Linux系統上的進程列表</p>
+
+<p class="calibre2">線程<br class="calibre6"/>進程間通信是非常簡單和便於使用的，但是，如果有很多進程需要共享彼此的資源，模型就會變得十分複雜。線程提供了一種解決這類問題的簡單和高效的方法。一個進程可以含有多個線程，除了環境上下文(堆棧和CPU寄存器)以外，所有的資源在線程間都是共享的。因此，如果一個線程修改了某個共享資源，則這種改變對於其它線程也是可見的。線程的缺點就是引入了一個新問題，即要避免兩個線程同時訪問某一個共享資源。<br class="calibre6"/>內核線程<br class="calibre6"/>現代操作系統在內核級上支持線程。這意味著線程直接由操作系統的調度器進行調度，這可以帶來大幅度的性能提升。內核線程的缺點是線程切換的花銷比較大，因此並發多個線程可能比單線程的效率要低，因為線程切換佔用了一定的時間。這也是單線程服務器，如thttpd，要比多線程服務器，如Apache性能好的原因。JAWS research project對用不同多任務方法實現的web服務器的性能作了很深入的分析。<br class="calibre6"/>用戶線程<br class="calibre6"/>線程也可以在用戶級上實現，這意味著進行線程調度是由程序自身或線程庫來完成的。如果線程在用戶級上實現，同樣也會有很大的線程切換開銷，但是，這種開銷要比在內核級的線程切換小很多。有些時候，用戶線程被稱為fiber(纖程)，暗示著它要比內核線程「輕」。一個簡單的線程庫<br class="calibre6"/>為了完全玩轉這些概念，libfiber誕生了。它實現了用戶線程和內核線程。該線程庫僅僅實現了線程的創建，銷毀及調度。它只能被用作教學，因為還有很多信號和同步的問題沒有解決。在編寫真實的程序時，可以使用內核線程庫pthreads或用戶線程庫GNU Portable Threads (Pth)。<br class="calibre6"/>Libfiber 接口<br class="calibre6"/>void initFibers(); <br class="calibre6"/>初始化線程庫的內部數據結構。必須在使用其他函數前調用。<br class="calibre6"/>int spawnFiber( void (*func)(void) ); <br class="calibre6"/>創建線程，該線程將會執行給定的函數。成功返回零，錯誤返回非零。<br class="calibre6"/>void fiberYield(); <br class="calibre6"/>主動放棄CPU。在內核線程實現中，只是簡單的調用sched_yield。<br class="calibre6"/>void waitForAllFibers(); <br class="calibre6"/>等待所有線程退出，釋放資源。如果在用戶線程中調用，只有所有其它線程全部返回該函數才會返回；如果在內核線程中調用，它會立即返回。成功返回零，錯誤返回非零。</p>
+
+<p class="calibre2">圖2顯示的是用該線程庫編寫的樣例程序。它創建了三個線程，分別執行不同的函數，等待所有線程退出後返回。</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>// Initialize the fiber library<br class="calibre6"/>initFibers();</p>
+
+<p class="calibre2">// Go fibers!<br class="calibre6"/>spawnFiber( &amp;fiber1 );<br class="calibre6"/>spawnFiber( &amp;fibonacchi );<br class="calibre6"/>spawnFiber( &amp;squares );</p>
+
+<p class="calibre2">// Since these are not preemptive, we must allow them to run<br class="calibre6"/>waitForAllFibers();</p>
+
+<p class="calibre2">// The program quits<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
+
+<p class="calibre2">圖2 使用線程庫的樣例程序</p>
+
+<p class="calibre2">在Linux上實現內核線程<br class="calibre6"/>Linux使用一個特殊的方法實現線程。在Linux上，進程和線程在本質上是一樣的，它們都被認為是任務。唯一的區別是現成共享內存空間，文件描述符和信號處理程序(通常情況下)。在Linux Kernel Mailing List上，Linus Torvalds發過一個經典的帖子來闡述這種實現方式的優點。<br class="calibre6"/>在Linux上，內核線程可以通過系統調用clone來創建。這個系統調用跟fork相似，都是創建一個任務。只不過clone可以指定共享哪些資源。在創建線程時，我們可以共享儘可能多的資源：內存空間，文件描述符和信號處理函數。當線程退出，發出SIGCHLD信號時，wait將會返回。<br class="calibre6"/>第一個挑戰是為線程分配棧空間。在libfier中使用的是最簡單的方法，即使用malloc在堆中分配棧空間。這意味著必須要估計一個棧的最大值。如果棧在使用時超出了最大值，會引起內存衝突。在bb_threads中，是使用mprotect在棧底創建一個barrier，這樣在棧溢出的時候會引發段錯誤。最好的方法是Linux pthreads的實現，是使用mmap來分配內存，這樣的話，內存隨需隨分配，如果系統不能分配另外的內存，將會產生segmentation violation。<br class="calibre6"/>傳遞給clone的棧指針必須指向棧頂，因為在多數處理器中，棧是向下生長的。為了避免內存洩露，線程退出時必須釋放棧空間。Libfiber庫使用wait等待線程退出，然後使用free釋放棧空間。圖3顯示了創建線程的例子。請通過libfiber-clone.c查看完整的實現。如果想瞭解Linux pthread如何實現創建線程，請看"The Fibers of Threads"。<br class="calibre6"/>#include <br class="calibre6"/>#include <br class="calibre6"/>#include <br class="calibre6"/>#include <br class="calibre6"/>#include <br class="calibre6"/>#include </p>
+
+<p class="calibre2">// 64kB stack<br class="calibre6"/>#define FIBER_STACK 1024*64</p>
+
+<p class="calibre2">// The child thread will execute this function<br class="calibre6"/>int threadFunction( void* argument )<br class="calibre6"/>{<br class="calibre6"/>printf( "child thread exiting\n" );<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>void* stack;<br class="calibre6"/>pid_t pid;</p>
+
+<p class="calibre2">// Allocate the stack<br class="calibre6"/>stack = malloc( FIBER_STACK );<br class="calibre6"/>if ( stack == 0 )<br class="calibre6"/>{<br class="calibre6"/>perror( "malloc: could not allocate stack" );<br class="calibre6"/>exit( 1 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">printf( "Creating child thread\n" );</p>
+
+<p class="calibre2">// Call the clone system call to create the child thread<br class="calibre6"/>pid = clone( &amp;threadFunction, (char*) stack + FIBER_STACK,<br class="calibre6"/>SIGCHLD | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | CLONE_VM, 0 );<br class="calibre6"/>if ( pid == -1 )<br class="calibre6"/>{<br class="calibre6"/>perror( "clone" );<br class="calibre6"/>exit( 2 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">// Wait for the child thread to exit<br class="calibre6"/>pid = waitpid( pid, 0, 0 );<br class="calibre6"/>if ( pid == -1 )<br class="calibre6"/>{<br class="calibre6"/>perror( "waitpid" );<br class="calibre6"/>exit( 3 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">// Free the stack<br class="calibre6"/>free( stack );</p>
+
+<p class="calibre2">printf( "Child thread returned and stack freed.\n" );</p>
+
+<p class="calibre2">return 0;<br class="calibre6"/>}</p>
+
+<p class="calibre2">圖3 用clone實現線程</p>
+
+<p class="calibre2">使用makecontext實現用戶線程<br class="calibre6"/>現代Unix系統都在ucontext.h中提供用於上下文切換的函數，這些函數有getcontext, setcontext，swapcontext 和makecontext。其中，getcontext用於保存當前上下文，setcontext用於切換上下文，swapcontext會保存當前上下文並切換到另一個上下文，makecontext創建一個新的上下文。實現用戶線程的過程是：我們首先調用getcontext獲得當前上下文，然後修改ucontext_t指定新的上下文。同樣的，我們需要開闢棧空間，但是這次實現的線程庫要涉及棧生長的方向。然後我們調用makecontext切換上下文，並指定用戶線程中要執行的函數。<br class="calibre6"/>在這種實現中還有一個挑戰，即一個線程必須可以主動讓出CPU給其它線程。swapcontext函數可以完成這個任務，圖4展示了一個這種實現的樣例程序，child線程和parent線程不斷切換以達到多線程的效果。在libfiber-uc.c文件中可以看到完整的實現。<br class="calibre6"/>#include <br class="calibre6"/>#include <br class="calibre6"/>#include </p>
+
+<p class="calibre2">// 64kB stack<br class="calibre6"/>#define FIBER_STACK 1024*64</p>
+
+<p class="calibre2">ucontext_t child, parent;</p>
+
+<p class="calibre2">// The child thread will execute this function<br class="calibre6"/>void threadFunction()<br class="calibre6"/>{<br class="calibre6"/>printf( "Child fiber yielding to parent" );<br class="calibre6"/>swapcontext( &amp;child, &amp;parent );<br class="calibre6"/>printf( "Child thread exiting\n" );<br class="calibre6"/>swapcontext( &amp;child, &amp;parent );<br class="calibre6"/>}</p>
+
+<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>// Get the current execution context<br class="calibre6"/>getcontext( &amp;child );</p>
+
+<p class="calibre2">// Modify the context to a new stack<br class="calibre6"/>child.uc_link = 0;<br class="calibre6"/>child.uc_stack.ss_sp = malloc( FIBER_STACK );<br class="calibre6"/>child.uc_stack.ss_size = FIBER_STACK;<br class="calibre6"/>child.uc_stack.ss_flags = 0; <br class="calibre6"/>if ( child.uc_stack.ss_sp == 0 )<br class="calibre6"/>{<br class="calibre6"/>perror( "malloc: Could not allocate stack" );<br class="calibre6"/>exit( 1 );<br class="calibre6"/>}</p>
+
+<p class="calibre2">// Create the new context<br class="calibre6"/>printf( "Creating child fiber\n" );<br class="calibre6"/>makecontext( &amp;child, &amp;threadFunction, 0 );</p>
+
+<p class="calibre2">// Execute the child context<br class="calibre6"/>printf( "Switching to child fiber\n" );<br class="calibre6"/>swapcontext( &amp;parent, &amp;child );<br class="calibre6"/>printf( "Switching to child fiber again\n" );<br class="calibre6"/>swapcontext( &amp;parent, &amp;child );</p>
+
+<p class="calibre2">// Free the stack<br class="calibre6"/>free( child.uc_stack.ss_sp );</p>
+
+<p class="calibre2">printf( "Child fiber returned and stack freed\n" );</p>
+
+<p class="calibre2">return 0;<br class="calibre6"/>}<br class="calibre6"/>圖4用makecontext實現線程</p>
+
+<p class="calibre2">結論<br class="calibre6"/>實現一個簡單的線程庫libfiber可以讓我們更好的理解線程庫是如何實現線程的，當我們在分析不同多線程工具的時候，上面的這些經驗就會派上用場。本線程庫是在Linux開發並測試的，但是真正的線程庫應該是可以移植到Unix平台上的，從這點上來說，本線程庫實現的內核線程是Linux專有的，因為它是利用clone系統調用來實現的。</p>
+</body>
+</html>
