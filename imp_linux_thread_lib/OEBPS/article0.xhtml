@@ -120,39 +120,95 @@
 
 <p class="calibre2"><b class="calibre3">Figure 4: Simple makecontext Fiber Example</b></p>
 
-<p class="calibre2"><b class="calibre3">Implementing Fibers Using longjmp</b></p>
+<h2>Implementing Fibers Using longjmp</h2>
 
-<p class="calibre2">ANSI C provides functions for saving and restoring the execution context for graceful error handling. <a href="http://www.evanjones.ca/software/../man/3-setjmp.html" target="_blank">setjmp </a> saves the current execution context, and <a href="http://www.evanjones.ca/software/../man/3-longjmp.html" target="_blank">longjmp </a> returns to a previously saved context. The one new challenge to implementing fibers with these functions is that they do not provide a way to create a new stack. They simply restore a previous stack frame. To create the stack, we use sigaltstack to allocate an alternate stack for the signal handler, set up a signal handler, then call it on the new stack using <a href="http://www.evanjones.ca/software/../man/3-raise.html" target="_blank">raise </a> . The signal handler saves its current state hen returns to get rid of the "signal handler context". Finally, the fiber is ready to run. <a href="http://www.evanjones.ca/software/threading.html#fig5" target="_blank">Figure 5</a> shows a minimal program that uses this technique to set up an alternate stack. See libfiber-clone.c in the <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber package</a> for the full implementation. This technique is used by <a href="http://www.gnu.org/software/pth/" target="_blank">GNU Pth</a> to implement fibers in a very portable fashion.</p>
+<p class="calibre2">ANSI C provides functions for saving and restoring
+the execution context for graceful error handling.
+<a href="http://www.evanjones.ca/software/../man/3-setjmp.html" target="_blank">setjmp </a> 
+saves the current execution context, 
+and <a href="http://www.evanjones.ca/software/../man/3-longjmp.html" target="_blank">longjmp </a> 
+returns to a previously saved context. The one new challenge to implementing fibers with these functions is that they do not provide a way to create a new stack. They simply restore a previous stack frame. To create the stack, we use sigaltstack to allocate an alternate stack for the signal handler, set up a signal handler, then call it on the new stack using <a href="http://www.evanjones.ca/software/../man/3-raise.html" target="_blank">raise </a> . The signal handler saves its current state hen returns to get rid of the "signal handler context". Finally, the fiber is ready to run. <a href="http://www.evanjones.ca/software/threading.html#fig5" target="_blank">Figure 5</a> shows a minimal program that uses this technique to set up an alternate stack. See libfiber-clone.c in the <a href="http://www.evanjones.ca/software/libfiber.tar.gz" target="_blank">libfiber package</a> for the full implementation. This technique is used by <a href="http://www.gnu.org/software/pth/" target="_blank">GNU Pth</a> to implement fibers in a very portable fashion.</p>
 
-<p class="calibre2">#include &lt;malloc.h&gt;<br class="calibre6"/>#include &lt;setjmp.h&gt;<br class="calibre6"/>#include &lt;signal.h&gt;<br class="calibre6"/>#include &lt;stdio.h&gt;</p>
-
-<p class="calibre2">// 64kB stack<br class="calibre6"/>#define FIBER_STACK 1024*64</p>
-
-<p class="calibre2">jmp_buf child, parent;</p>
-
-<p class="calibre2">// The child thread will execute this function<br class="calibre6"/>void threadFunction()<br class="calibre6"/>{<br class="calibre6"/>printf( "Child fiber yielding to parent\n" );<br class="calibre6"/>if ( setjmp( child ) )<br class="calibre6"/>{<br class="calibre6"/>printf( "Child thread exiting\n" );<br class="calibre6"/>longjmp( parent, 1 );<br class="calibre6"/>}</p>
-
-<p class="calibre2">longjmp( parent, 1 );<br class="calibre6"/>}</p>
-
-<p class="calibre2">void signalHandler( int arg )<br class="calibre6"/>{<br class="calibre6"/>if ( setjmp( child ) )<br class="calibre6"/>{<br class="calibre6"/>threadFunction();<br class="calibre6"/>}</p>
-
-<p class="calibre2">return;<br class="calibre6"/>}</p>
-
-<p class="calibre2">int main()<br class="calibre6"/>{<br class="calibre6"/>stack_t stack;<br class="calibre6"/>struct sigaction sa;</p>
-
-<p class="calibre2">// Create the new stack<br class="calibre6"/>stack.ss_flags = 0;<br class="calibre6"/>stack.ss_size = FIBER_STACK;<br class="calibre6"/>stack.ss_sp = malloc( FIBER_STACK );<br class="calibre6"/>if ( stack.ss_sp == 0 )<br class="calibre6"/>{<br class="calibre6"/>perror( "malloc: Could not allocate stack." );<br class="calibre6"/>exit( 1 );<br class="calibre6"/>}<br class="calibre6"/>sigaltstack( &amp;stack, 0 );</p>
-
-<p class="calibre2">// Set up the custom signal handler<br class="calibre6"/>sa.sa_handler = &amp;signalHandler;<br class="calibre6"/>sa.sa_flags = SA_ONSTACK;<br class="calibre6"/>sigemptyset( &amp;sa.sa_mask );<br class="calibre6"/>sigaction( SIGUSR1, &amp;sa, 0 );</p>
-
-<p class="calibre2">// Send the signal to call the function on the new stack<br class="calibre6"/>printf( "Creating child fiber\n" );<br class="calibre6"/>raise( SIGUSR1 );</p>
-
-<p class="calibre2">// Execute the child context<br class="calibre6"/>printf( "Switching to child fiber\n" );<br class="calibre6"/>if ( setjmp( parent ) )<br class="calibre6"/>{<br class="calibre6"/>printf( "Switching to child fiber again\n" );<br class="calibre6"/>if ( setjmp( parent ) == 0 ) longjmp( child, 1 );<br class="calibre6"/>}<br class="calibre6"/>else longjmp( child, 1 );</p>
-
-<p class="calibre2">// Free the stack<br class="calibre6"/>free( stack.ss_sp );<br class="calibre6"/>printf( "Child fiber returned and stack freed\n" );<br class="calibre6"/>return 0;<br class="calibre6"/>}</p>
-
+<pre style="white-space: pre-wrap;">
+<b> 1</b> #include &lt;malloc.h&gt;
+<b> 2</b> #include &lt;setjmp.h&gt;
+<b> 3</b> #include &lt;signal.h&gt;
+<b> 4</b> #include &lt;stdio.h&gt;
+<b> 5</b> 
+<b> 6</b> // 64kB stack
+<b> 7</b> #define FIBER_STACK 1024*64
+<b> 8</b> 
+<b> 9</b> jmp_buf child, parent;
+<b>10</b> 
+<b>11</b> // The child thread will execute this function
+<b>12</b> void threadFunction()
+<b>13</b> {
+<b>14</b>   printf( &quot;Child fiber yielding to parent\n&quot; );
+<b>15</b>   if ( setjmp( child ) )
+<b>16</b>   {
+<b>17</b>           printf( &quot;Child thread exiting\n&quot; );
+<b>18</b>           longjmp( parent, 1 );
+<b>19</b>   }
+<b>20</b> 
+<b>21</b>   longjmp( parent, 1 );
+<b>22</b> }
+<b>23</b> 
+<b>24</b> void signalHandler( int arg )
+<b>25</b> {
+<b>26</b>   if ( setjmp( child ) )
+<b>27</b>   {
+<b>28</b>           threadFunction();
+<b>29</b>   }
+<b>30</b>  
+<b>31</b>   return;
+<b>32</b> }
+<b>33</b> 
+<b>34</b> int main()
+<b>35</b> {
+<b>36</b>   stack_t stack;
+<b>37</b>   struct sigaction sa;
+<b>38</b>  
+<b>39</b>   // Create the new stack
+<b>40</b>   stack.ss_flags = 0;
+<b>41</b>   stack.ss_size = FIBER_STACK;
+<b>42</b>   stack.ss_sp = malloc( FIBER_STACK );
+<b>43</b>   if ( stack.ss_sp == 0 )
+<b>44</b>   {
+<b>45</b>           perror( &quot;malloc: Could not allocate stack.&quot; );
+<b>46</b>           exit( 1 );
+<b>47</b>   }
+<b>48</b>   sigaltstack( &amp;stack, 0 );
+<b>49</b>  
+<b>50</b>   // Set up the custom signal handler
+<b>51</b>   sa.sa_handler = &amp;signalHandler;
+<b>52</b>   sa.sa_flags = SA_ONSTACK;
+<b>53</b>   sigemptyset( &amp;sa.sa_mask );
+<b>54</b>   sigaction( SIGUSR1, &amp;sa, 0 );
+<b>55</b>  
+<b>56</b>   // Send the signal to call the function on the new stack
+<b>57</b>   printf( &quot;Creating child fiber\n&quot; );
+<b>58</b>   raise( SIGUSR1 );
+<b>59</b>  
+<b>60</b>   // Execute the child context
+<b>61</b>   printf( &quot;Switching to child fiber\n&quot; );
+<b>62</b>   if ( setjmp( parent ) )
+<b>63</b>   {
+<b>64</b>           printf( &quot;Switching to child fiber again\n&quot; );
+<b>65</b>           if ( setjmp( parent ) == 0 ) longjmp( child, 1 );
+<b>66</b>   }
+<b>67</b>   else longjmp( child, 1 );
+<b>68</b>  
+<b>69</b>   // Free the stack
+<b>70</b>   free( stack.ss_sp );
+<b>71</b>   printf( &quot;Child fiber returned and stack freed\n&quot; );
+<b>72</b>   return 0;
+<b>73</b> }
+</pre>
 <p class="calibre2"><b class="calibre3">Figure 5: Simple longjmp Fiber Example</b></p>
 
-<p class="calibre2"><b class="calibre3">Conclusion</b></p>
+<h2>
+Conclusion
+</h2>
 
 <p class="calibre2">The implementation of libfiber can be examined to understand how threads and fibers are created by libraries which provide them. This can be useful when analyzing the performance impact of various multiprocessing techniques. The library was developed and tested on Linux, however, the fiber implementations should be portable across most Unix platforms. The thread implementation, on the other hand, is Linux specific, due to the <a href="http://www.evanjones.ca/software/../man/2-clone.html" target="_blank">clone </a> system call.</p>
 
