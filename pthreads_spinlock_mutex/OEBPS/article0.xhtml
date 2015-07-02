@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+<title>http://www.grabmybooks.com</title>
+<link rel="stylesheet" href="css/book.css" type="text/css"/>
+</head>
+<body>
+<h2>Pthreads並行編程: 線程同步之spin lock與mutex性能比較 | Parallel Labs</h2>
+<p>POSIX threads(簡稱Pthreads)是在多核平台上進行並行編程的一套常用的API。線程同步(Thread Synchronization)是並行編程中非常重要的通訊手段，其中最典型的應用就是用Pthreads提供的鎖機制(lock)來對多個線程之間共 享的臨界區(Critical Section)進行保護(另一種常用的同步機制是barrier)。</p>
+
+<p>Pthreads提供了多種鎖機制：<br/>(1) Mutex（互斥量）：pthread_mutex_***<br/>(2) Spin lock（自旋鎖）：pthread_spin_***<br/>(3) Condition Variable（條件變量）：pthread_con_***<br/>(4) Read/Write lock（讀寫鎖）：pthread_rwlock_***</p>
+
+<p>Pthreads提供的Mutex鎖操作相關的API主要有：<br/><a href="https://computing.llnl.gov/tutorials/pthreads/man/pthread_mutex_lock.txt">pthread_mutex_lock (pthread_mutex_t *mutex);</a> <a href="https://computing.llnl.gov/tutorials/pthreads/man/pthread_mutex_trylock.txt">pthread_mutex_trylock (pthread_mutex_t *mutex);</a> <a href="https://computing.llnl.gov/tutorials/pthreads/man/pthread_mutex_unlock.txt">pthread_mutex_unlock (pthread_mutex_t *mutex);</a> </p>
+
+<p>Pthreads提供的與Spin Lock鎖操作相關的API主要有：<br/><a href="https://computing.llnl.gov/tutorials/pthreads/man/pthread_spin_lock.txt">pthread_spin_lock (pthread_spinlock_t *lock);</a> <a href="https://computing.llnl.gov/tutorials/pthreads/man/pthread_spin_trylock.txt">pthread_spin_trylock (pthread_spinlock_t *lock);</a> <a href="https://computing.llnl.gov/tutorials/pthreads/man/pthread_spin_unlock.txt">pthread_spin_unlock (pthread_spinlock_t *lock);</a> </p>
+
+<p>從實現原理上來講，Mutex屬於sleep-waiting類型的鎖。例如在一個雙核的機器上有兩個線程(線程A和線程B)，它們分別運行在Core0和Core1上。假設線程A想要通過pthread_mutex_lock操作去得到一個臨界區的鎖，而此時這個鎖正被線程B所持有，那麼線程A就會被阻塞(blocking)，Core0 會在此時進行上下文切換(Context Switch)將線程A置於等待隊列中，此時Core0就可以運行其他的任務(例如另一個線程C)而不必進行忙等待。而Spin lock則不然，它屬於busy-waiting類型的鎖，如果線程A是使用pthread_spin_lock操作去請求鎖，那麼線程A就會一直在 Core0上進行忙等待並不停的進行鎖請求，直到得到這個鎖為止。</p>
+
+<p>如果大家去查閱Linux glibc中對pthreads API的實現NPTL(<a href="http://en.wikipedia.org/wiki/Native_POSIX_Thread_Library">Native POSIX Thread Library</a> ) 的源碼的話(使用」getconf GNU_LIBPTHREAD_VERSION」命令可以得到我們系統中NPTL的版本號)，就會發現pthread_mutex_lock()操作如果沒有鎖成功的話就會調用system_wait()的系統調用（現在NPTL的實現採用了用戶空間的<a href="http://en.wikipedia.org/wiki/Futex">futex</a> ，不需要頻繁進行系統調用，性能已經大有改善），並將當前線程加入該mutex的等待隊列裡。而spin lock則可以理解為在一個while(1)循環中用內嵌的彙編代碼實現的鎖操作(印象中看過一篇論文介紹說在linux內核中spin lock操作只需要兩條CPU指令，解鎖操作只用一條指令就可以完成)。有興趣的朋友可以參考另一個名為<a href="http://www.jbox.dk/">sanos</a> 的微內核中pthreds API的實現：<a href="http://www.jbox.dk/sanos/source/lib/pthread/mutex.c.html">mutex.c</a> <a href="http://www.jbox.dk/sanos/source/lib/pthread/spinlock.c.html">spinlock.c</a> ，儘管與NPTL中的代碼實現不盡相同，但是因為它的實現非常簡單易懂，對我們理解spin lock和mutex的特性還是很有幫助的。</p>
+
+<p>那麼在實際編程中mutex和spin lcok哪個的性能更好呢？我們知道spin lock在Linux內核中有非常廣泛的利用，那麼這是不是說明spin lock的性能更好呢？下面讓我們來用實際的代碼測試一下（請確保你的系統中已經安裝了最近的g++）。</p>
+
+<pre style="white-space: pre-wrap;">
+<b>  1</b> // Name: spinlockvsmutex1.cc
+<b>  2</b> // Source: http://www.alexonlinux.com/pthread-mutex-vs-pthread-spinlock
+<b>  3</b> // Compiler(spin lock version): g++ -o spin_version -DUSE_SPINLOCK spinlockvsmutex1.cc -lpthread
+<b>  4</b> // Compiler(mutex version): g++ -o mutex_version spinlockvsmutex1.cc -lpthread
+<b>  5</b> #include &lt;stdio.h&gt;
+<b>  6</b> #include &lt;unistd.h&gt;
+<b>  7</b> #include &lt;sys/syscall.h&gt;
+<b>  8</b> #include &lt;errno.h&gt;
+<b>  9</b> #include &lt;sys/time.h&gt;
+<b> 10</b> #include &lt;list&gt;
+<b> 11</b> #include &lt;pthread.h&gt;
+<b> 12</b> 
+<b> 13</b> #define LOOPS 50000000
+<b> 14</b> 
+<b> 15</b> using namespace std;
+<b> 16</b> 
+<b> 17</b> list&lt;int&gt; the_list;
+<b> 18</b> 
+<b> 19</b> #ifdef USE_SPINLOCK
+<b> 20</b> pthread_spinlock_t spinlock;
+<b> 21</b> #else
+<b> 22</b> pthread_mutex_t mutex;
+<b> 23</b> #endif
+<b> 24</b> 
+<b> 25</b> //Get the thread id
+<b> 26</b> pid_t gettid() { return syscall( __NR_gettid ); }
+<b> 27</b> 
+<b> 28</b> void *consumer(void *ptr)
+<b> 29</b> {
+<b> 30</b>     int i;
+<b> 31</b> 
+<b> 32</b>     printf(&quot;Consumer TID %lun&quot;, (unsigned long)gettid());
+<b> 33</b> 
+<b> 34</b>     while (1)
+<b> 35</b>     {
+<b> 36</b> #ifdef USE_SPINLOCK
+<b> 37</b>         pthread_spin_lock(&amp;spinlock);
+<b> 38</b> #else
+<b> 39</b>         pthread_mutex_lock(&amp;mutex);
+<b> 40</b> #endif
+<b> 41</b> 
+<b> 42</b>         if (the_list.empty())
+<b> 43</b>         {
+<b> 44</b> #ifdef USE_SPINLOCK
+<b> 45</b>             pthread_spin_unlock(&amp;spinlock);
+<b> 46</b> #else
+<b> 47</b>             pthread_mutex_unlock(&amp;mutex);
+<b> 48</b> #endif
+<b> 49</b>             break;
+<b> 50</b>         }
+<b> 51</b> 
+<b> 52</b>         i = the_list.front();
+<b> 53</b>         the_list.pop_front();
+<b> 54</b> 
+<b> 55</b> #ifdef USE_SPINLOCK
+<b> 56</b>         pthread_spin_unlock(&amp;spinlock);
+<b> 57</b> #else
+<b> 58</b>         pthread_mutex_unlock(&amp;mutex);
+<b> 59</b> #endif
+<b> 60</b>     }
+<b> 61</b> 
+<b> 62</b>     return NULL;
+<b> 63</b> }
+<b> 64</b> 
+<b> 65</b> int main()
+<b> 66</b> {
+<b> 67</b>     int i;
+<b> 68</b>     pthread_t thr1, thr2;
+<b> 69</b>     struct timeval tv1, tv2;
+<b> 70</b> 
+<b> 71</b> #ifdef USE_SPINLOCK
+<b> 72</b>     pthread_spin_init(&amp;spinlock, 0);
+<b> 73</b> #else
+<b> 74</b>     pthread_mutex_init(&amp;mutex, NULL);
+<b> 75</b> #endif
+<b> 76</b> 
+<b> 77</b>     // Creating the list content...
+<b> 78</b>     for (i = 0; i &lt; LOOPS; i++)
+<b> 79</b>         the_list.push_back(i);
+<b> 80</b> 
+<b> 81</b>     // Measuring time before starting the threads...
+<b> 82</b>     gettimeofday(&amp;tv1, NULL);
+<b> 83</b> 
+<b> 84</b>     pthread_create(&amp;thr1, NULL, consumer, NULL);
+<b> 85</b>     pthread_create(&amp;thr2, NULL, consumer, NULL);
+<b> 86</b> 
+<b> 87</b>     pthread_join(thr1, NULL);
+<b> 88</b>     pthread_join(thr2, NULL);
+<b> 89</b> 
+<b> 90</b>     // Measuring time after threads finished...
+<b> 91</b>     gettimeofday(&amp;tv2, NULL);
+<b> 92</b> 
+<b> 93</b>     if (tv1.tv_usec &gt; tv2.tv_usec)
+<b> 94</b>     {
+<b> 95</b>         tv2.tv_sec--;
+<b> 96</b>         tv2.tv_usec += 1000000;
+<b> 97</b>     }
+<b> 98</b> 
+<b> 99</b>     printf(&quot;Result - %ld.%ldn&quot;, tv2.tv_sec - tv1.tv_sec,
+<b>100</b>         tv2.tv_usec - tv1.tv_usec);
+<b>101</b> 
+<b>102</b> #ifdef USE_SPINLOCK
+<b>103</b>     pthread_spin_destroy(&amp;spinlock);
+<b>104</b> #else
+<b>105</b>     pthread_mutex_destroy(&amp;mutex);
+<b>106</b> #endif
+<b>107</b> 
+<b>108</b>     return 0;
+<b>109</b> }
+</pre>
+
+<p>該程序運行過程如下：主線程先初始化一個list結構，並根據LOOPS的值將對應數量的entry插入該list，之後創建兩個新線程，它們都執行consumer()這個任務。兩個被創建的新線程同時對這個list進行pop操作。主線程會計算從創建兩個新線程到兩個新線程結束之間所用的時間，輸出為下文中的」Result 「。</p>
+
+<p>測試機器參數：<br/>Ubuntu 9.04 X86_64<br/>Intel(R) Core(TM)2 Duo CPU E8400 @ 3.00GHz<br/>4.0 GB Memory</p>
+
+<p>從下面是測試結果：</p>
+
+<pre style="white-space: pre-wrap;">
+gchen@gchen-desktop:~/Workspace/mutex$ g++ -o spin_version -DUSE_SPINLOCK spinvsmutex1.cc -lpthread
+gchen@gchen-desktop:~/Workspace/mutex$ g++ -o mutex_version spinvsmutex1.cc -lpthread
+gchen@gchen-desktop:~/Workspace/mutex$ time ./spin_version
+Consumer TID 5520
+Consumer TID 5521
+Result - 5.888750
+ 
+real    0m10.918s
+user    0m15.601s
+sys    0m0.804s
+ 
+gchen@gchen-desktop:~/Workspace/mutex$ time ./mutex_version
+Consumer TID 5691
+Consumer TID 5692
+Result - 9.116376
+ 
+real    0m14.031s
+user    0m12.245s
+sys    0m4.368s
+</pre>
+
+<p>可以看見spin lock的版本在該程序中表現出來的性能更好。另外值得注意的是sys時間，mutex版本花費了更多的系統調用時間，這就是因為mutex會在鎖衝突時調用system wait造成的。</p>
+
+<p>但是，是不是說spin lock就一定更好了呢？讓我們再來看一個鎖衝突程度非常劇烈的實例程序：</p>
+
+<pre style="white-space: pre-wrap;">
+<b> 1</b> //Name: svm2.c
+<b> 2</b> //Source: http://www.solarisinternals.com/wiki/index.php/DTrace_Topics_Locks
+<b> 3</b> //Compile(spin lock version): gcc -o spin -DUSE_SPINLOCK svm2.c -lpthread
+<b> 4</b> //Compile(mutex version): gcc -o mutex svm2.c -lpthread
+<b> 5</b> #include &lt;stdio.h&gt;
+<b> 6</b> #include &lt;stdlib.h&gt;
+<b> 7</b> #include &lt;pthread.h&gt;
+<b> 8</b> #include &lt;sys/syscall.h&gt;
+<b> 9</b>  
+<b>10</b> #define        THREAD_NUM     2
+<b>11</b>  
+<b>12</b> pthread_t g_thread[THREAD_NUM];
+<b>13</b> #ifdef USE_SPINLOCK
+<b>14</b> pthread_spinlock_t g_spin;
+<b>15</b> #else
+<b>16</b> pthread_mutex_t g_mutex;
+<b>17</b> #endif
+<b>18</b> __uint64_t g_count;
+<b>19</b>  
+<b>20</b> pid_t gettid()
+<b>21</b> {
+<b>22</b>     return syscall(SYS_gettid);
+<b>23</b> }
+<b>24</b>  
+<b>25</b> void *run_amuck(void *arg)
+<b>26</b> {
+<b>27</b>        int i, j;
+<b>28</b>  
+<b>29</b>        printf(&quot;Thread %lu started.n&quot;, (unsigned long)gettid());
+<b>30</b>  
+<b>31</b>        for (i = 0; i &lt; 10000; i++) {
+<b>32</b> #ifdef USE_SPINLOCK
+<b>33</b>            pthread_spin_lock(&amp;g_spin);
+<b>34</b> #else
+<b>35</b>                pthread_mutex_lock(&amp;g_mutex);
+<b>36</b> #endif
+<b>37</b>                for (j = 0; j &lt; 100000; j++) {
+<b>38</b>                        if (g_count++ == 123456789)
+<b>39</b>                                printf(&quot;Thread %lu wins!n&quot;, (unsigned long)gettid());
+<b>40</b>                }
+<b>41</b> #ifdef USE_SPINLOCK
+<b>42</b>            pthread_spin_unlock(&amp;g_spin);
+<b>43</b> #else
+<b>44</b>                pthread_mutex_unlock(&amp;g_mutex);
+<b>45</b> #endif
+<b>46</b>        }
+<b>47</b>         
+<b>48</b>        printf(&quot;Thread %lu finished!n&quot;, (unsigned long)gettid());
+<b>49</b>  
+<b>50</b>        return (NULL);
+<b>51</b> }
+<b>52</b>  
+<b>53</b> int main(int argc, char *argv[])
+<b>54</b> {
+<b>55</b>        int i, threads = THREAD_NUM;
+<b>56</b>  
+<b>57</b>        printf(&quot;Creating %d threads...n&quot;, threads);
+<b>58</b> #ifdef USE_SPINLOCK
+<b>59</b>        pthread_spin_init(&amp;g_spin, 0);
+<b>60</b> #else
+<b>61</b>        pthread_mutex_init(&amp;g_mutex, NULL);
+<b>62</b> #endif
+<b>63</b>        for (i = 0; i &lt; threads; i++)
+<b>64</b>                pthread_create(&amp;g_thread[i], NULL, run_amuck, (void *) i);
+<b>65</b>  
+<b>66</b>        for (i = 0; i &lt; threads; i++)
+<b>67</b>                pthread_join(g_thread[i], NULL);
+<b>68</b>  
+<b>69</b>        printf(&quot;Done.n&quot;);
+<b>70</b>  
+<b>71</b>        return (0);
+<b>72</b> }
+</pre>
+
+<p>這個程序的特徵就是臨界區非常大，這樣兩個線程的鎖競爭會非常的劇烈。當然這個是一個極端情況，實際應用程序中臨界區不會如此大，鎖競爭也不會如此激烈。測試結果顯示mutex版本性能更好：</p>
+
+<pre style="white-space: pre-wrap;">
+gchen@gchen-desktop:~/Workspace/mutex$ time ./spin
+Creating 2 threads...
+Thread 31796 started.
+Thread 31797 started.
+Thread 31797 wins!
+Thread 31797 finished!
+Thread 31796 finished!
+Done.
+ 
+real    0m5.748s
+user    0m10.257s
+sys    0m0.004s
+ 
+gchen@gchen-desktop:~/Workspace/mutex$ time ./mutex
+Creating 2 threads...
+Thread 31801 started.
+Thread 31802 started.
+Thread 31802 wins!
+Thread 31802 finished!
+Thread 31801 finished!
+Done.
+ 
+real    0m4.823s
+user    0m4.772s
+sys    0m0.032s
+</pre>
+
+
+<p>另外一個值得注意的細節是spin lock耗費了更多的user time。這就是因為兩個線程分別運行在兩個核上，大部分時間只有一個線程能拿到鎖，所以另一個線程就一直在它運行的core上進行忙等待，CPU佔用率一直是100%；而mutex則不同，當對鎖的請求失敗後上下文切換就會發生，這樣就能空出一個核來進行別的運算任務了。（其實這種上下文切換對已經拿著鎖的那個線程性能也是有影響的，因為當該線程釋放該鎖時它需要通知操作系統去喚醒那些被阻塞的線程，這也是額外的開銷）</p>
+
+<p>總結<br/>（1）Mutex適合對鎖操作非常頻繁的場景，並且具有更好的適應性。儘管相比spin lock它會花費更多的開銷（主要是上下文切換），但是它能適合實際開發中複雜的應用場景，在保證一定性能的前提下提供更大的靈活度。</p>
+
+<p>（2）spin lock的lock/unlock性能更好(花費更少的cpu指令)，但是它只適應用於臨界區運行時間很短的場景。而在實際軟件開發中，除非程序員對自己的程序的鎖操作行為非常的瞭解，否則使用spin lock不是一個好主意(通常一個多線程程序中對鎖的操作有數以萬次，如果失敗的鎖操作(contended lock requests)過多的話就會浪費很多的時間進行空等待)。</p>
+
+<p>（3）更保險的方法或許是先（保守的）使用 Mutex，然後如果對性能還有進一步的需求，可以嘗試使用spin lock進行調優。畢竟我們的程序不像Linux kernel那樣對性能需求那麼高(Linux Kernel最常用的鎖操作是spin lock和rw lock)。</p>
+
+<p>2010年3月3日補記：這個觀點在<a href="http://www.oracle.com/technology/documentation/berkeley-db/db/programmer_reference/transapp_tune.html">Oracle的文檔</a> 中得到了支持：</p>
+
+<p>During configuration, Berkeley DB selects a mutex implementation for the architecture. Berkeley DB normally prefers blocking-mutex implementations over non-blocking ones. For example, Berkeley DB will select POSIX pthread mutex interfaces rather than assembly-code test-and-set spin mutexes because pthread mutexes are usually more efficient and less likely to waste CPU cycles spinning without getting any work accomplished. </p>
+
+<p>p.s.調用syscall(SYS_gettid)和syscall( __NR_gettid )都可以得到當前線程的id:)</p>
+
+<p>轉載請註明來自: www.parallellabs.com</p>
+
+<p><b>相關日誌</b></p>
+
+<p><small>12/04/2010</small> <a href="http://www.parallellabs.com/2010/12/04/why-should-we-be-care-of-volatile-keyword-in-multithreaded-applications/">剖析為什麼在多核多線程程序中要慎用volatile關鍵字？</a> <small>04/09/2011</small> <a href="http://www.parallellabs.com/2011/04/09/pthread-mutex-lock-and-thread-safety/">《程序員的自我修養》中關於加鎖不能保證線程安全的一個錯誤</a> <small>10/02/2011</small> <a href="http://www.parallellabs.com/2011/10/02/lock-in-parallel-programming/">並行編程中的「鎖」難題</a> <small>04/15/2010</small> <a href="http://www.parallellabs.com/2010/04/15/atomic-operation-in-multithreaded-application/">多線程程序中操作的原子性</a> <small>10/25/2010</small> <a href="http://www.parallellabs.com/2010/10/25/practical-concurrent-queue-algorithm/">多線程隊列的算法優化</a></p>
+</body>
+</html>
